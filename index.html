@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>The_Arafat_Earnings_Bot (Firebase)</title>
+  <title>Genius_Ads_Earning_Bot (Firebase)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
@@ -464,8 +464,8 @@
         cursor: pointer;
     }
   </style>
-  <script src='//libtl.com/sdk.js' data-zone='9892740' data-sdk='show_9892740'></script>
-  <script src='//libtl.com/sdk.js' data-zone='9892740' data-sdk='show_9892740'></script>
+  <script src='//libtl.com/sdk.js' data-zone='9892808' data-sdk='show_9892808'></script>
+  <script src='//libtl.com/sdk.js' data-zone='9892808' data-sdk='show_9892808'></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -710,13 +710,12 @@
     import { getDatabase, ref, onValue, set, get, update, push, onChildAdded, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyDfn1veuHMeHCbqgYQs_KEREDgwVmBxSHw",
-    authDomain: "the-arafat-earnings.firebaseapp.com",
-    projectId: "the-arafat-earnings",
-    storageBucket: "the-arafat-earnings.firebasestorage.app",
-    messagingSenderId: "1082223011616",
-    appId: "1:1082223011616:web:3de7e7438ca002dda6d945",
-    measurementId: "G-T9NY7D2RW8"
+    apiKey: "AIzaSyBIyRCpm3tLVxgsN7W_OFNBr6v5CX3HcYg",
+    authDomain: "genius-earning-bot.firebaseapp.com",
+    projectId: "genius-earning-bot",
+    storageBucket: "genius-earning-bot.firebasestorage.app",
+    messagingSenderId: "1063434671346",
+    appId: "1:1063434671346:web:ed06bda4e9ef76d4f52c6b"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -959,8 +958,8 @@
     }
     
     function initializeInAppAds() {
-        if (typeof show_9892740 === 'function') {
-            show_9892740({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
+        if (typeof show_9892808 === 'function') {
+            show_9892808({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
         } else {
             setTimeout(initializeInAppAds, 2000);
         }
@@ -1143,7 +1142,7 @@
         const overlay = document.getElementById('timer-notification-overlay');
         const overlayContent = document.getElementById('timer-notification-content');
         
-        show_9892740().catch(e => console.error("Ad SDK error:", e));
+        show_9892808().catch(e => console.error("Ad SDK error:", e));
 
         overlay.style.display = 'flex';
         let countdown = adTimerSeconds;

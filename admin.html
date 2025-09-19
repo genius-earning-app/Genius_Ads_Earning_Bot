@@ -79,9 +79,13 @@
         .icon.users { background: var(--blue); } .icon.ads { background: var(--purple); } .icon.earnings { background: var(--green); } .icon.commission { background: var(--orange); } .icon.referrals { background: var(--teal); } .icon.request { background: var(--yellow); color: #333;} .icon.pending { background: #e67e22; } .icon.approved { background: #27ae60; } .icon.methods { background: #c0392b; } .icon.settings { background: #2c3e50; }
 
         .section-card { background-color: white; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .section-header { padding: 15px 20px; background-color: var(--primary-bg); color: var(--text-light); border-radius: 8px 8px 0 0; font-size: 1.2rem; font-weight: 600; display: flex; align-items: center;}
+        .section-header { padding: 15px 20px; background-color: var(--primary-bg); color: var(--text-light); border-radius: 8px 8px 0 0; font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
         .section-header i { margin-right: 10px; }
-        .section-body { padding: 20px; }
+        .section-header .toggle-icon { transition: transform 0.3s ease; }
+        .section-header.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .section-body { padding: 20px; border-top: 1px solid var(--primary-bg); display: block; transition: all 0.3s ease-in-out; }
+        .section-body.collapsed { display: none; }
+
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; font-family: 'Hind Siliguri', sans-serif; }
@@ -94,16 +98,16 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
         .overlay.active { opacity: 1; visibility: visible; }
         
-        .ad-network-setting, .task-setting, .method-setting, .tier-setting, .package-setting, .text-setting { 
+        .ad-network-setting, .task-setting, .method-setting, .tier-setting, .package-setting, .text-setting, .error-message-setting { 
             display: grid; gap: 15px; align-items: center;
             margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color);
         }
-        .ad-network-setting { grid-template-columns: 2fr 2fr auto auto; }
+        .ad-network-setting { grid-template-columns: 2fr 1fr 1fr 1fr auto auto; }
         .task-setting { grid-template-columns: 2fr 2fr 1fr auto auto; }
         .method-setting { grid-template-columns: 1fr 1fr 1fr auto auto; }
         .tier-setting { grid-template-columns: 2fr 2fr 1fr auto auto; }
         .package-setting { grid-template-columns: 2fr 1fr 1fr auto; }
-        .text-setting { grid-template-columns: 1fr 2fr; }
+        .text-setting, .error-message-setting { grid-template-columns: 1fr 2fr; }
 
         .btn-remove { padding: 8px 12px; background: var(--red); color: white; border: none; border-radius: 5px; cursor: pointer; }
         .btn-add { padding: 10px; background: var(--blue); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;}
@@ -140,14 +144,16 @@
         .btn-history { background-color: var(--teal); }
         .btn-block { background-color: var(--orange); }
         .btn-unblock { background-color: #7f8c8d; }
-        /* নতুন যুক্ত: রেফারেল দেখার জন্য বাটন স্টাইল */
         .btn-info { background-color: #17a2b8; }
+        .btn-refund { background-color: var(--purple); font-size: 0.8rem; padding: 4px 8px;}
         
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; color: white; white-space: nowrap;}
         .status-pending { background-color: var(--yellow); color: var(--text-dark); }
         .status-approved { background-color: var(--green); }
         .status-rejected { background-color: var(--red); }
         .status-blocked { background-color: var(--text-dark); }
+        .status-open { background-color: var(--blue); }
+        .status-closed { background-color: #7f8c8d; }
 
         .tab-nav { display: flex; gap: 10px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
         .tab-btn { padding: 10px 20px; background: none; border: none; cursor: pointer; font-size: 1rem; font-weight: 600; color: var(--text-dark); border-radius: 5px 5px 0 0;}
@@ -179,6 +185,7 @@
         .icon.withdrawal { background-color: var(--red); }
         .icon.referral, .icon.login, .icon.task { background-color: var(--blue); }
         .icon.manual { background-color: var(--purple); }
+        .icon.refund { background-color: var(--orange); }
 
         .promo-code-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: flex-end; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); }
         .promo-code-form .form-group { margin: 0; }
@@ -189,12 +196,29 @@
         .user-management-toolbar { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin-bottom: 20px; }
         .user-management-toolbar .form-group { margin-bottom: 0; flex-grow: 1; }
         .user-management-toolbar .btn-add { margin-top: 0; }
-        /* নতুন যুক্ত: ফিল্টার ইনপুটগুলোর জন্য স্টাইল */
         .user-management-toolbar .filter-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .user-management-toolbar .filter-group .form-group { min-width: 150px; flex-grow: 0.5;}
 
+        .modal-transaction-list { max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 10px; border-radius: 5px; margin-top: 15px;}
+        .modal-transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f5f5f5;}
+        .modal-transaction-item:last-child { border-bottom: none; }
+        .modal-transaction-info .title { font-size: 0.9rem; font-weight: 500;}
+        .modal-transaction-info .date { font-size: 0.75rem; color: #888; }
+        .admin-notes-section .form-group { margin-bottom: 10px; }
+        .admin-notes-section button { width: auto; padding: 10px 20px; font-size: 0.9rem; }
+
+        .ticket-details-container { background-color: #f9f9f9; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .ticket-details-container p { margin: 0 0 10px; }
+        .ticket-details-container strong { color: var(--primary-bg); }
+        .ticket-replies-list { max-height: 200px; overflow-y: auto; }
+        .ticket-reply-item { margin-bottom: 15px; padding: 10px; border-radius: 8px; }
+        .ticket-reply-item.user-reply { background-color: #e9ecef; }
+        .ticket-reply-item.admin-reply { background-color: #d1e7dd; text-align: right; }
+        .reply-meta { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #555; }
+        .reply-message { font-size: 0.95rem; }
+
         @media (max-width: 768px) {
-            .ad-network-setting, .task-setting, .method-setting, .tier-setting, .package-setting, .text-setting { grid-template-columns: 1fr; gap: 10px; }
+            .ad-network-setting, .task-setting, .method-setting, .tier-setting, .package-setting, .text-setting, .error-message-setting { grid-template-columns: 1fr; gap: 10px; }
             .method-setting .btn-remove, .task-setting .btn-remove, .ad-network-setting .btn-remove, .tier-setting .btn-remove, .package-setting .btn-remove { margin-top: 5px; width: 100%; }
             .promo-code-form { grid-template-columns: 1fr; }
 
@@ -216,6 +240,7 @@
                 <li><a href="#dashboard" class="nav-link active"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
                 <li><a href="#user-management" class="nav-link"><i class="fas fa-users-cog"></i>Users Management</a></li>
                 <li><a href="#withdraw-management" class="nav-link"><i class="fas fa-money-check-alt"></i>Withdraw Management</a></li>
+                <li><a href="#support-management" class="nav-link"><i class="fas fa-life-ring"></i>Support System</a></li>
                 <li><a href="#settings" class="nav-link"><i class="fas fa-cog"></i>Settings</a></li>
             </ul>
         </nav>
@@ -238,10 +263,6 @@
                         <div class="dashboard-card"><div class="icon commission"><i class="fas fa-percent"></i></div><div class="card-content"><h3 id="db-total-commission">BDT 0</h3><p>Total Commission</p></div></div>
                         <div class="dashboard-card"><div class="icon referrals"><i class="fas fa-user-plus"></i></div><div class="card-content"><h3 id="db-total-referrals">0</h3><p>Total Referrals</p></div></div>
                         <div class="dashboard-card"><div class="icon request"><i class="fas fa-inbox"></i></div><div class="card-content"><h3 id="db-req-withdraw">0</h3><p>Pending Requests</p></div></div>
-                        <div class="dashboard-card"><div class="icon pending"><i class="fas fa-hourglass-half"></i></div><div class="card-content"><h3 id="db-pending-withdraw">0</h3><p>Pending Withdrawal (Legacy)</p></div></div>
-                        <div class="dashboard-card"><div class="icon approved"><i class="fas fa-check-circle"></i></div><div class="card-content"><h3 id="db-approved-withdraw">0</h3><p>Approved Withdrawal</p></div></div>
-                        <div class="dashboard-card"><div class="icon methods"><i class="fas fa-credit-card"></i></div><div class="card-content"><h3 id="db-withdraw-methods">0</h3><p>Withdrawal Methods</p></div></div>
-                        <div class="dashboard-card"><div class="icon settings"><i class="fas fa-cog"></i></div><div class="card-content" style="cursor: pointer;" onclick="navigateToPage('settings')"><h3>Settings</h3><p>Manage App Settings</p></div></div>
                     </div>
                     <div class="analytics-grid">
                         <div class="section-card">
@@ -260,7 +281,22 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- নতুন যুক্ত: টপ আর্নার এবং টপ রেফারার কার্ড -->
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-chart-pie"></i>উপার্জনের উৎস</div>
+                            <div class="section-body">
+                                <div class="chart-container">
+                                    <canvas id="earning-sources-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-users-viewfinder"></i>সক্রিয় ব্যবহারকারী (গত ৭ দিন)</div>
+                            <div class="section-body">
+                                <div class="chart-container">
+                                    <canvas id="user-retention-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-trophy"></i>Top 5 Earners</div>
                             <div class="section-body">
@@ -295,7 +331,6 @@
                                 <div class="form-group">
                                     <input type="text" id="userSearch" placeholder="Search User (Name, Username, or ID)">
                                 </div>
-                                <!-- নতুন যুক্ত: ফিল্টার অপশন -->
                                 <div class="filter-group">
                                     <div class="form-group">
                                         <select id="filter-status">
@@ -370,13 +405,42 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Support System Page -->
+                <div id="support-management" class="page">
+                    <div class="section-card">
+                        <div class="section-header"><i class="fas fa-life-ring"></i>Support Tickets</div>
+                        <div class="section-body">
+                             <p>এখানে ব্যবহারকারীদের পাঠানো বার্তা বা সমস্যাগুলো দেখা যাবে।</p>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Date</th>
+                                            <th>Subject</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="support-tickets-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Settings Page -->
                 <div id="settings" class="page">
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <input type="text" id="settingsSearch" placeholder="🔍 Search settings sections..." style="padding: 15px; font-size: 1.1rem;">
+                    </div>
+
                     <form id="settingsForm">
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-bullhorn"></i>App Control</div>
-                            <div class="section-body">
+                            <div class="section-header"><i class="fas fa-bullhorn"></i>App Control<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
                                 <div class="form-group"><label for="appVersion">App Version</label><input type="text" id="appVersion" placeholder="e.g., 1.0.0"></div>
                                 <div class="form-group"><label for="botUsername">Telegram Bot Username (without @)</label><input type="text" id="botUsername" placeholder="e.g., YourBotUsername"></div>
                                 <div class="form-group"><label for="announcement">Announcement / Notice</label><textarea id="announcement" placeholder="অ্যাপের ব্যবহারকারীদের জন্য ঘোষণা..."></textarea></div>
@@ -384,16 +448,16 @@
                         </div>
 
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-bell"></i>সকল ব্যবহারকারীকে নোটিফিকেশন পাঠান</div>
-                            <div class="section-body">
+                            <div class="section-header"><i class="fas fa-bell"></i>সকল ব্যবহারকারীকে নোটিফিকেশন পাঠান<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
                                 <div class="form-group"><label for="global-notification-message">নোটিফিকেশন বার্তা</label><textarea id="global-notification-message" placeholder="এই বার্তাটি সকল সক্রিয় ব্যবহারকারীর কাছে অ্যাপের ভেতর পপ-আপ হিসেবে দেখানো হবে..."></textarea></div>
                                 <button type="button" class="update-btn" style="background-color: var(--blue);" id="send-global-notification-btn">Send Global Notification</button>
                             </div>
                         </div>
                         
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-palette"></i>App Customization</div>
-                            <div class="section-body">
+                            <div class="section-header"><i class="fas fa-palette"></i>App Customization<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
                                 <div class="form-group">
                                     <label for="themeColor">App Primary Theme Color</label>
                                     <input type="color" id="themeColor">
@@ -412,9 +476,9 @@
                         </div>
 
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-cogs"></i>Manage Settings</div>
-                            <div class="section-body">
-                                <div class="form-group"><label for="adsReward">Ads Reward</label><input type="number" step="0.01" id="adsReward"></div>
+                            <div class="section-header"><i class="fas fa-cogs"></i>Manage Settings<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div class="form-group"><label for="adsReward">Ads Reward (Default)</label><input type="number" step="0.01" id="adsReward"></div>
                                 <div class="form-group"><label for="adsLimit">Daily Ads Limit</label><input type="number" id="adsLimit"></div>
                                 <div class="form-group"><label for="refferBonus">Referral Commission in %</label><input type="number" id="refferBonus"></div>
                                 <div class="form-group"><label for="refferJoinBonus">Referral Join Bonus</label><input type="number" step="0.01" id="refferJoinBonus"></div>
@@ -424,8 +488,23 @@
                         </div>
                         
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-gift"></i>Promo Code Management</div>
-                            <div class="section-body">
+                            <div class="section-header"><i class="fas fa-user-friends"></i>Referral System Control<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div class="form-group">
+                                    <label for="maxReferrals">Maximum Referrals Limit per User</label>
+                                    <input type="number" id="maxReferrals" placeholder="e.g., 100 (0 for unlimited)">
+                                </div>
+                                <div class="form-group">
+                                    <label for="referralCommissionActivation">Minimum Ads Watched by Referred User to Activate Commission</label>
+                                    <input type="number" id="referralCommissionActivation" placeholder="e.g., 10 (0 to disable)">
+                                    <small>রেফার করা ব্যবহারকারী এই সংখ্যক বিজ্ঞাপন দেখার পরই রেফারার কমিশন পাওয়া শুরু করবে।</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-gift"></i>Promo Code Management<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
                                 <h4>Existing Promo Codes</h4>
                                 <div class="table-container">
                                     <table class="data-table">
@@ -443,9 +522,9 @@
                         </div>
 
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-tools"></i>Advanced Control</div>
-                            <div class="section-body">
-                                <div class="form-group"><label for="adWatchTimerSeconds">Ad Watch Timer (Seconds)</label><input type="number" id="adWatchTimerSeconds" placeholder="e.g., 30"></div>
+                            <div class="section-header"><i class="fas fa-tools"></i>Advanced Control<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div class="form-group"><label for="adWatchTimerSeconds">Ad Watch Timer (Seconds) - Default</label><input type="number" id="adWatchTimerSeconds" placeholder="e.g., 30"></div>
                                 <div class="form-group"><label for="hourlyAdsLimit">Hourly Ads Limit</label><input type="number" id="hourlyAdsLimit" placeholder="e.g., 25"></div>
                                 <div class="form-group"><label for="minReferralsForWithdrawal">Minimum Referrals for Withdrawal</label><input type="number" id="minReferralsForWithdrawal" placeholder="e.g., 3"></div>
                                 <hr>
@@ -454,8 +533,19 @@
                         </div>
                         
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-bullseye"></i>Targeted Actions (User Segmentation)</div>
-                            <div class="section-body targeted-actions-form">
+                            <div class="section-header"><i class="fas fa-user-secret"></i>Advanced Fraud Detection Settings<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div class="form-group">
+                                    <label for="ipSharingLimit">IP Sharing Limit</label>
+                                    <input type="number" id="ipSharingLimit" placeholder="e.g., 3">
+                                    <small>একই IP ঠিকানা থেকে সর্বোচ্চ কতজন ব্যবহারকারীকে অনুমতি দেওয়া হবে। এর বেশি হলে তাদের সন্দেহজনক হিসেবে দেখানো হবে।</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-bullseye"></i>Targeted Actions (User Segmentation)<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
                                 <div class="grid">
                                     <div class="form-group"><label for="target-segment">Select Target Segment</label><select id="target-segment"><option value="all">All Active Users</option><option value="tier">Users by Tier</option><option value="inactive">Inactive Users</option></select></div>
                                     <div class="form-group" id="tier-select-group" style="display: none;"><label for="target-tier">Select Tier</label><select id="target-tier"></select></div>
@@ -468,14 +558,14 @@
                             </div>
                         </div>
 
-                        <div class="section-card"><div class="section-header"><i class="fas fa-ad"></i>Ad Network Zone IDs</div><div class="section-body" id="ad-networks-section"></div></div>
-                        <div class="section-card"><div class="section-header"><i class="fas fa-calendar-check"></i>Daily Check-in Bonus</div><div class="section-body" id="daily-checkin-section"></div></div>
-                        <div class="section-card"><div class="section-header"><i class="fas fa-tasks"></i>Complete Tasks</div><div class="section-body" id="tasks-section"></div></div>
-                        <div class="section-card"><div class="section-header"><i class="fas fa-layer-group"></i>ব্যবহারকারীর স্তর (User Tiers)</div><div class="section-body" id="user-tiers-section"></div></div>
+                        <div class="section-card"><div class="section-header"><i class="fas fa-ad"></i>Ad Network Zone IDs<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="ad-networks-section"></div></div>
+                        <div class="section-card"><div class="section-header"><i class="fas fa-calendar-check"></i>Daily Check-in Bonus<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="daily-checkin-section"></div></div>
+                        <div class="section-card"><div class="section-header"><i class="fas fa-tasks"></i>Complete Tasks<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="tasks-section"></div></div>
+                        <div class="section-card"><div class="section-header"><i class="fas fa-layer-group"></i>ব্যবহারকারীর স্তর (User Tiers)<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="user-tiers-section"></div></div>
 
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-wallet"></i>Withdrawal & Monetization</div>
-                            <div class="section-body">
+                            <div class="section-header"><i class="fas fa-wallet"></i>Withdrawal & Monetization<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
                                 <div class="form-group"><label for="minWithdraw">Minimum Withdrawal Limit</label><input type="number" id="minWithdraw"></div>
                                 <div class="form-group">
                                     <label for="withdrawalFeePercent">Withdrawal Fee (%)</label>
@@ -486,13 +576,19 @@
                             </div>
                         </div>
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-store"></i>পয়েন্ট স্টোর (Store)</div>
-                            <div class="section-body" id="point-packages-section"></div>
+                            <div class="section-header"><i class="fas fa-store"></i>পয়েন্ট স্টোর (Store)<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed" id="point-packages-section"></div>
                         </div>
 
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-edit"></i>অ্যাপের টেক্সট পরিবর্তন (Text Management)</div>
-                            <div class="section-body" id="text-management-section"></div>
+                            <div class="section-header"><i class="fas fa-edit"></i>অ্যাপের টেক্সট পরিবর্তন (Text Management)<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed" id="text-management-section"></div>
+                        </div>
+                        
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-exclamation-triangle"></i>ত্রুটির বার্তা নিয়ন্ত্রণ (Error Messages)<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed" id="error-message-section">
+                            </div>
                         </div>
                         
                         <button type="submit" class="update-btn">UPDATE ALL SETTINGS</button>
@@ -508,10 +604,28 @@
             <div class="modal-header"><h3 id="modal-user-name">Edit User</h3><button class="modal-close-btn" onclick="closeUserEditModal()">&times;</button></div>
             <div class="modal-body">
                 <div class="user-details" id="user-details-content"></div><hr>
+                
                 <h4>Manual Transaction</h4>
                 <div class="form-group"><label for="points-to-add">Add/Subtract Points (e.g., 100 or -50)</label><input type="number" id="points-to-add" placeholder="0"></div>
                 <div class="form-group"><label for="transaction-reason">Reason (will be shown in user's history)</label><input type="text" id="transaction-reason" placeholder="e.g., Weekly bonus, refund..."></div>
                 <button class="update-btn" id="save-user-changes-btn">Save Changes & Add to History</button><hr>
+                
+                <h4>Refund a Transaction</h4>
+                <div id="modal-refund-section">
+                    <p><small>ব্যবহারকারীর সাম্প্রতিক লেনদেনগুলো নিচে দেখানো হলো। যেকোনো লেনদেন রিফান্ড করতে বাটনে ক্লিক করুন।</small></p>
+                    <div class="modal-transaction-list" id="modal-transaction-list-container"></div>
+                </div>
+                <hr>
+                
+                <div class="admin-notes-section">
+                    <h4>Admin Notes (Visible to Admins Only)</h4>
+                    <div class="form-group">
+                        <textarea id="admin-notes-textarea" placeholder="Add a private note about this user..."></textarea>
+                    </div>
+                    <button class="update-btn" style="background-color: var(--teal);" onclick="window.saveAdminNote()">Save Note</button>
+                </div>
+                <hr>
+
                 <h4>Send Notification</h4>
                 <div class="form-group"><label for="user-notification-message">Message for this user</label><textarea id="user-notification-message" placeholder="This message will be shown to the user in the app..."></textarea></div>
                 <button class="update-btn" style="background-color: var(--blue);" onclick="window.sendUserNotification()">Send Notification</button>
@@ -524,11 +638,23 @@
             <div class="modal-body" id="user-history-content"></div>
         </div>
     </div>
-    <!-- নতুন যুক্ত: রেফারেল তালিকা দেখার জন্য মোডাল -->
     <div class="modal-overlay" id="user-referrals-modal">
         <div class="modal-content">
             <div class="modal-header"><h3 id="modal-referrals-user-name">User's Referrals</h3><button class="modal-close-btn" onclick="closeUserReferralsModal()">&times;</button></div>
             <div class="modal-body" id="user-referrals-content"></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="support-ticket-modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="modal-ticket-subject">Support Ticket</h3><button class="modal-close-btn" onclick="closeSupportTicketModal()">&times;</button></div>
+            <div class="modal-body">
+                <div class="ticket-details-container" id="ticket-details-content"></div>
+                <div class="ticket-replies-list" id="ticket-replies-list"></div>
+                <hr>
+                <h4>Send Reply</h4>
+                <div class="form-group"><textarea id="ticket-reply-message" placeholder="Write your reply..."></textarea></div>
+                <button class="update-btn" style="background-color: var(--blue);" onclick="window.sendSupportReply()">Send Reply</button>
+            </div>
         </div>
     </div>
 
@@ -536,13 +662,13 @@
 <script type="module">
     // --- Firebase Configuration ---
     const firebaseConfig = {
-    apiKey: "AIzaSyDfn1veuHMeHCbqgYQs_KEREDgwVmBxSHw",
-    authDomain: "the-arafat-earnings.firebaseapp.com",
-    projectId: "the-arafat-earnings",
-    storageBucket: "the-arafat-earnings.firebasestorage.app",
-    messagingSenderId: "1082223011616",
-    appId: "1:1082223011616:web:3de7e7438ca002dda6d945",
-    measurementId: "G-T9NY7D2RW8"
+        apiKey: "AIzaSyDfn1veuHMeHCbqgYQs_KEREDgwVmBxSHw",
+        authDomain: "the-arafat-earnings.firebaseapp.com",
+        projectId: "the-arafat-earnings",
+        storageBucket: "the-arafat-earnings.firebasestorage.app",
+        messagingSenderId: "1082223011616",
+        appId: "1:1082223011616:web:3de7e7438ca002dda6d945",
+        measurementId: "G-T9NY7D2RW8"
     };
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -555,6 +681,7 @@
     const configRef = ref(database, 'app/config'); 
     const usersRef = ref(database, 'app/users');
     const withdrawRequestsRef = ref(database, 'app/withdraw_requests');
+    const supportTicketsRef = ref(database, 'app/support_tickets');
     const globalNotificationRef = ref(database, 'app/global_notification');
     const promoCodesRef = ref(database, 'app/promo_codes');
 
@@ -571,7 +698,8 @@
         let allWithdrawals = {};
         let currentWithdrawFilter = 'Pending';
         let currentEditingUserId = null;
-        let userGrowthChart = null, dailyEarningsChart = null;
+        let currentReplyingTicketId = null;
+        let userGrowthChart = null, dailyEarningsChart = null, earningSourcesChart = null, userRetentionChart = null;
 
         const DEFAULT_CONFIG = {
             adsReward: 1.0, adsLimit: 100, refferBonus: 10,
@@ -581,7 +709,7 @@
             adWatchTimerSeconds: 30, hourlyAdsLimit: 25,
             minReferralsForWithdrawal: 3, maintenanceMode: false,
             adNetworksEnabled: true,
-            adNetworks: [ { name: 'Monetag Ads', zoneId: '9704633', enabled: true } ],
+            adNetworks: [ { name: 'Monetag Ads', zoneId: '9704633', reward: 1, timer: 30, enabled: true } ],
             dailyCheckinEnabled: true,
             dailyCheckinRewards: Array.from({ length: 10 }, (_, i) => ({ day: i + 1, reward: (i + 1) * 2 })),
             tasksEnabled: true,
@@ -608,24 +736,41 @@
             ],
             textStrings: {
                 navHome: "Home", navEarn: "Earn", navRefer: "Refer", navProfile: "Profile",
-                referTitle: "Refer & Earn Forever", referLinkTitle: "Your Referral Link"
-            }
+                referTitle: "Refer & Earn Forever", referLinkTitle: "Your Referral Link",
+                errorMessages: {
+                    insufficientBalance: "Insufficient balance.",
+                    minWithdrawal: "Minimum withdrawal is {amount} {currency}.",
+                    minReferrals: "Minimum {count} referrals required for withdrawal.",
+                    fillAllFields: "Please fill all fields correctly."
+                }
+            },
+            fraudDetection: { ipSharingLimit: 3 },
+            referralControl: { maxReferrals: 0, commissionActivation: { adsWatched: 10 } }
         };
 
         function init() {
             onValue(configRef, (snapshot) => {
                 const data = snapshot.val();
                 appConfig = data ? { ...DEFAULT_CONFIG, ...data } : { ...DEFAULT_CONFIG };
+                if (!appConfig.textStrings.errorMessages) {
+                    appConfig.textStrings.errorMessages = DEFAULT_CONFIG.textStrings.errorMessages;
+                }
                 if (!data) {
-                    console.log("No config found. Using and saving default config.");
                     set(configRef, appConfig);
                 }
                 renderAllSettings();
                 updateDashboardData();
             });
-            onValue(usersRef, (snapshot) => { allUsers = snapshot.val() || {}; renderUsers(true); updateDashboardData(); processAnalyticsData(); renderDashboardAnalytics(); });
+            onValue(usersRef, (snapshot) => { 
+                allUsers = snapshot.val() || {}; 
+                renderUsers(true); 
+                updateDashboardData(); 
+                processAnalyticsData(); 
+                renderDashboardAnalytics(); 
+            });
             onValue(withdrawRequestsRef, (snapshot) => { allWithdrawals = snapshot.val() || {}; renderWithdrawals(); updateDashboardData(); });
             onValue(promoCodesRef, (snapshot) => { renderPromoCodes(snapshot.val() || {}); });
+            onValue(supportTicketsRef, (snapshot) => { renderSupportTickets(snapshot.val() || {}); });
 
             menuToggle.addEventListener('click', toggleMenu);
             overlay.addEventListener('click', toggleMenu);
@@ -634,7 +779,6 @@
 
             document.getElementById('withdraw-tab-nav').addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { document.querySelectorAll('#withdraw-tab-nav .tab-btn').forEach(btn => btn.classList.remove('active')); e.target.classList.add('active'); currentWithdrawFilter = e.target.dataset.status; renderWithdrawals(); } });
             document.getElementById('userSearch').addEventListener('input', () => renderUsers(false));
-            // নতুন যুক্ত: ফিল্টারগুলোর জন্য ইভেন্ট লিসেনার
             document.getElementById('filter-status').addEventListener('change', () => renderUsers(false));
             document.getElementById('filter-balance').addEventListener('change', () => renderUsers(false));
             
@@ -644,44 +788,106 @@
             document.getElementById('send-global-notification-btn').addEventListener('click', sendGlobalNotification);
             document.getElementById('target-segment').addEventListener('change', handleSegmentChange);
             document.getElementById('action-type').addEventListener('change', handleActionChange);
+            
+            document.getElementById('settingsSearch').addEventListener('keyup', filterSettings);
+            document.querySelectorAll('#settings .section-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const body = header.nextElementSibling;
+                    header.classList.toggle('collapsed');
+                    body.classList.toggle('collapsed');
+                });
+            });
+
             initCharts();
         }
         
+        function filterSettings() {
+            const searchTerm = document.getElementById('settingsSearch').value.toLowerCase();
+            const sections = document.querySelectorAll('#settings .section-card');
+            sections.forEach(section => {
+                const headerText = section.querySelector('.section-header').innerText.toLowerCase();
+                if (headerText.includes(searchTerm)) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
         function initCharts() {
             if (userGrowthChart) userGrowthChart.destroy();
+            if (dailyEarningsChart) dailyEarningsChart.destroy();
+            if (earningSourcesChart) earningSourcesChart.destroy();
+            if (userRetentionChart) userRetentionChart.destroy();
+
             const userCtx = document.getElementById('user-growth-chart').getContext('2d');
             userGrowthChart = new Chart(userCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'নতুন ব্যবহারকারী', data: [], backgroundColor: 'rgba(52, 152, 219, 0.2)', borderColor: 'rgba(52, 152, 219, 1)', borderWidth: 2, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false } });
-            if (dailyEarningsChart) dailyEarningsChart.destroy();
+            
             const earningsCtx = document.getElementById('daily-earnings-chart').getContext('2d');
             dailyEarningsChart = new Chart(earningsCtx, { type: 'bar', data: { labels: [], datasets: [{ label: 'দৈনিক আয় (পয়েন্ট)', data: [], backgroundColor: 'rgba(46, 204, 113, 0.7)', borderColor: 'rgba(46, 204, 113, 1)', borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false } });
+            
+            const sourcesCtx = document.getElementById('earning-sources-chart').getContext('2d');
+            earningSourcesChart = new Chart(sourcesCtx, { type: 'doughnut', data: { labels: ['Ads', 'Referrals', 'Tasks', 'Check-in', 'Bonus'], datasets: [{ data: [], backgroundColor: ['#3498db', '#9b59b6', '#f1c40f', '#2ecc71', '#e74c3c'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+
+            const retentionCtx = document.getElementById('user-retention-chart').getContext('2d');
+            userRetentionChart = new Chart(retentionCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'সক্রিয় ব্যবহারকারী', data: [], backgroundColor: 'rgba(230, 126, 34, 0.2)', borderColor: '#e67e22', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false } });
         }
 
         function processAnalyticsData() {
+            if (Object.keys(allUsers).length === 0) return;
             const userGrowthData = {}, dailyEarningsData = {};
+            const earningSources = { 'Ads': 0, 'Referrals': 0, 'Tasks': 0, 'Check-in': 0, 'Bonus': 0 };
+            const dailyActiveUsers = {};
+            const today = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                const dateString = date.toLocaleDateString('en-CA');
+                dailyActiveUsers[dateString] = new Set();
+            }
+
             Object.values(allUsers).forEach(user => {
                 if (user.joinedAt) { const joinDate = new Date(user.joinedAt).toLocaleDateString('en-CA'); userGrowthData[joinDate] = (userGrowthData[joinDate] || 0) + 1; }
-                if (user.transactionHistory) { Object.values(user.transactionHistory).forEach(tx => { if (tx.amount > 0 && ['earning', 'login', 'task', 'referral'].includes(tx.type)) { const txDate = new Date(tx.date).toLocaleDateString('en-CA'); dailyEarningsData[txDate] = (dailyEarningsData[txDate] || 0) + tx.amount; } }); }
+                if (user.profile?.lastLogin?.timestamp) {
+                    const lastLoginDate = new Date(user.profile.lastLogin.timestamp).toLocaleDateString('en-CA');
+                    if (dailyActiveUsers[lastLoginDate]) { dailyActiveUsers[lastLoginDate].add(user.profile.id); }
+                }
+                if (user.transactionHistory) { 
+                    Object.values(user.transactionHistory).forEach(tx => { 
+                        if (tx.amount > 0) {
+                             const txDate = new Date(tx.date).toLocaleDateString('en-CA');
+                             dailyEarningsData[txDate] = (dailyEarningsData[txDate] || 0) + tx.amount;
+                             if (tx.type === 'earning') earningSources['Ads'] += tx.amount;
+                             else if (tx.type === 'referral') earningSources['Referrals'] += tx.amount;
+                             else if (tx.type === 'task') earningSources['Tasks'] += tx.amount;
+                             else if (tx.type === 'login') earningSources['Check-in'] += tx.amount;
+                             else if (tx.type === 'manual' || tx.type === 'promo') earningSources['Bonus'] += tx.amount;
+                        }
+                    }); 
+                }
             });
             const sortedUserDates = Object.keys(userGrowthData).sort(), sortedEarningDates = Object.keys(dailyEarningsData).sort();
             userGrowthChart.data.labels = sortedUserDates; userGrowthChart.data.datasets[0].data = sortedUserDates.map(date => userGrowthData[date]); userGrowthChart.update();
             dailyEarningsChart.data.labels = sortedEarningDates; dailyEarningsChart.data.datasets[0].data = sortedEarningDates.map(date => dailyEarningsData[date]); dailyEarningsChart.update();
+            earningSourcesChart.data.datasets[0].data = [earningSources['Ads'], earningSources['Referrals'], earningSources['Tasks'], earningSources['Check-in'], earningSources['Bonus']]; earningSourcesChart.update();
+            const retentionLabels = Object.keys(dailyActiveUsers);
+            const retentionData = retentionLabels.map(date => dailyActiveUsers[date].size);
+            userRetentionChart.data.labels = retentionLabels.map(d => new Date(d).toLocaleDateString('en-GB', {day: '2-digit', month: 'short'}));
+            userRetentionChart.data.datasets[0].data = retentionData; userRetentionChart.update();
         }
 
-        // নতুন যুক্ত: টপ আর্নার এবং টপ রেফারার রেন্ডার করার ফাংশন
         function renderDashboardAnalytics() {
             const usersArray = Object.entries(allUsers);
             
-            // Top Earners
             const topEarners = usersArray.sort(([, a], [, b]) => (b.totalEarnings || 0) - (a.totalEarnings || 0)).slice(0, 5);
             const topEarnersBody = document.getElementById('top-earners-body');
             topEarnersBody.innerHTML = topEarners.map(([id, user]) => `
                 <tr>
                     <td data-label="User">${user.profile?.firstName || id}</td>
-                    <td data-label="Earnings">${user.totalEarnings || 0}</td>
+                    <td data-label="Earnings">${(user.totalEarnings || 0).toLocaleString()}</td>
                 </tr>
             `).join('');
 
-            // Top Referrers
             const topReferrers = usersArray.sort(([, a], [, b]) => (Object.keys(b.referralsList || {}).length) - (Object.keys(a.referralsList || {}).length)).slice(0, 5);
             const topReferrersBody = document.getElementById('top-referrers-body');
             topReferrersBody.innerHTML = topReferrers.map(([id, user]) => `
@@ -720,18 +926,24 @@
             document.getElementById('themeColor').value = appConfig.theme?.primaryColor || '#6a11cb';
             document.getElementById('withdrawalFeePercent').value = appConfig.withdrawalFeePercent || 0;
 
+            if(appConfig.fraudDetection) document.getElementById('ipSharingLimit').value = appConfig.fraudDetection.ipSharingLimit || 3;
+            if(appConfig.referralControl) {
+                document.getElementById('maxReferrals').value = appConfig.referralControl.maxReferrals || 0;
+                document.getElementById('referralCommissionActivation').value = appConfig.referralControl.commissionActivation?.adsWatched || 10;
+            }
+
             renderAdNetworksSection(); renderDailyCheckinSection(); renderTasksSection();
             renderUserTiersSection(); renderWithdrawalMethodsSection();
             renderPointPackagesSection(); renderTextManagementSection();
+            renderErrorMessageSection();
         }
 
         function renderWithdrawals() {
             const tbody = document.getElementById('withdraw-table-body');
-            const filteredWithdrawals = Object.entries(allWithdrawals).filter(([id, data]) => data.status === currentWithdrawFilter);
+            const filteredWithdrawals = Object.entries(allWithdrawals).filter(([id, data]) => data.status === currentWithdrawFilter).sort(([, a], [, b]) => new Date(b.date) - new Date(a.date));
             tbody.innerHTML = filteredWithdrawals.length === 0 ? `<tr><td colspan="7">No ${currentWithdrawFilter} requests found.</td></tr>` : filteredWithdrawals.map(([id, req]) => `<tr><td data-label="User ID">${req.userId || 'N/A'}</td><td data-label="Date">${new Date(req.date).toLocaleString()}</td><td data-label="Method">${req.method}</td><td data-label="Account">${req.number}</td><td data-label="Amount">${req.amount} ${appConfig.currency || ''}</td><td data-label="Status"><span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span></td><td data-label="Actions">${req.status === 'Pending' ? `<button class="action-btn btn-approve" onclick="window.manageWithdrawal('${id}', 'Approved')">Approve</button><button class="action-btn btn-reject" onclick="window.manageWithdrawal('${id}', 'Rejected')">Reject</button>` : (req.transactionId ? `TxID: ${req.transactionId}` : '-')}</td></tr>`).join('');
         }
         
-        // নতুন যুক্ত: উত্তোলনের অনুরোধ manage করার ফাংশনে ট্রানজেকশন আইডি যোগ করা
         window.manageWithdrawal = async (requestId, newStatus) => {
             if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) return;
             try {
@@ -750,7 +962,6 @@
             } catch (error) { console.error("Error updating withdrawal status:", error); alert("Failed to update status."); }
         };
 
-        // নতুন যুক্ত: ব্যবহারকারী ফিল্টার করার জন্য renderUsers ফাংশনে পরিবর্তন
         window.renderUsers = (resetFilters) => {
             if (resetFilters) {
                 document.getElementById('userSearch').value = '';
@@ -764,7 +975,6 @@
 
             let usersArray = Object.entries(allUsers);
 
-            // Filter logic
             let filteredUsers = usersArray.filter(([id, data]) => {
                 if (statusFilter === 'active' && data.isBlocked) return false;
                 if (statusFilter === 'blocked' && !data.isBlocked) return false;
@@ -774,28 +984,93 @@
                 return id.toLowerCase().includes(searchTerm) || name.toLowerCase().includes(searchTerm) || (data.profile?.username || '').toLowerCase().includes(searchTerm);
             });
 
-            // Sort logic
             if (balanceFilter === 'high') {
                 filteredUsers.sort(([, a], [, b]) => (b.balance || 0) - (a.balance || 0));
             } else if (balanceFilter === 'low') {
                 filteredUsers.sort(([, a], [, b]) => (a.balance || 0) - (b.balance || 0));
             }
 
-            tbody.innerHTML = filteredUsers.length === 0 ? '<tr><td colspan="6">No users found.</td></tr>' : filteredUsers.map(([id, user]) => `<tr><td data-label="Select"><input type="checkbox" class="user-checkbox" data-id="${id}"></td><td data-label="User ID">${id}</td><td data-label="Name">${(user.profile?.firstName || 'N/A')} ${(user.profile?.lastName || '')}</td><td data-label="Balance">${user.balance || 0}</td><td data-label="Status"><span class="status-badge ${user.isBlocked ? 'status-blocked' : 'status-approved'}">${user.isBlocked ? 'Blocked' : 'Active'}</span></td><td data-label="Actions"><button class="action-btn btn-view" onclick="window.openUserEditModal('${id}')">Edit</button><button class="action-btn btn-history" onclick="window.openUserHistoryModal('${id}')">History</button><button class="action-btn btn-info" onclick="window.openUserReferralsModal('${id}')">Referrals</button><button class="action-btn ${user.isBlocked ? 'btn-unblock' : 'btn-block'}" onclick="window.toggleUserBlock('${id}', ${user.isBlocked || false})">${user.isBlocked ? 'Unblock' : 'Block'}</button></td></tr>`).join('');
+            tbody.innerHTML = filteredUsers.length === 0 ? '<tr><td colspan="6">No users found.</td></tr>' : filteredUsers.map(([id, user]) => `<tr><td data-label="Select"><input type="checkbox" class="user-checkbox" data-id="${id}"></td><td data-label="User ID">${id}</td><td data-label="Name">${(user.profile?.firstName || 'N/A')} ${(user.profile?.lastName || '')}</td><td data-label="Balance">${(user.balance || 0).toLocaleString()}</td><td data-label="Status"><span class="status-badge ${user.isBlocked ? 'status-blocked' : 'status-approved'}">${user.isBlocked ? 'Blocked' : 'Active'}</span></td><td data-label="Actions"><button class="action-btn btn-view" onclick="window.openUserEditModal('${id}')">Edit</button><button class="action-btn btn-history" onclick="window.openUserHistoryModal('${id}')">History</button><button class="action-btn btn-info" onclick="window.openUserReferralsModal('${id}')">Referrals</button><button class="action-btn ${user.isBlocked ? 'btn-unblock' : 'btn-block'}" onclick="window.toggleUserBlock('${id}', ${user.isBlocked || false})">${user.isBlocked ? 'Unblock' : 'Block'}</button></td></tr>`).join('');
         };
 
         window.openUserEditModal = (userId) => {
             const user = allUsers[userId]; if (!user) return; currentEditingUserId = userId; const modal = document.getElementById('user-edit-modal'); document.getElementById('modal-user-name').textContent = `Edit User: ${user.profile?.firstName || userId}`;
             const lastLogin = user.profile?.lastLogin; const lastLoginTime = lastLogin?.timestamp ? new Date(lastLogin.timestamp).toLocaleString() : 'N/A'; const lastLoginIP = lastLogin?.ip || 'N/A';
-            let userDetailsHTML = `<p><strong>User ID:</strong> ${userId}</p><p><strong>Name:</strong> ${user.profile?.firstName || ''} ${user.profile?.lastName || ''}</p><p><strong>Username:</strong> @${user.profile?.username || 'N/A'}</p><p><strong>Current Balance:</strong> ${user.balance || 0} points</p><hr><p><strong>Last Login Time:</strong> ${lastLoginTime}</p><p><strong>Last Login IP:</strong> ${lastLoginIP}</p>`;
-            // নতুন যুক্ত: ব্লক করার কারণ দেখানো
+            let userDetailsHTML = `<p><strong>User ID:</strong> ${userId}</p><p><strong>Name:</strong> ${user.profile?.firstName || ''} ${user.profile?.lastName || ''}</p><p><strong>Username:</strong> @${user.profile?.username || 'N/A'}</p><p><strong>Current Balance:</strong> ${(user.balance || 0).toLocaleString()} points</p><hr><p><strong>Last Login Time:</strong> ${lastLoginTime}</p><p><strong>Last Login IP:</strong> ${lastLoginIP}</p>`;
             if (user.isBlocked && user.blockReason) {
                 userDetailsHTML += `<p><strong>Block Reason:</strong> ${user.blockReason}</p>`;
             }
             document.getElementById('user-details-content').innerHTML = userDetailsHTML;
-            document.getElementById('points-to-add').value = ''; document.getElementById('transaction-reason').value = ''; document.getElementById('user-notification-message').value = ''; modal.classList.add('active');
+            document.getElementById('points-to-add').value = ''; document.getElementById('transaction-reason').value = ''; document.getElementById('user-notification-message').value = '';
+            document.getElementById('admin-notes-textarea').value = user.adminNotes || '';
+            
+            const transactionContainer = document.getElementById('modal-transaction-list-container');
+            const history = user.transactionHistory || {};
+            const historyItems = Object.entries(history).sort(([, a], [, b]) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+            if(historyItems.length === 0) {
+                 transactionContainer.innerHTML = '<p>No recent transactions to refund.</p>';
+            } else {
+                transactionContainer.innerHTML = historyItems.map(([key, item]) => {
+                    const isRefundable = item.type !== 'withdrawal' && item.type !== 'refund';
+                    const amountClass = item.amount >= 0 ? 'positive' : 'negative';
+                    return `
+                    <div class="modal-transaction-item">
+                        <div class="modal-transaction-info">
+                            <div class="title">${item.title}</div>
+                            <div class="date">${new Date(item.date).toLocaleString()}</div>
+                        </div>
+                        <div class="amount-action">
+                            <span class="amount ${amountClass}">${item.amount.toLocaleString()} Pts</span>
+                            ${isRefundable ? `<button class="action-btn btn-refund" onclick="window.refundTransaction('${userId}', '${key}')">Refund</button>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+            
+            modal.classList.add('active');
         };
         window.closeUserEditModal = () => document.getElementById('user-edit-modal').classList.remove('active');
+
+        window.refundTransaction = async (userId, transactionId) => {
+            if (!confirm("Are you sure you want to refund this transaction? The points will be reversed from the user's balance.")) return;
+            const user = allUsers[userId];
+            const transaction = user?.transactionHistory?.[transactionId];
+
+            if (!user || !transaction) {
+                return alert("Transaction not found.");
+            }
+            
+            const pointsToReverse = transaction.amount;
+            const reason = `Refund for: ${transaction.title}`;
+            const userRef = ref(database, `app/users/${userId}`);
+
+            try {
+                const userSnapshot = await get(userRef);
+                if (userSnapshot.exists()) {
+                    const currentBalance = userSnapshot.val().balance || 0;
+                    const newBalance = currentBalance - pointsToReverse;
+
+                    const newHistoryRef = push(ref(database, `app/users/${userId}/transactionHistory`));
+                    const updates = {
+                        balance: newBalance,
+                        [`transactionHistory/${newHistoryRef.key}`]: {
+                            type: 'refund',
+                            amount: -pointsToReverse,
+                            title: reason,
+                            date: new Date().toISOString(),
+                            refundedTxId: transactionId
+                        }
+                    };
+
+                    await update(userRef, updates);
+                    alert(`Transaction refunded successfully. ${pointsToReverse} points have been deducted. New balance: ${newBalance}`);
+                    closeUserEditModal();
+                }
+            } catch (error) {
+                console.error("Error refunding transaction:", error);
+                alert("Failed to refund transaction.");
+            }
+        };
 
         window.openUserHistoryModal = (userId) => {
             const user = allUsers[userId]; if (!user) return; const modal = document.getElementById('user-history-modal'); document.getElementById('modal-history-user-name').textContent = `History for ${user.profile?.firstName || userId}`; const contentDiv = document.getElementById('user-history-content');
@@ -803,14 +1078,13 @@
                 const historyItems = Object.entries(history).sort(([, a], [, b]) => new Date(b.date) - new Date(a.date));
                 contentDiv.innerHTML = `<ul class="history-list">${historyItems.map(([key, item]) => {
                     const date = new Date(item.date).toLocaleString(); let iconClass, amountClass, amountPrefix, amountDisplay;
-                    switch(item.type) { case 'earning': iconClass = 'fa-solid fa-play'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'withdrawal': iconClass = 'fa-solid fa-arrow-down'; amountClass = 'negative'; amountPrefix = '-'; amountDisplay = `${item.amount} ${appConfig.currency}`; break; case 'referral': iconClass = 'fa-solid fa-users'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'login': iconClass = 'fa-solid fa-calendar-check'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'task': iconClass = 'fa-solid fa-tasks'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'manual': iconClass = 'fa-solid fa-user-pen'; amountClass = item.amount >= 0 ? 'positive' : 'negative'; amountPrefix = item.amount >= 0 ? '+' : ''; amountDisplay = `${item.amount} Points`; break; default: iconClass = 'fa-solid fa-question'; amountClass = ''; amountPrefix = ''; amountDisplay = `${item.amount}`; break; }
+                    switch(item.type) { case 'earning': iconClass = 'fa-solid fa-play'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount.toLocaleString()} Points`; break; case 'withdrawal': iconClass = 'fa-solid fa-arrow-down'; amountClass = 'negative'; amountPrefix = '-'; amountDisplay = `${item.amount} ${appConfig.currency}`; break; case 'referral': iconClass = 'fa-solid fa-users'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount.toLocaleString()} Points`; break; case 'login': iconClass = 'fa-solid fa-calendar-check'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount.toLocaleString()} Points`; break; case 'task': iconClass = 'fa-solid fa-tasks'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount.toLocaleString()} Points`; break; case 'manual': iconClass = 'fa-solid fa-user-pen'; amountClass = item.amount >= 0 ? 'positive' : 'negative'; amountPrefix = item.amount >= 0 ? '+' : ''; amountDisplay = `${item.amount.toLocaleString()} Points`; break; case 'refund': iconClass = 'fa-solid fa-undo'; amountClass = 'negative'; amountPrefix = ''; amountDisplay = `${item.amount.toLocaleString()} Points`; break; default: iconClass = 'fa-solid fa-question'; amountClass = ''; amountPrefix = ''; amountDisplay = `${item.amount}`; break; }
                     return `<li class="history-item"><div class="icon ${item.type}"><i class="${iconClass}"></i></div><div class="info"><div class="title">${item.title || item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div><div class="date">${date}</div></div><div class="amount ${amountClass}">${amountPrefix}${amountDisplay}</div></li>`;
                 }).join('')}</ul>`;
             } modal.classList.add('active');
         };
         window.closeUserHistoryModal = () => document.getElementById('user-history-modal').classList.remove('active');
 
-        // নতুন যুক্ত: রেফারেল তালিকা মোডাল খোলার এবং বন্ধ করার ফাংশন
         window.openUserReferralsModal = (userId) => {
             const user = allUsers[userId];
             if (!user) return;
@@ -821,18 +1095,17 @@
             if (Object.keys(referralsList).length === 0) {
                 contentDiv.innerHTML = '<p>This user has not referred anyone yet.</p>';
             } else {
-                const referralItemsHTML = Object.keys(referralsList).map(refId => {
-                    const referredUser = allUsers[refId];
-                    const name = referredUser ? (referredUser.profile?.firstName || 'N/A') : 'Unknown User';
+                const referralItemsHTML = Object.values(referralsList).map(ref => {
+                    const referredUser = allUsers[ref.userId];
+                    const name = referredUser ? `${referredUser.profile?.firstName || ''} ${referredUser.profile?.lastName || ''}`.trim() : `User ID: ${ref.userId}`;
                     const joinDate = referredUser ? new Date(referredUser.joinedAt).toLocaleDateString() : 'N/A';
-                    return `<li class="history-item"><div class="info"><div class="title">${name} (ID: ${refId})</div><div class="date">Joined on: ${joinDate}</div></div></li>`;
+                    return `<li class="history-item"><div class="info"><div class="title">${name}</div><div class="date">Joined on: ${joinDate}</div></div></li>`;
                 }).join('');
                 contentDiv.innerHTML = `<ul class="history-list">${referralItemsHTML}</ul>`;
             }
             modal.classList.add('active');
         };
         window.closeUserReferralsModal = () => document.getElementById('user-referrals-modal').classList.remove('active');
-
 
         async function saveUserChanges() {
             if (!currentEditingUserId) return; const pointsStr = document.getElementById('points-to-add').value; const pointsToAdd = parseInt(pointsStr, 10);
@@ -849,24 +1122,33 @@
             } catch (error) { console.error("Error updating user balance:", error); alert("Failed to update balance."); }
         }
 
+        window.saveAdminNote = async () => {
+            if (!currentEditingUserId) return;
+            const note = document.getElementById('admin-notes-textarea').value.trim();
+            try {
+                await update(ref(database, `app/users/${currentEditingUserId}`), { adminNotes: note });
+                alert("Admin note saved successfully!");
+            } catch (error) {
+                console.error("Error saving admin note:", error);
+                alert("Failed to save admin note.");
+            }
+        };
+
         window.sendUserNotification = async () => {
             if (!currentEditingUserId) return; const message = document.getElementById('user-notification-message').value.trim(); if (!message) return alert("Message cannot be empty.");
             try { const notificationsRef = ref(database, `app/users/${currentEditingUserId}/notifications`); const newNotificationRef = push(notificationsRef); await set(newNotificationRef, { message: message, date: new Date().toISOString(), read: false }); alert("Notification sent!"); document.getElementById('user-notification-message').value = ''; } catch(error) { console.error("Error sending notification:", error); alert("Failed to send notification."); }
         };
 
-        // নতুন যুক্ত: ব্লক করার সময় কারণ যোগ করার ফাংশন
         window.toggleUserBlock = async (userId, isCurrentlyBlocked) => {
             const action = isCurrentlyBlocked ? 'unblock' : 'block';
             if (!confirm(`Are you sure you want to ${action} this user?`)) return;
 
             let updates = { isBlocked: !isCurrentlyBlocked };
-            if (!isCurrentlyBlocked) { // If blocking
+            if (!isCurrentlyBlocked) { 
                 const reason = prompt("Enter reason for blocking this user (optional):", "");
-                if (reason) {
-                    updates.blockReason = reason;
-                }
-            } else { // If unblocking
-                updates.blockReason = null; // Remove the reason on unblock
+                updates.blockReason = reason || null;
+            } else { 
+                updates.blockReason = null; 
             }
 
             try {
@@ -883,8 +1165,8 @@
             container.innerHTML = `<div class="section-toggle"><label>${config.toggleLabel}</label><label class="switch"><input type="checkbox" id="${config.enabledId}" ${appConfig[config.enabledFlag] ? 'checked' : ''}><span class="slider"></span></label></div><div id="${config.listContainerId}" style="padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;">${listHtml}<button type="button" class="btn-add" onclick="${config.addFunction}"><i class="fas fa-plus"></i> ${config.addButtonLabel}</button></div>`;
             const switchEl = document.getElementById(config.enabledId), listContainerEl = document.getElementById(config.listContainerId); listContainerEl.style.display = switchEl.checked ? 'block' : 'none'; switchEl.addEventListener('change', () => { listContainerEl.style.display = switchEl.checked ? 'block' : 'none'; });
         }
-        function renderAdNetworksSection() { renderSection('ad-networks-section', appConfig.adNetworks || [], { toggleLabel: 'Enable Ad Networks Feature', enabledId: 'adNetworksEnabled', enabledFlag: 'adNetworksEnabled', listContainerId: 'ad-networks-list', itemRenderer: (item, index) => `<div class="ad-network-setting"><input type="text" data-type="adNetworkName" data-index="${index}" value="${item.name}" placeholder="Ad Network Name"><input type="text" data-type="adNetworkZoneId" data-index="${index}" value="${item.zoneId}" placeholder="Zone ID"><label class="switch"><input type="checkbox" data-type="adNetworkItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label><button type="button" class="btn-remove" onclick="removeAdNetwork(${index})">&times;</button></div>`, addFunction: 'window.addAdNetwork()', addButtonLabel: 'Add Ad Network' }); }
-        window.addAdNetwork = () => { if (!appConfig.adNetworks) appConfig.adNetworks = []; appConfig.adNetworks.push({ name: '', zoneId: '', enabled: true }); renderAdNetworksSection(); }; window.removeAdNetwork = (index) => { if(confirm('Are you sure?')) { appConfig.adNetworks.splice(index, 1); renderAdNetworksSection(); } };
+        function renderAdNetworksSection() { renderSection('ad-networks-section', appConfig.adNetworks || [], { toggleLabel: 'Enable Ad Networks Feature', enabledId: 'adNetworksEnabled', enabledFlag: 'adNetworksEnabled', listContainerId: 'ad-networks-list', itemRenderer: (item, index) => `<div class="ad-network-setting"><input type="text" data-type="adNetworkName" data-index="${index}" value="${item.name}" placeholder="Ad Network Name"><input type="text" data-type="adNetworkZoneId" data-index="${index}" value="${item.zoneId}" placeholder="Zone ID"><input type="number" data-type="adNetworkReward" data-index="${index}" value="${item.reward}" placeholder="Reward"><input type="number" data-type="adNetworkTimer" data-index="${index}" value="${item.timer}" placeholder="Timer (s)"><label class="switch"><input type="checkbox" data-type="adNetworkItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label><button type="button" class="btn-remove" onclick="removeAdNetwork(${index})">&times;</button></div>`, addFunction: 'window.addAdNetwork()', addButtonLabel: 'Add Ad Network' }); }
+        window.addAdNetwork = () => { if (!appConfig.adNetworks) appConfig.adNetworks = []; appConfig.adNetworks.push({ name: '', zoneId: '', reward: 1, timer: 30, enabled: true }); renderAdNetworksSection(); }; window.removeAdNetwork = (index) => { if(confirm('Are you sure?')) { appConfig.adNetworks.splice(index, 1); renderAdNetworksSection(); } };
         function renderDailyCheckinSection() { const container = document.getElementById('daily-checkin-section'); container.innerHTML = `<div class="section-toggle"><label>Enable Daily Check-in Feature</label><label class="switch"><input type="checkbox" id="dailyCheckinEnabled" ${appConfig.dailyCheckinEnabled ? 'checked' : ''}><span class="slider"></span></label></div><div id="daily-checkin-list" style="padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;"><div class="days-grid">${(appConfig.dailyCheckinRewards || []).map((item, index) => `<div class="daily-checkin-item"><div class="form-group"><label class="day-label">Day ${item.day}</label><input type="number" step="0.01" data-type="checkinReward" data-index="${index}" value="${item.reward}"></div><button type="button" class="btn-remove" onclick="removeCheckinDay(${index})">&times;</button></div>`).join('')}</div><button type="button" class="btn-add" onclick="addCheckinDay()"><i class="fas fa-plus"></i> Add New Day</button></div>`; const switchEl = document.getElementById('dailyCheckinEnabled'), listEl = document.getElementById('daily-checkin-list'); listEl.style.display = switchEl.checked ? 'block' : 'none'; switchEl.addEventListener('change', () => { listEl.style.display = switchEl.checked ? 'block' : 'none'; }); }
         window.addCheckinDay = () => { if (!appConfig.dailyCheckinRewards) appConfig.dailyCheckinRewards = []; const nextDay = appConfig.dailyCheckinRewards.length + 1; appConfig.dailyCheckinRewards.push({ day: nextDay, reward: 0 }); renderDailyCheckinSection(); }; window.removeCheckinDay = (index) => { if(confirm('Are you sure?')) { appConfig.dailyCheckinRewards.splice(index, 1); appConfig.dailyCheckinRewards.forEach((item, i) => item.day = i + 1); renderDailyCheckinSection(); }};
         function renderTasksSection() { renderSection('tasks-section', appConfig.tasks || [], { toggleLabel: 'Enable Tasks Feature', enabledId: 'tasksEnabled', enabledFlag: 'tasksEnabled', listContainerId: 'tasks-list', itemRenderer: (item, index) => `<div class="task-setting"><input type="text" data-type="taskTitle" data-index="${index}" value="${item.title}" placeholder="Task Title"><input type="text" data-type="taskLink" data-index="${index}" value="${item.link}" placeholder="Task Link"><input type="number" step="0.01" data-type="taskReward" data-index="${index}" value="${item.reward}" placeholder="Reward"><label class="switch"><input type="checkbox" data-type="taskItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label><button type="button" class="btn-remove" onclick="removeTask(${index})">&times;</button></div>`, addFunction: 'window.addTask()', addButtonLabel: 'Add Task' }); }
@@ -940,14 +1222,38 @@
             }
             alert(`${successCount} users have been updated.`);
         };
+        
         window.showFraudulentUsers = () => {
-            const threshold = parseInt(prompt("Show users who watched more than X ads today:", "500"), 10);
-            if (isNaN(threshold)) return;
+            const adsThreshold = parseInt(prompt("Show users who watched more than X ads today:", "500"), 10);
+            const ipThreshold = appConfig.fraudDetection?.ipSharingLimit || 3;
+            
+            const ipMap = {};
+            Object.entries(allUsers).forEach(([id, user]) => {
+                const ip = user.profile?.lastLogin?.ip;
+                if (ip) {
+                    if (!ipMap[ip]) ipMap[ip] = [];
+                    ipMap[ip].push(id);
+                }
+            });
+
+            const suspiciousByIp = Object.values(ipMap).filter(users => users.length >= ipThreshold).flat();
+            const suspiciousByAds = !isNaN(adsThreshold) ? Object.entries(allUsers).filter(([id, user]) => (user.dailyStats?.adsWatched || 0) > adsThreshold).map(([id]) => id) : [];
+            
+            const suspiciousUserIds = [...new Set([...suspiciousByIp, ...suspiciousByAds])];
+
+            if (suspiciousUserIds.length === 0) {
+                return alert("No suspicious users found based on current criteria.");
+            }
+
             const tbody = document.getElementById('users-table-body');
-            const suspiciousUsers = Object.entries(allUsers).filter(([id, user]) => (user.dailyStats?.adsWatched || 0) > threshold);
-            tbody.innerHTML = suspiciousUsers.length === 0 ? `<tr><td colspan="6">No users found over ${threshold} ads.</td></tr>` : suspiciousUsers.map(([id, user]) => `<tr>... (user row HTML) ...</tr>`).join('');
-            alert(`Showing ${suspiciousUsers.length} users who watched more than ${threshold} ads today.`);
+            const filteredUserHtml = suspiciousUserIds.map(id => {
+                const user = allUsers[id];
+                return `<tr><td data-label="Select"><input type="checkbox" class="user-checkbox" data-id="${id}"></td><td data-label="User ID">${id}</td><td data-label="Name">${(user.profile?.firstName || 'N/A')} ${(user.profile?.lastName || '')}</td><td data-label="Balance">${(user.balance || 0).toLocaleString()}</td><td data-label="Status"><span class="status-badge ${user.isBlocked ? 'status-blocked' : 'status-approved'}">${user.isBlocked ? 'Blocked' : 'Active'}</span></td><td data-label="Actions"><button class="action-btn btn-view" onclick="window.openUserEditModal('${id}')">Edit</button><button class="action-btn btn-history" onclick="window.openUserHistoryModal('${id}')">History</button><button class="action-btn btn-info" onclick="window.openUserReferralsModal('${id}')">Referrals</button><button class="action-btn ${user.isBlocked ? 'btn-unblock' : 'btn-block'}" onclick="window.toggleUserBlock('${id}', ${user.isBlocked || false})">${user.isBlocked ? 'Unblock' : 'Block'}</button></td></tr>`;
+            }).join('');
+            tbody.innerHTML = filteredUserHtml;
+            alert(`Showing ${suspiciousUserIds.length} suspicious users.`);
         };
+
         function renderPointPackagesSection() { renderSection('point-packages-section', appConfig.pointPackages || [], { toggleLabel: 'Enable Point Store Feature', enabledId: 'storeEnabled', enabledFlag: 'storeEnabled', listContainerId: 'point-packages-list', itemRenderer: (item, index) => `<div class="package-setting"><input type="text" data-type="packagePrice" data-index="${index}" value="${item.price}" placeholder="Price (e.g., 100)"><input type="text" data-type="packageCurrency" data-index="${index}" value="${item.currency}" placeholder="Currency (BDT)"><input type="number" data-type="packagePoints" data-index="${index}" value="${item.points}" placeholder="Points"><button type="button" class="btn-remove" onclick="removePointPackage(${index})">&times;</button></div>`, addFunction: 'window.addPointPackage()', addButtonLabel: 'Add Package' }); }
         window.addPointPackage = () => { if (!appConfig.pointPackages) appConfig.pointPackages = []; appConfig.pointPackages.push({ price: 0, currency: 'BDT', points: 0, enabled: true }); renderPointPackagesSection(); };
         window.removePointPackage = (index) => { if (confirm('Are you sure?')) { appConfig.pointPackages.splice(index, 1); renderPointPackagesSection(); } };
@@ -961,6 +1267,16 @@
                 <div class="text-setting"><label>Refer Page Title</label><input type="text" id="text-referTitle" value="${strings.referTitle || ''}"></div>
                 <div class="text-setting"><label>Refer Link Title</label><input type="text" id="text-referLinkTitle" value="${strings.referLinkTitle || ''}"></div>
             `;
+        }
+        function renderErrorMessageSection() {
+            const container = document.getElementById('error-message-section');
+            const messages = appConfig.textStrings.errorMessages || {};
+            container.innerHTML = Object.entries(messages).map(([key, value]) => `
+                <div class="error-message-setting">
+                    <label for="error-${key}">${key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</label>
+                    <input type="text" id="error-${key}" data-key="${key}" value="${value}">
+                </div>
+            `).join('');
         }
 
         async function saveAllSettings(e) {
@@ -987,13 +1303,37 @@
             appConfig.withdrawalFeePercent = parseFloat(document.getElementById('withdrawalFeePercent').value) || 0;
             appConfig.storeEnabled = document.getElementById('storeEnabled').checked;
             appConfig.pointPackages = Array.from(document.querySelectorAll('.package-setting')).map((el, index) => ({ price: parseFloat(el.querySelector('[data-type="packagePrice"]').value), currency: el.querySelector('[data-type="packageCurrency"]').value, points: parseInt(el.querySelector('[data-type="packagePoints"]').value), enabled: true }));
-            appConfig.textStrings = { navHome: document.getElementById('text-navHome').value, navEarn: document.getElementById('text-navEarn').value, navRefer: document.getElementById('text-navRefer').value, navProfile: document.getElementById('text-navProfile').value, referTitle: document.getElementById('text-referTitle').value, referLinkTitle: document.getElementById('text-referLinkTitle').value };
+            appConfig.textStrings.navHome = document.getElementById('text-navHome').value;
+            appConfig.textStrings.navEarn = document.getElementById('text-navEarn').value;
+            appConfig.textStrings.navRefer = document.getElementById('text-navRefer').value;
+            appConfig.textStrings.navProfile = document.getElementById('text-navProfile').value;
+            appConfig.textStrings.referTitle = document.getElementById('text-referTitle').value;
+            appConfig.textStrings.referLinkTitle = document.getElementById('text-referLinkTitle').value;
 
-            appConfig.adNetworksEnabled = document.getElementById('adNetworksEnabled').checked; appConfig.adNetworks = (appConfig.adNetworks || []).map((item, index) => ({ ...item, name: document.querySelector(`[data-type="adNetworkName"][data-index="${index}"]`).value, zoneId: document.querySelector(`[data-type="adNetworkZoneId"][data-index="${index}"]`).value, enabled: document.querySelector(`[data-type="adNetworkItemEnabled"][data-index="${index}"]`).checked }));
+            document.querySelectorAll('.error-message-setting input').forEach(input => {
+                appConfig.textStrings.errorMessages[input.dataset.key] = input.value;
+            });
+
+            appConfig.adNetworksEnabled = document.getElementById('adNetworksEnabled').checked; 
+            appConfig.adNetworks = (appConfig.adNetworks || []).map((item, index) => ({ 
+                ...item, 
+                name: document.querySelector(`[data-type="adNetworkName"][data-index="${index}"]`).value, 
+                zoneId: document.querySelector(`[data-type="adNetworkZoneId"][data-index="${index}"]`).value, 
+                reward: parseFloat(document.querySelector(`[data-type="adNetworkReward"][data-index="${index}"]`).value),
+                timer: parseInt(document.querySelector(`[data-type="adNetworkTimer"][data-index="${index}"]`).value),
+                enabled: document.querySelector(`[data-type="adNetworkItemEnabled"][data-index="${index}"]`).checked 
+            }));
+
             appConfig.dailyCheckinEnabled = document.getElementById('dailyCheckinEnabled').checked; appConfig.dailyCheckinRewards = (appConfig.dailyCheckinRewards || []).map((item, index) => ({ ...item, reward: parseFloat(document.querySelector(`[data-type="checkinReward"][data-index="${index}"]`).value) }));
             appConfig.tasksEnabled = document.getElementById('tasksEnabled').checked; appConfig.tasks = (appConfig.tasks || []).map((item, index) => ({ ...item, title: document.querySelector(`[data-type="taskTitle"][data-index="${index}"]`).value, link: document.querySelector(`[data-type="taskLink"][data-index="${index}"]`).value, reward: parseFloat(document.querySelector(`[data-type="taskReward"][data-index="${index}"]`).value), enabled: document.querySelector(`[data-type="taskItemEnabled"][data-index="${index}"]`).checked }));
             appConfig.userTiersEnabled = document.getElementById('userTiersEnabled').checked; const tempTiers = []; document.querySelectorAll('.tier-setting').forEach((el, index) => { tempTiers.push({ name: el.querySelector(`[data-type="tierName"]`).value, requiredPoints: parseInt(el.querySelector(`[data-type="tierRequiredPoints"]`).value), bonusPercent: parseInt(el.querySelector(`[data-type="tierBonusPercent"]`).value) }); }); appConfig.userTiers = tempTiers.sort((a,b) => a.requiredPoints - b.requiredPoints);
             appConfig.withdrawalMethodsEnabled = document.getElementById('withdrawalMethodsEnabled').checked; appConfig.withdrawalMethods = (appConfig.withdrawalMethods || []).map((item, index) => ({ ...item, name: document.querySelector(`[data-type="methodName"][data-index="${index}"]`).value, bn_name: document.querySelector(`[data-type="methodBnName"][data-index="${index}"]`).value, logo: document.querySelector(`[data-type="methodLogo"][data-index="${index}"]`).value, enabled: document.querySelector(`[data-type="methodItemEnabled"][data-index="${index}"]`).checked }));
+
+            appConfig.fraudDetection = { ipSharingLimit: parseInt(document.getElementById('ipSharingLimit').value) || 3 };
+            appConfig.referralControl = {
+                maxReferrals: parseInt(document.getElementById('maxReferrals').value) || 0,
+                commissionActivation: { adsWatched: parseInt(document.getElementById('referralCommissionActivation').value) || 10 }
+            };
 
             await saveConfigToFirebase();
         }
@@ -1001,25 +1341,85 @@
         function toggleMenu() { sideNav.classList.toggle('open'); overlay.classList.toggle('active'); }
         function handleNavClick(e) { e.preventDefault(); navigateToPage(this.getAttribute('href').substring(1)); if (window.innerWidth <= 768) toggleMenu(); }
         window.navigateToPage = function(targetId) { pages.forEach(p => p.classList.remove('active')); document.getElementById(targetId).classList.add('active'); navLinks.forEach(l => { l.classList.toggle('active', l.getAttribute('href') === `#${targetId}`); }); }
+        
         function updateDashboardData() {
+            if(Object.keys(allUsers).length === 0) return;
             const currency = appConfig.currency || 'BDT', pointsPerCurrency = appConfig.pointsPerCurrency || 100;
-            const pendingWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'Pending'), approvedWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'Approved');
-            const totalApprovedAmount = approvedWithdrawals.reduce((sum, w) => sum + (w.amount || 0), 0);
+            const pendingWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'Pending');
             let totalEarningsPoints = 0, totalReferrals = 0, totalAdsWatched = 0, totalCommissionPoints = 0;
             Object.values(allUsers).forEach(user => { totalEarningsPoints += user.totalEarnings || 0; totalReferrals += user.referralsList ? Object.keys(user.referralsList).length : 0; totalAdsWatched += user.totalAdsWatched || 0; totalCommissionPoints += user.totalReferralCommission || 0; });
             document.getElementById('db-total-users').textContent = Object.keys(allUsers).length;
-            document.getElementById('db-ads-watched').textContent = totalAdsWatched;
-            document.getElementById('db-total-earnings').textContent = `${currency} ${(totalEarningsPoints / pointsPerCurrency).toFixed(2)}`;
-            document.getElementById('db-total-commission').textContent = `${currency} ${(totalCommissionPoints / pointsPerCurrency).toFixed(2)}`;
-            document.getElementById('db-total-referrals').textContent = totalReferrals;
+            document.getElementById('db-ads-watched').textContent = totalAdsWatched.toLocaleString();
+            document.getElementById('db-total-earnings').textContent = `${currency} ${(totalEarningsPoints / pointsPerCurrency).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('db-total-commission').textContent = `${currency} ${(totalCommissionPoints / pointsPerCurrency).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('db-total-referrals').textContent = totalReferrals.toLocaleString();
             document.getElementById('db-req-withdraw').textContent = pendingWithdrawals.length;
-            document.getElementById('db-approved-withdraw').textContent = `${currency} ${totalApprovedAmount.toFixed(2)}`;
-            if (appConfig.withdrawalMethods) document.getElementById('db-withdraw-methods').textContent = appConfig.withdrawalMethods.length;
         }
+        
+        // Support Ticket Functions
+        function renderSupportTickets(tickets) {
+            const tbody = document.getElementById('support-tickets-body');
+            const sortedTickets = Object.entries(tickets).sort(([, a], [, b]) => new Date(b.timestamp) - new Date(a.timestamp));
+            tbody.innerHTML = sortedTickets.length === 0 ? `<tr><td colspan="5">No support tickets found.</td></tr>` : sortedTickets.map(([id, ticket]) => `<tr><td data-label="User ID">${ticket.userId}</td><td data-label="Date">${new Date(ticket.timestamp).toLocaleString()}</td><td data-label="Subject">${ticket.subject}</td><td data-label="Status"><span class="status-badge status-${ticket.status.toLowerCase()}">${ticket.status}</span></td><td data-label="Actions"><button class="action-btn btn-view" onclick="window.openSupportTicketModal('${id}')">View & Reply</button></td></tr>`).join('');
+        }
+
+        window.openSupportTicketModal = async (ticketId) => {
+            currentReplyingTicketId = ticketId;
+            const ticketRef = ref(database, `app/support_tickets/${ticketId}`);
+            const snapshot = await get(ticketRef);
+            if (!snapshot.exists()) return alert("Ticket not found.");
+            
+            const ticket = snapshot.val();
+            document.getElementById('modal-ticket-subject').textContent = ticket.subject;
+            document.getElementById('ticket-details-content').innerHTML = `
+                <p><strong>User:</strong> ${ticket.userName || 'N/A'} (@${ticket.userUsername || 'N/A'})</p>
+                <p><strong>User ID:</strong> ${ticket.userId}</p>
+                <p><strong>Date:</strong> ${new Date(ticket.timestamp).toLocaleString()}</p>
+                <p><strong>Original Message:</strong> ${ticket.message}</p>
+            `;
+
+            const repliesList = document.getElementById('ticket-replies-list');
+            const replies = ticket.replies || {};
+            repliesList.innerHTML = Object.values(replies).map(reply => `
+                <div class="ticket-reply-item ${reply.isAdmin ? 'admin-reply' : 'user-reply'}">
+                    <div class="reply-meta">${reply.isAdmin ? 'Admin' : 'User'} replied at ${new Date(reply.timestamp).toLocaleString()}</div>
+                    <div class="reply-message">${reply.message}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('ticket-reply-message').value = '';
+            document.getElementById('support-ticket-modal').classList.add('active');
+        };
+
+        window.closeSupportTicketModal = () => document.getElementById('support-ticket-modal').classList.remove('active');
+
+        window.sendSupportReply = async () => {
+            if (!currentReplyingTicketId) return;
+            const message = document.getElementById('ticket-reply-message').value.trim();
+            if (!message) return alert("Reply message cannot be empty.");
+
+            const reply = {
+                message: message,
+                timestamp: new Date().toISOString(),
+                isAdmin: true
+            };
+
+            try {
+                const repliesRef = ref(database, `app/support_tickets/${currentReplyingTicketId}/replies`);
+                await push(repliesRef, reply);
+                await update(ref(database, `app/support_tickets/${currentReplyingTicketId}`), { status: 'Replied' });
+                
+                alert("Reply sent successfully!");
+                closeSupportTicketModal();
+            } catch (error) {
+                console.error("Error sending reply:", error);
+                alert("Failed to send reply.");
+            }
+        };
 
         init();
     });
 </script>
 
 </body>
-</html>```
+</html>

@@ -6,7 +6,6 @@
     <title>Admin Dashboard (Firebase)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- নতুন যুক্ত: Chart.js লাইব্রেরি -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -87,6 +86,7 @@
         .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; font-family: 'Hind Siliguri', sans-serif; }
         .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group input[type="color"] { padding: 5px; height: 48px; }
 
         .update-btn { width: 100%; padding: 15px; background: var(--green); color: var(--text-light); border: none; border-radius: 5px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         .update-btn:hover { background-color: #27ae60; }
@@ -94,15 +94,16 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
         .overlay.active { opacity: 1; visibility: visible; }
         
-        .ad-network-setting, .task-setting, .method-setting, .tier-setting { /* tier-setting যুক্ত করা হলো */
+        .ad-network-setting, .task-setting, .method-setting, .tier-setting, .package-setting, .text-setting { 
             display: grid; gap: 15px; align-items: center;
             margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color);
         }
         .ad-network-setting { grid-template-columns: 2fr 2fr auto auto; }
         .task-setting { grid-template-columns: 2fr 2fr 1fr auto auto; }
         .method-setting { grid-template-columns: 1fr 1fr 1fr auto auto; }
-        /* নতুন tier-setting এর জন্য স্টাইল */
         .tier-setting { grid-template-columns: 2fr 2fr 1fr auto auto; }
+        .package-setting { grid-template-columns: 2fr 1fr 1fr auto; }
+        .text-setting { grid-template-columns: 1fr 2fr; }
 
         .btn-remove { padding: 8px 12px; background: var(--red); color: white; border: none; border-radius: 5px; cursor: pointer; }
         .btn-add { padding: 10px; background: var(--blue); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;}
@@ -123,24 +124,9 @@
         .daily-checkin-item .form-group { flex-grow: 1; margin: 0; }
         .daily-checkin-item label.day-label { font-weight: 600; margin-bottom: 8px; display: block; text-align: center;}
         
-        /* --- অ্যানালিটিক্স চার্টের জন্য নতুন স্টাইল শুরু --- */
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-top: 25px;
-        }
-        @media (min-width: 992px) {
-            .analytics-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-        /* --- অ্যানালিটিক্স চার্টের জন্য নতুন স্টাইল শেষ --- */
+        .analytics-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 25px; }
+        @media (min-width: 992px) { .analytics-grid { grid-template-columns: 1fr 1fr; } }
+        .chart-container { position: relative; height: 300px; width: 100%; }
 
         .table-container { overflow-x: auto; }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -154,6 +140,8 @@
         .btn-history { background-color: var(--teal); }
         .btn-block { background-color: var(--orange); }
         .btn-unblock { background-color: #7f8c8d; }
+        /* নতুন যুক্ত: রেফারেল দেখার জন্য বাটন স্টাইল */
+        .btn-info { background-color: #17a2b8; }
         
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; color: white; white-space: nowrap;}
         .status-pending { background-color: var(--yellow); color: var(--text-dark); }
@@ -192,50 +180,30 @@
         .icon.referral, .icon.login, .icon.task { background-color: var(--blue); }
         .icon.manual { background-color: var(--purple); }
 
-        /* --- নতুন যুক্ত: Promo Code তৈরির Form এর জন্য স্টাইল --- */
-        .promo-code-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            align-items: flex-end;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
+        .promo-code-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: flex-end; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); }
         .promo-code-form .form-group { margin: 0; }
         .promo-code-form button { height: 46px; }
 
-        /* --- নতুন যুক্ত: Targeted Actions Form এর জন্য স্টাইল --- */
-        .targeted-actions-form .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
+        .targeted-actions-form .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+
+        .user-management-toolbar { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin-bottom: 20px; }
+        .user-management-toolbar .form-group { margin-bottom: 0; flex-grow: 1; }
+        .user-management-toolbar .btn-add { margin-top: 0; }
+        /* নতুন যুক্ত: ফিল্টার ইনপুটগুলোর জন্য স্টাইল */
+        .user-management-toolbar .filter-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .user-management-toolbar .filter-group .form-group { min-width: 150px; flex-grow: 0.5;}
 
         @media (max-width: 768px) {
-            .ad-network-setting, .task-setting, .method-setting, .tier-setting { grid-template-columns: 1fr; gap: 10px; }
-            .method-setting .btn-remove, .task-setting .btn-remove, .ad-network-setting .btn-remove, .tier-setting .btn-remove { margin-top: 5px; width: 100%; }
+            .ad-network-setting, .task-setting, .method-setting, .tier-setting, .package-setting, .text-setting { grid-template-columns: 1fr; gap: 10px; }
+            .method-setting .btn-remove, .task-setting .btn-remove, .ad-network-setting .btn-remove, .tier-setting .btn-remove, .package-setting .btn-remove { margin-top: 5px; width: 100%; }
             .promo-code-form { grid-template-columns: 1fr; }
 
             .data-table thead { display: none; }
-            .data-table, .data-table tbody, .data-table tr, .data-table td {
-                display: block; width: 100%;
-            }
-            .data-table tr {
-                margin-bottom: 15px; border: 1px solid var(--border-color);
-                border-radius: 5px; overflow: hidden;
-            }
-            .data-table td {
-                text-align: right; padding-left: 50%;
-                position: relative; border: none; border-bottom: 1px solid #eee;
-            }
+            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
+            .data-table tr { margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 5px; overflow: hidden; }
+            .data-table td { text-align: right; padding-left: 50%; position: relative; border: none; border-bottom: 1px solid #eee; }
             .data-table td:last-child { border-bottom: none; }
-            .data-table td::before {
-                content: attr(data-label); position: absolute;
-                left: 10px; width: 45%; padding-right: 10px;
-                white-space: nowrap; text-align: left; font-weight: bold;
-                color: var(--primary-bg);
-            }
+            .data-table td::before { content: attr(data-label); position: absolute; left: 10px; width: 45%; padding-right: 10px; white-space: nowrap; text-align: left; font-weight: bold; color: var(--primary-bg); }
             .data-table .action-btn { margin-bottom: 5px; }
         }
     </style>
@@ -275,7 +243,6 @@
                         <div class="dashboard-card"><div class="icon methods"><i class="fas fa-credit-card"></i></div><div class="card-content"><h3 id="db-withdraw-methods">0</h3><p>Withdrawal Methods</p></div></div>
                         <div class="dashboard-card"><div class="icon settings"><i class="fas fa-cog"></i></div><div class="card-content" style="cursor: pointer;" onclick="navigateToPage('settings')"><h3>Settings</h3><p>Manage App Settings</p></div></div>
                     </div>
-                    <!-- নতুন যুক্ত: অ্যানালিটিক্স সেকশন শুরু -->
                     <div class="analytics-grid">
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-chart-line"></i>দৈনিক ব্যবহারকারী বৃদ্ধি</div>
@@ -293,8 +260,30 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- নতুন যুক্ত: টপ আর্নার এবং টপ রেফারার কার্ড -->
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-trophy"></i>Top 5 Earners</div>
+                            <div class="section-body">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead><tr><th>User</th><th>Total Earnings (Points)</th></tr></thead>
+                                        <tbody id="top-earners-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-users"></i>Top 5 Referrers</div>
+                            <div class="section-body">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead><tr><th>User</th><th>Total Referrals</th></tr></thead>
+                                        <tbody id="top-referrers-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- নতুন যুক্ত: অ্যানালিটিক্স সেকশন শেষ -->
                 </div>
 
                 <!-- User Management Page -->
@@ -302,14 +291,42 @@
                     <div class="section-card">
                         <div class="section-header"><i class="fas fa-users"></i>Users Management</div>
                         <div class="section-body">
-                            <div class="form-group">
-                                <label for="userSearch">Search User (by Name, Username, or ID)</label>
-                                <input type="text" id="userSearch" placeholder="Search...">
+                            <div class="user-management-toolbar">
+                                <div class="form-group">
+                                    <input type="text" id="userSearch" placeholder="Search User (Name, Username, or ID)">
+                                </div>
+                                <!-- নতুন যুক্ত: ফিল্টার অপশন -->
+                                <div class="filter-group">
+                                    <div class="form-group">
+                                        <select id="filter-status">
+                                            <option value="">Filter by Status</option>
+                                            <option value="active">Active</option>
+                                            <option value="blocked">Blocked</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select id="filter-balance">
+                                            <option value="">Filter by Balance</option>
+                                            <option value="high">Highest First</option>
+                                            <option value="low">Lowest First</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <select id="bulk-action-select" class="form-group" style="padding: 12px; width: auto; flex-grow: 0.5;">
+                                    <option value="">Bulk Actions</option>
+                                    <option value="block">Block Selected</option>
+                                    <option value="unblock">Unblock Selected</option>
+                                    <option value="bonus">Give Bonus to Selected</option>
+                                </select>
+                                <button class="btn-add" style="background-color: var(--purple);" onclick="window.applyBulkAction()">Apply</button>
+                                <button class="btn-add" style="background-color: var(--orange);" onclick="window.showFraudulentUsers()">Find Suspicious Users</button>
+                                <button class="btn-add" onclick="window.renderUsers(true)">Reset Filter</button>
                             </div>
                             <div class="table-container">
                                 <table class="data-table">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="select-all-users"></th>
                                             <th>User ID</th>
                                             <th>Name</th>
                                             <th>Balance (Points)</th>
@@ -317,9 +334,7 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="users-table-body">
-                                        <!-- User data will be loaded here -->
-                                    </tbody>
+                                    <tbody id="users-table-body"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -349,9 +364,7 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="withdraw-table-body">
-                                        <!-- Withdraw data will be loaded here -->
-                                    </tbody>
+                                    <tbody id="withdraw-table-body"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -361,76 +374,43 @@
                 <!-- Settings Page -->
                 <div id="settings" class="page">
                     <form id="settingsForm">
-                        <!-- App Control Settings -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-bullhorn"></i>App Control</div>
                             <div class="section-body">
-                                <div class="form-group">
-                                    <label for="appVersion">App Version</label>
-                                    <input type="text" id="appVersion" placeholder="e.g., 1.0.0">
-                                </div>
-                                <div class="form-group">
-                                    <label for="botUsername">Telegram Bot Username (without @)</label>
-                                    <input type="text" id="botUsername" placeholder="e.g., YourBotUsername">
-                                </div>
-                                <div class="form-group">
-                                    <label for="announcement">Announcement / Notice</label>
-                                    <textarea id="announcement" placeholder="অ্যাপের ব্যবহারকারীদের জন্য ঘোষণা..."></textarea>
-                                </div>
+                                <div class="form-group"><label for="appVersion">App Version</label><input type="text" id="appVersion" placeholder="e.g., 1.0.0"></div>
+                                <div class="form-group"><label for="botUsername">Telegram Bot Username (without @)</label><input type="text" id="botUsername" placeholder="e.g., YourBotUsername"></div>
+                                <div class="form-group"><label for="announcement">Announcement / Notice</label><textarea id="announcement" placeholder="অ্যাপের ব্যবহারকারীদের জন্য ঘোষণা..."></textarea></div>
                             </div>
                         </div>
 
-                        <!-- নতুন যুক্ত: গ্লোবাল নোটিফিকেশন সেকশন শুরু -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-bell"></i>সকল ব্যবহারকারীকে নোটিফিকেশন পাঠান</div>
                             <div class="section-body">
-                                <div class="form-group">
-                                    <label for="global-notification-message">নোটিফিকেশন বার্তা</label>
-                                    <textarea id="global-notification-message" placeholder="এই বার্তাটি সকল সক্রিয় ব্যবহারকারীর কাছে অ্যাপের ভেতর পপ-আপ হিসেবে দেখানো হবে..."></textarea>
-                                </div>
+                                <div class="form-group"><label for="global-notification-message">নোটিফিকেশন বার্তা</label><textarea id="global-notification-message" placeholder="এই বার্তাটি সকল সক্রিয় ব্যবহারকারীর কাছে অ্যাপের ভেতর পপ-আপ হিসেবে দেখানো হবে..."></textarea></div>
                                 <button type="button" class="update-btn" style="background-color: var(--blue);" id="send-global-notification-btn">Send Global Notification</button>
                             </div>
                         </div>
-                        <!-- নতুন যুক্ত: গ্লোবাল নোটিফিকেশন সেকশন শেষ -->
                         
-                        <!-- ====================================================================== -->
-                        <!-- ============ নতুন যুক্ত সেকশন: App Customization শুরু ============= -->
-                        <!-- ====================================================================== -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-palette"></i>App Customization</div>
                             <div class="section-body">
-                                <div class="section-toggle">
-                                    <label>Enable Welcome Bonus for New Users</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="welcomeBonusEnabled">
-                                        <span class="slider"></span>
-                                    </label>
-                                </div>
                                 <div class="form-group">
-                                    <label for="welcomeBonus">Welcome Bonus (Points)</label>
-                                    <input type="number" id="welcomeBonus" placeholder="e.g., 100">
+                                    <label for="themeColor">App Primary Theme Color</label>
+                                    <input type="color" id="themeColor">
                                 </div>
                                 <hr>
-                                <div class="form-group">
-                                    <label for="dynamicWelcomeMessage">Welcome Message Template</label>
-                                    <input type="text" id="dynamicWelcomeMessage" placeholder="e.g., Welcome, {name}!">
-                                    <small>Use <code>{name}</code> to insert the user's first name.</small>
+                                <div class="section-toggle">
+                                    <label>Enable Welcome Bonus for New Users</label>
+                                    <label class="switch"><input type="checkbox" id="welcomeBonusEnabled"><span class="slider"></span></label>
                                 </div>
-                                <div class="form-group">
-                                    <label for="dynamicShoppingButtonText">Shopping Button Text</label>
-                                    <input type="text" id="dynamicShoppingButtonText" placeholder="e.g., Start Shopping Now">
-                                </div>
-                                <div class="form-group">
-                                    <label for="dynamicShoppingButtonLink">Shopping Button Link</label>
-                                    <input type="text" id="dynamicShoppingButtonLink" placeholder="e.g., https://your-shop.com">
-                                </div>
+                                <div class="form-group"><label for="welcomeBonus">Welcome Bonus (Points)</label><input type="number" id="welcomeBonus" placeholder="e.g., 100"></div>
+                                <hr>
+                                <div class="form-group"><label for="dynamicWelcomeMessage">Welcome Message Template</label><input type="text" id="dynamicWelcomeMessage" placeholder="e.g., Welcome, {name}!"><small>Use <code>{name}</code> to insert the user's first name.</small></div>
+                                <div class="form-group"><label for="dynamicShoppingButtonText">Shopping Button Text</label><input type="text" id="dynamicShoppingButtonText" placeholder="e.g., Start Shopping Now"></div>
+                                <div class="form-group"><label for="dynamicShoppingButtonLink">Shopping Button Link</label><input type="text" id="dynamicShoppingButtonLink" placeholder="e.g., https://your-shop.com"></div>
                             </div>
                         </div>
-                        <!-- ====================================================================== -->
-                        <!-- ============= নতুন যুক্ত সেকশন: App Customization শেষ ============== -->
-                        <!-- ====================================================================== -->
 
-                        <!-- General Settings -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-cogs"></i>Manage Settings</div>
                             <div class="section-body">
@@ -439,173 +419,80 @@
                                 <div class="form-group"><label for="refferBonus">Referral Commission in %</label><input type="number" id="refferBonus"></div>
                                 <div class="form-group"><label for="refferJoinBonus">Referral Join Bonus</label><input type="number" step="0.01" id="refferJoinBonus"></div>
                                 <div class="form-group"><label for="currency">Currency Symbol</label><input type="text" id="currency"></div>
-                                <div class="form-group">
-                                    <label for="pointsPerCurrency">Points per <span id="currency-label">Currency</span></label>
-                                    <input type="number" id="pointsPerCurrency" placeholder="e.g., 100">
-                                </div>
+                                <div class="form-group"><label for="pointsPerCurrency">Points per <span id="currency-label">Currency</span></label><input type="number" id="pointsPerCurrency" placeholder="e.g., 100"></div>
                             </div>
                         </div>
                         
-                        <!-- ====================================================================== -->
-                        <!-- ============== নতুন যুক্ত সেকশন: Promo Codes শুরু =================== -->
-                        <!-- ====================================================================== -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-gift"></i>Promo Code Management</div>
                             <div class="section-body">
                                 <h4>Existing Promo Codes</h4>
                                 <div class="table-container">
                                     <table class="data-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Code</th>
-                                                <th>Reward (Points)</th>
-                                                <th>Usage</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="promo-codes-table-body">
-                                            <!-- Promo codes will be loaded here -->
-                                        </tbody>
+                                        <thead><tr><th>Code</th><th>Reward (Points)</th><th>Usage</th><th>Status</th><th>Actions</th></tr></thead>
+                                        <tbody id="promo-codes-table-body"></tbody>
                                     </table>
                                 </div>
                                 <div class="promo-code-form">
-                                    <div class="form-group">
-                                        <label for="promo-code-name">New Code</label>
-                                        <input type="text" id="promo-code-name" placeholder="e.g., EIDBONUS25">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="promo-code-reward">Reward (Points)</label>
-                                        <input type="number" id="promo-code-reward" placeholder="e.g., 500">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="promo-code-limit">Usage Limit</label>
-                                        <input type="number" id="promo-code-limit" placeholder="e.g., 100">
-                                    </div>
+                                    <div class="form-group"><label for="promo-code-name">New Code</label><input type="text" id="promo-code-name" placeholder="e.g., EIDBONUS25"></div>
+                                    <div class="form-group"><label for="promo-code-reward">Reward (Points)</label><input type="number" id="promo-code-reward" placeholder="e.g., 500"></div>
+                                    <div class="form-group"><label for="promo-code-limit">Usage Limit</label><input type="number" id="promo-code-limit" placeholder="e.g., 100"></div>
                                     <button type="button" class="update-btn" style="background-color: var(--blue);" onclick="window.createPromoCode()">Create Code</button>
                                 </div>
                             </div>
                         </div>
-                        <!-- ====================================================================== -->
-                        <!-- =============== নতুন যুক্ত সেকশন: Promo Codes শেষ ================== -->
-                        <!-- ====================================================================== -->
 
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-tools"></i>Advanced Control</div>
                             <div class="section-body">
-                                <div class="form-group">
-                                    <label for="adWatchTimerSeconds">Ad Watch Timer (Seconds)</label>
-                                    <input type="number" id="adWatchTimerSeconds" placeholder="e.g., 30">
-                                </div>
-                                <div class="form-group">
-                                    <label for="hourlyAdsLimit">Hourly Ads Limit</label>
-                                    <input type="number" id="hourlyAdsLimit" placeholder="e.g., 25">
-                                </div>
-                                <div class="form-group">
-                                    <label for="minReferralsForWithdrawal">Minimum Referrals for Withdrawal</label>
-                                    <input type="number" id="minReferralsForWithdrawal" placeholder="e.g., 3">
-                                </div>
+                                <div class="form-group"><label for="adWatchTimerSeconds">Ad Watch Timer (Seconds)</label><input type="number" id="adWatchTimerSeconds" placeholder="e.g., 30"></div>
+                                <div class="form-group"><label for="hourlyAdsLimit">Hourly Ads Limit</label><input type="number" id="hourlyAdsLimit" placeholder="e.g., 25"></div>
+                                <div class="form-group"><label for="minReferralsForWithdrawal">Minimum Referrals for Withdrawal</label><input type="number" id="minReferralsForWithdrawal" placeholder="e.g., 3"></div>
                                 <hr>
-                                <div class="section-toggle">
-                                    <label>Enable Maintenance Mode</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="maintenanceMode">
-                                        <span class="slider"></span>
-                                    </label>
-                                </div>
+                                <div class="section-toggle"><label>Enable Maintenance Mode</label><label class="switch"><input type="checkbox" id="maintenanceMode"><span class="slider"></span></label></div>
                             </div>
                         </div>
                         
-                        <!-- ====================================================================== -->
-                        <!-- =========== নতুন যুক্ত সেকশন: Targeted Actions শুরু ================= -->
-                        <!-- ====================================================================== -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-bullseye"></i>Targeted Actions (User Segmentation)</div>
                             <div class="section-body targeted-actions-form">
                                 <div class="grid">
-                                    <div class="form-group">
-                                        <label for="target-segment">Select Target Segment</label>
-                                        <select id="target-segment">
-                                            <option value="all">All Active Users</option>
-                                            <option value="tier">Users by Tier</option>
-                                            <option value="inactive">Inactive Users</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group" id="tier-select-group" style="display: none;">
-                                        <label for="target-tier">Select Tier</label>
-                                        <select id="target-tier">
-                                            <!-- Tiers will be loaded here -->
-                                        </select>
-                                    </div>
-                                    <div class="form-group" id="inactive-days-group" style="display: none;">
-                                        <label for="inactive-days">Inactive for more than (days)</label>
-                                        <input type="number" id="inactive-days" value="7">
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="grid">
-                                    <div class="form-group">
-                                        <label for="action-type">Select Action</label>
-                                        <select id="action-type">
-                                            <option value="notification">Send Notification</option>
-                                            <option value="bonus">Give Bonus Points</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group" id="action-notification-group">
-                                    <label for="action-notification-message">Notification Message</label>
-                                    <textarea id="action-notification-message" placeholder="Message for the targeted users..."></textarea>
-                                </div>
-                                <div class="form-group" id="action-bonus-group" style="display: none;">
-                                    <label for="action-bonus-points">Bonus Points</label>
-                                    <input type="number" id="action-bonus-points" placeholder="e.g., 200">
-                                    <label for="action-bonus-reason" style="margin-top: 10px;">Reason for Bonus</label>
-                                    <input type="text" id="action-bonus-reason" placeholder="e.g., Special gift for Gold members">
-                                </div>
+                                    <div class="form-group"><label for="target-segment">Select Target Segment</label><select id="target-segment"><option value="all">All Active Users</option><option value="tier">Users by Tier</option><option value="inactive">Inactive Users</option></select></div>
+                                    <div class="form-group" id="tier-select-group" style="display: none;"><label for="target-tier">Select Tier</label><select id="target-tier"></select></div>
+                                    <div class="form-group" id="inactive-days-group" style="display: none;"><label for="inactive-days">Inactive for more than (days)</label><input type="number" id="inactive-days" value="7"></div>
+                                </div><hr>
+                                <div class="grid"><div class="form-group"><label for="action-type">Select Action</label><select id="action-type"><option value="notification">Send Notification</option><option value="bonus">Give Bonus Points</option></select></div></div>
+                                <div class="form-group" id="action-notification-group"><label for="action-notification-message">Notification Message</label><textarea id="action-notification-message" placeholder="Message for the targeted users..."></textarea></div>
+                                <div class="form-group" id="action-bonus-group" style="display: none;"><label for="action-bonus-points">Bonus Points</label><input type="number" id="action-bonus-points" placeholder="e.g., 200"><label for="action-bonus-reason" style="margin-top: 10px;">Reason for Bonus</label><input type="text" id="action-bonus-reason" placeholder="e.g., Special gift for Gold members"></div>
                                 <button type="button" class="update-btn" style="background-color: var(--purple);" onclick="window.executeTargetedAction()">Execute Action</button>
                             </div>
                         </div>
-                        <!-- ====================================================================== -->
-                        <!-- ============ নতুন যুক্ত সেকশন: Targeted Actions শেষ ================== -->
-                        <!-- ====================================================================== -->
 
+                        <div class="section-card"><div class="section-header"><i class="fas fa-ad"></i>Ad Network Zone IDs</div><div class="section-body" id="ad-networks-section"></div></div>
+                        <div class="section-card"><div class="section-header"><i class="fas fa-calendar-check"></i>Daily Check-in Bonus</div><div class="section-body" id="daily-checkin-section"></div></div>
+                        <div class="section-card"><div class="section-header"><i class="fas fa-tasks"></i>Complete Tasks</div><div class="section-body" id="tasks-section"></div></div>
+                        <div class="section-card"><div class="section-header"><i class="fas fa-layer-group"></i>ব্যবহারকারীর স্তর (User Tiers)</div><div class="section-body" id="user-tiers-section"></div></div>
 
-                        <!-- Ad Networks Settings -->
                         <div class="section-card">
-                            <div class="section-header"><i class="fas fa-ad"></i>Ad Network Zone IDs</div>
-                            <div class="section-body" id="ad-networks-section"></div>
-                        </div>
-
-                        <!-- Daily Check-in Settings -->
-                        <div class="section-card">
-                            <div class="section-header"><i class="fas fa-calendar-check"></i>Daily Check-in Bonus</div>
-                            <div class="section-body" id="daily-checkin-section"></div>
-                        </div>
-                        
-                        <!-- Tasks Settings -->
-                        <div class="section-card">
-                            <div class="section-header"><i class="fas fa-tasks"></i>Complete Tasks</div>
-                            <div class="section-body" id="tasks-section"></div>
-                        </div>
-
-                        <!-- নতুন যুক্ত: ব্যবহারকারীর স্তর সেকশন শুরু -->
-                        <div class="section-card">
-                            <div class="section-header"><i class="fas fa-layer-group"></i>ব্যবহারকারীর স্তর (User Tiers)</div>
-                            <div class="section-body" id="user-tiers-section"></div>
-                        </div>
-                        <!-- নতুন যুক্ত: ব্যবহারকারীর স্তর সেকশন শেষ -->
-
-                        <!-- Withdrawal Settings -->
-                        <div class="section-card">
-                            <div class="section-header"><i class="fas fa-wallet"></i>Withdrawal Settings</div>
+                            <div class="section-header"><i class="fas fa-wallet"></i>Withdrawal & Monetization</div>
                             <div class="section-body">
+                                <div class="form-group"><label for="minWithdraw">Minimum Withdrawal Limit</label><input type="number" id="minWithdraw"></div>
                                 <div class="form-group">
-                                    <label for="minWithdraw">Minimum Withdrawal Limit</label>
-                                    <input type="number" id="minWithdraw">
+                                    <label for="withdrawalFeePercent">Withdrawal Fee (%)</label>
+                                    <input type="number" id="withdrawalFeePercent" placeholder="e.g., 5 for 5%">
                                 </div>
                                 <hr>
                                 <div id="withdrawal-methods-section"></div>
                             </div>
+                        </div>
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-store"></i>পয়েন্ট স্টোর (Store)</div>
+                            <div class="section-body" id="point-packages-section"></div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-edit"></i>অ্যাপের টেক্সট পরিবর্তন (Text Management)</div>
+                            <div class="section-body" id="text-management-section"></div>
                         </div>
                         
                         <button type="submit" class="update-btn">UPDATE ALL SETTINGS</button>
@@ -615,48 +502,33 @@
         </main>
     </div>
 
-    <!-- User Edit Modal -->
+    <!-- Modals -->
     <div class="modal-overlay" id="user-edit-modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-user-name">Edit User</h3>
-                <button class="modal-close-btn" onclick="closeUserEditModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h3 id="modal-user-name">Edit User</h3><button class="modal-close-btn" onclick="closeUserEditModal()">&times;</button></div>
             <div class="modal-body">
-                <div class="user-details" id="user-details-content"></div>
-                <hr>
-                
+                <div class="user-details" id="user-details-content"></div><hr>
                 <h4>Manual Transaction</h4>
-                <div class="form-group">
-                    <label for="points-to-add">Add/Subtract Points (e.g., 100 or -50)</label>
-                    <input type="number" id="points-to-add" placeholder="0">
-                </div>
-                <div class="form-group">
-                    <label for="transaction-reason">Reason (will be shown in user's history)</label>
-                    <input type="text" id="transaction-reason" placeholder="e.g., Weekly bonus, refund...">
-                </div>
-                <button class="update-btn" id="save-user-changes-btn">Save Changes & Add to History</button>
-                <hr>
-
+                <div class="form-group"><label for="points-to-add">Add/Subtract Points (e.g., 100 or -50)</label><input type="number" id="points-to-add" placeholder="0"></div>
+                <div class="form-group"><label for="transaction-reason">Reason (will be shown in user's history)</label><input type="text" id="transaction-reason" placeholder="e.g., Weekly bonus, refund..."></div>
+                <button class="update-btn" id="save-user-changes-btn">Save Changes & Add to History</button><hr>
                 <h4>Send Notification</h4>
-                <div class="form-group">
-                    <label for="user-notification-message">Message for this user</label>
-                    <textarea id="user-notification-message" placeholder="This message will be shown to the user in the app..."></textarea>
-                </div>
+                <div class="form-group"><label for="user-notification-message">Message for this user</label><textarea id="user-notification-message" placeholder="This message will be shown to the user in the app..."></textarea></div>
                 <button class="update-btn" style="background-color: var(--blue);" onclick="window.sendUserNotification()">Send Notification</button>
             </div>
         </div>
     </div>
-    
     <div class="modal-overlay" id="user-history-modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-history-user-name">Transaction History</h3>
-                <button class="modal-close-btn" onclick="closeUserHistoryModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="user-history-content">
-                <!-- History items will be loaded here -->
-            </div>
+            <div class="modal-header"><h3 id="modal-history-user-name">Transaction History</h3><button class="modal-close-btn" onclick="closeUserHistoryModal()">&times;</button></div>
+            <div class="modal-body" id="user-history-content"></div>
+        </div>
+    </div>
+    <!-- নতুন যুক্ত: রেফারেল তালিকা দেখার জন্য মোডাল -->
+    <div class="modal-overlay" id="user-referrals-modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="modal-referrals-user-name">User's Referrals</h3><button class="modal-close-btn" onclick="closeUserReferralsModal()">&times;</button></div>
+            <div class="modal-body" id="user-referrals-content"></div>
         </div>
     </div>
 
@@ -664,12 +536,13 @@
 <script type="module">
     // --- Firebase Configuration ---
     const firebaseConfig = {
-    apiKey: "AIzaSyBIyRCpm3tLVxgsN7W_OFNBr6v5CX3HcYg",
-    authDomain: "genius-earning-bot.firebaseapp.com",
-    projectId: "genius-earning-bot",
-    storageBucket: "genius-earning-bot.firebasestorage.app",
-    messagingSenderId: "1063434671346",
-    appId: "1:1063434671346:web:ed06bda4e9ef76d4f52c6b"
+    apiKey: "AIzaSyDfn1veuHMeHCbqgYQs_KEREDgwVmBxSHw",
+    authDomain: "the-arafat-earnings.firebaseapp.com",
+    projectId: "the-arafat-earnings",
+    storageBucket: "the-arafat-earnings.firebasestorage.app",
+    messagingSenderId: "1082223011616",
+    appId: "1:1082223011616:web:3de7e7438ca002dda6d945",
+    measurementId: "G-T9NY7D2RW8"
     };
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -682,9 +555,7 @@
     const configRef = ref(database, 'app/config'); 
     const usersRef = ref(database, 'app/users');
     const withdrawRequestsRef = ref(database, 'app/withdraw_requests');
-    // নতুন যুক্ত: গ্লোবাল নোটিফিকেশন ref
     const globalNotificationRef = ref(database, 'app/global_notification');
-    // নতুন যুক্ত: প্রোমো কোডের জন্য ref
     const promoCodesRef = ref(database, 'app/promo_codes');
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -700,21 +571,15 @@
         let allWithdrawals = {};
         let currentWithdrawFilter = 'Pending';
         let currentEditingUserId = null;
-        
-        // নতুন যুক্ত: চার্টের জন্য ভ্যারিয়েবল
-        let userGrowthChart = null;
-        let dailyEarningsChart = null;
+        let userGrowthChart = null, dailyEarningsChart = null;
 
         const DEFAULT_CONFIG = {
             adsReward: 1.0, adsLimit: 100, refferBonus: 10,
             refferJoinBonus: 5.0, currency: 'BDT', minWithdraw: 500,
             appVersion: '1.0.0', announcement: '',
-            botUsername: 'YourBotUsername',
-            pointsPerCurrency: 100,
-            adWatchTimerSeconds: 30,
-            hourlyAdsLimit: 25,
-            minReferralsForWithdrawal: 3,
-            maintenanceMode: false,
+            botUsername: 'YourBotUsername', pointsPerCurrency: 100,
+            adWatchTimerSeconds: 30, hourlyAdsLimit: 25,
+            minReferralsForWithdrawal: 3, maintenanceMode: false,
             adNetworksEnabled: true,
             adNetworks: [ { name: 'Monetag Ads', zoneId: '9704633', enabled: true } ],
             dailyCheckinEnabled: true,
@@ -729,446 +594,283 @@
                 { name: 'Silver', requiredPoints: 50000, bonusPercent: 2 },
                 { name: 'Gold', requiredPoints: 200000, bonusPercent: 5 }
             ],
-            // ============ নতুন যুক্ত ডিফল্ট কনফিগ শুরু ============
-            welcomeBonus: 100,
-            welcomeBonusEnabled: true,
+            welcomeBonus: 100, welcomeBonusEnabled: true,
             dynamicText: {
                 welcomeMessageTemplate: 'Welcome, {name}!',
                 shoppingButtonText: 'Start Shopping Now',
                 shoppingButtonLink: 'https://the-arafat-collection-woad.vercel.app/'
+            },
+            theme: { primaryColor: '#6a11cb' },
+            withdrawalFeePercent: 0,
+            storeEnabled: false,
+            pointPackages: [
+                { price: 100, currency: 'BDT', points: 10000, enabled: true }
+            ],
+            textStrings: {
+                navHome: "Home", navEarn: "Earn", navRefer: "Refer", navProfile: "Profile",
+                referTitle: "Refer & Earn Forever", referLinkTitle: "Your Referral Link"
             }
-            // ============ নতুন যুক্ত ডিফল্ট কনফিগ শেষ ============
         };
 
         function init() {
             onValue(configRef, (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    appConfig = { ...DEFAULT_CONFIG, ...data };
-                } else {
+                appConfig = data ? { ...DEFAULT_CONFIG, ...data } : { ...DEFAULT_CONFIG };
+                if (!data) {
                     console.log("No config found. Using and saving default config.");
-                    appConfig = { ...DEFAULT_CONFIG };
                     set(configRef, appConfig);
                 }
                 renderAllSettings();
                 updateDashboardData();
-            }, (err) => console.error("Config read error:", err));
-            
-            onValue(usersRef, (snapshot) => {
-                allUsers = snapshot.val() || {};
-                renderUsers();
-                updateDashboardData();
-                processAnalyticsData(); // নতুন: ব্যবহারকারীর ডেটা লোড হলে চার্ট আপডেট হবে
-            }, (err) => console.error("Users read error:", err));
-            
-            onValue(withdrawRequestsRef, (snapshot) => {
-                allWithdrawals = snapshot.val() || {};
-                renderWithdrawals();
-                updateDashboardData();
-            }, (err) => console.error("Withdrawals read error:", err));
-            
-            // নতুন যুক্ত: প্রোমো কোড লোড করার জন্য Listener
-            onValue(promoCodesRef, (snapshot) => {
-                const codes = snapshot.val() || {};
-                renderPromoCodes(codes);
-            }, (err) => console.error("Promo codes read error:", err));
+            });
+            onValue(usersRef, (snapshot) => { allUsers = snapshot.val() || {}; renderUsers(true); updateDashboardData(); processAnalyticsData(); renderDashboardAnalytics(); });
+            onValue(withdrawRequestsRef, (snapshot) => { allWithdrawals = snapshot.val() || {}; renderWithdrawals(); updateDashboardData(); });
+            onValue(promoCodesRef, (snapshot) => { renderPromoCodes(snapshot.val() || {}); });
 
             menuToggle.addEventListener('click', toggleMenu);
             overlay.addEventListener('click', toggleMenu);
             navLinks.forEach(link => link.addEventListener('click', handleNavClick));
             settingsForm.addEventListener('submit', saveAllSettings);
 
-            document.getElementById('withdraw-tab-nav').addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    document.querySelectorAll('#withdraw-tab-nav .tab-btn').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active');
-                    currentWithdrawFilter = e.target.dataset.status;
-                    renderWithdrawals();
-                }
-            });
-
-            document.getElementById('userSearch').addEventListener('input', renderUsers);
+            document.getElementById('withdraw-tab-nav').addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { document.querySelectorAll('#withdraw-tab-nav .tab-btn').forEach(btn => btn.classList.remove('active')); e.target.classList.add('active'); currentWithdrawFilter = e.target.dataset.status; renderWithdrawals(); } });
+            document.getElementById('userSearch').addEventListener('input', () => renderUsers(false));
+            // নতুন যুক্ত: ফিল্টারগুলোর জন্য ইভেন্ট লিসেনার
+            document.getElementById('filter-status').addEventListener('change', () => renderUsers(false));
+            document.getElementById('filter-balance').addEventListener('change', () => renderUsers(false));
+            
+            document.getElementById('select-all-users').addEventListener('change', (e) => { document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = e.target.checked); });
             document.getElementById('save-user-changes-btn').addEventListener('click', saveUserChanges);
-            document.getElementById('currency').addEventListener('input', (e) => {
-                document.getElementById('currency-label').textContent = e.target.value || 'Currency';
-            });
-            
+            document.getElementById('currency').addEventListener('input', (e) => { document.getElementById('currency-label').textContent = e.target.value || 'Currency'; });
             document.getElementById('send-global-notification-btn').addEventListener('click', sendGlobalNotification);
-            
-            // নতুন যুক্ত: User Segmentation ফর্মের জন্য Event Listeners
             document.getElementById('target-segment').addEventListener('change', handleSegmentChange);
             document.getElementById('action-type').addEventListener('change', handleActionChange);
-
             initCharts();
         }
         
         function initCharts() {
+            if (userGrowthChart) userGrowthChart.destroy();
             const userCtx = document.getElementById('user-growth-chart').getContext('2d');
-            userGrowthChart = new Chart(userCtx, {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: 'নতুন ব্যবহারকারী', data: [], backgroundColor: 'rgba(52, 152, 219, 0.2)', borderColor: 'rgba(52, 152, 219, 1)', borderWidth: 2, tension: 0.3 }] },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
+            userGrowthChart = new Chart(userCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'নতুন ব্যবহারকারী', data: [], backgroundColor: 'rgba(52, 152, 219, 0.2)', borderColor: 'rgba(52, 152, 219, 1)', borderWidth: 2, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false } });
+            if (dailyEarningsChart) dailyEarningsChart.destroy();
             const earningsCtx = document.getElementById('daily-earnings-chart').getContext('2d');
-            dailyEarningsChart = new Chart(earningsCtx, {
-                type: 'bar',
-                data: { labels: [], datasets: [{ label: 'দৈনিক আয় (পয়েন্ট)', data: [], backgroundColor: 'rgba(46, 204, 113, 0.7)', borderColor: 'rgba(46, 204, 113, 1)', borderWidth: 1 }] },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            dailyEarningsChart = new Chart(earningsCtx, { type: 'bar', data: { labels: [], datasets: [{ label: 'দৈনিক আয় (পয়েন্ট)', data: [], backgroundColor: 'rgba(46, 204, 113, 0.7)', borderColor: 'rgba(46, 204, 113, 1)', borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false } });
         }
 
         function processAnalyticsData() {
-            const userGrowthData = {};
-            const dailyEarningsData = {};
-            
+            const userGrowthData = {}, dailyEarningsData = {};
             Object.values(allUsers).forEach(user => {
-                if (user.joinedAt) {
-                    const joinDate = new Date(user.joinedAt).toLocaleDateString('en-CA'); // YYYY-MM-DD format
-                    userGrowthData[joinDate] = (userGrowthData[joinDate] || 0) + 1;
-                }
-                if (user.transactionHistory) {
-                     Object.values(user.transactionHistory).forEach(tx => {
-                        if (tx.amount > 0 && ['earning', 'login', 'task', 'referral'].includes(tx.type)) {
-                            const txDate = new Date(tx.date).toLocaleDateString('en-CA');
-                            dailyEarningsData[txDate] = (dailyEarningsData[txDate] || 0) + tx.amount;
-                        }
-                     });
-                }
+                if (user.joinedAt) { const joinDate = new Date(user.joinedAt).toLocaleDateString('en-CA'); userGrowthData[joinDate] = (userGrowthData[joinDate] || 0) + 1; }
+                if (user.transactionHistory) { Object.values(user.transactionHistory).forEach(tx => { if (tx.amount > 0 && ['earning', 'login', 'task', 'referral'].includes(tx.type)) { const txDate = new Date(tx.date).toLocaleDateString('en-CA'); dailyEarningsData[txDate] = (dailyEarningsData[txDate] || 0) + tx.amount; } }); }
             });
+            const sortedUserDates = Object.keys(userGrowthData).sort(), sortedEarningDates = Object.keys(dailyEarningsData).sort();
+            userGrowthChart.data.labels = sortedUserDates; userGrowthChart.data.datasets[0].data = sortedUserDates.map(date => userGrowthData[date]); userGrowthChart.update();
+            dailyEarningsChart.data.labels = sortedEarningDates; dailyEarningsChart.data.datasets[0].data = sortedEarningDates.map(date => dailyEarningsData[date]); dailyEarningsChart.update();
+        }
 
-            const sortedUserDates = Object.keys(userGrowthData).sort();
-            const sortedEarningDates = Object.keys(dailyEarningsData).sort();
+        // নতুন যুক্ত: টপ আর্নার এবং টপ রেফারার রেন্ডার করার ফাংশন
+        function renderDashboardAnalytics() {
+            const usersArray = Object.entries(allUsers);
+            
+            // Top Earners
+            const topEarners = usersArray.sort(([, a], [, b]) => (b.totalEarnings || 0) - (a.totalEarnings || 0)).slice(0, 5);
+            const topEarnersBody = document.getElementById('top-earners-body');
+            topEarnersBody.innerHTML = topEarners.map(([id, user]) => `
+                <tr>
+                    <td data-label="User">${user.profile?.firstName || id}</td>
+                    <td data-label="Earnings">${user.totalEarnings || 0}</td>
+                </tr>
+            `).join('');
 
-            userGrowthChart.data.labels = sortedUserDates;
-            userGrowthChart.data.datasets[0].data = sortedUserDates.map(date => userGrowthData[date]);
-            userGrowthChart.update();
-
-            dailyEarningsChart.data.labels = sortedEarningDates;
-            dailyEarningsChart.data.datasets[0].data = sortedEarningDates.map(date => dailyEarningsData[date]);
-            dailyEarningsChart.update();
+            // Top Referrers
+            const topReferrers = usersArray.sort(([, a], [, b]) => (Object.keys(b.referralsList || {}).length) - (Object.keys(a.referralsList || {}).length)).slice(0, 5);
+            const topReferrersBody = document.getElementById('top-referrers-body');
+            topReferrersBody.innerHTML = topReferrers.map(([id, user]) => `
+                <tr>
+                    <td data-label="User">${user.profile?.firstName || id}</td>
+                    <td data-label="Referrals">${Object.keys(user.referralsList || {}).length}</td>
+                </tr>
+            `).join('');
         }
 
         async function sendGlobalNotification() {
             const message = document.getElementById('global-notification-message').value.trim();
-            if (!message) {
-                return alert("নোটিফিকেশন বার্তা খালি রাখা যাবে না।");
-            }
-
-            if (!confirm("আপনি কি নিশ্চিত যে এই বার্তাটি সকল ব্যবহারকারীর কাছে পাঠাতে চান?")) return;
-
-            try {
-                await set(globalNotificationRef, {
-                    message: message,
-                    timestamp: new Date().toISOString()
-                });
-                alert("গ্লোবাল নোটিফিকেশন সফলভাবে পাঠানো হয়েছে!");
-                document.getElementById('global-notification-message').value = '';
-            } catch (error) {
-                console.error("Error sending global notification:", error);
-                alert("নোটিফিকেশন পাঠাতে ব্যর্থ হয়েছে।");
+            if (message && confirm("আপনি কি নিশ্চিত যে এই বার্তাটি সকল ব্যবহারকারীর কাছে পাঠাতে চান?")) {
+                try { await set(globalNotificationRef, { message: message, timestamp: new Date().toISOString() }); alert("গ্লোবাল নোটিফিকেশন সফলভাবে পাঠানো হয়েছে!"); document.getElementById('global-notification-message').value = ''; } catch (error) { console.error("Error sending global notification:", error); alert("নোটিফিকেশন পাঠাতে ব্যর্থ হয়েছে।"); }
             }
         }
         
-        async function saveConfigToFirebase() {
-            try {
-                await set(configRef, appConfig);
-                alert('Settings updated successfully in Firebase!');
-            } catch (error) {
-                console.error("Error saving settings to Firebase: ", error);
-                alert('Failed to update settings. Check console.');
-            }
-        }
+        async function saveConfigToFirebase() { try { await set(configRef, appConfig); alert('Settings updated successfully!'); } catch (error) { console.error("Error saving settings to Firebase: ", error); alert('Failed to update settings.'); } }
         
         function renderAllSettings() {
             if (!appConfig || Object.keys(appConfig).length === 0) return;
             document.getElementById('appVersion').value = appConfig.appVersion || '1.0.0';
             document.getElementById('announcement').value = appConfig.announcement || '';
-            document.getElementById('adsReward').value = appConfig.adsReward;
-            document.getElementById('adsLimit').value = appConfig.adsLimit;
-            document.getElementById('refferBonus').value = appConfig.refferBonus;
-            document.getElementById('refferJoinBonus').value = appConfig.refferJoinBonus;
-            document.getElementById('currency').value = appConfig.currency;
-            document.getElementById('minWithdraw').value = appConfig.minWithdraw;
-            
-            document.getElementById('adWatchTimerSeconds').value = appConfig.adWatchTimerSeconds;
-            document.getElementById('hourlyAdsLimit').value = appConfig.hourlyAdsLimit;
+            document.getElementById('adsReward').value = appConfig.adsReward; document.getElementById('adsLimit').value = appConfig.adsLimit;
+            document.getElementById('refferBonus').value = appConfig.refferBonus; document.getElementById('refferJoinBonus').value = appConfig.refferJoinBonus;
+            document.getElementById('currency').value = appConfig.currency; document.getElementById('minWithdraw').value = appConfig.minWithdraw;
+            document.getElementById('adWatchTimerSeconds').value = appConfig.adWatchTimerSeconds; document.getElementById('hourlyAdsLimit').value = appConfig.hourlyAdsLimit;
             document.getElementById('minReferralsForWithdrawal').value = appConfig.minReferralsForWithdrawal;
             document.getElementById('maintenanceMode').checked = appConfig.maintenanceMode;
-
-            document.getElementById('botUsername').value = appConfig.botUsername || '';
-            document.getElementById('pointsPerCurrency').value = appConfig.pointsPerCurrency || 100;
+            document.getElementById('botUsername').value = appConfig.botUsername || ''; document.getElementById('pointsPerCurrency').value = appConfig.pointsPerCurrency || 100;
             document.getElementById('currency-label').textContent = appConfig.currency || 'Currency';
+            document.getElementById('welcomeBonusEnabled').checked = appConfig.welcomeBonusEnabled; document.getElementById('welcomeBonus').value = appConfig.welcomeBonus;
+            if (appConfig.dynamicText) { document.getElementById('dynamicWelcomeMessage').value = appConfig.dynamicText.welcomeMessageTemplate; document.getElementById('dynamicShoppingButtonText').value = appConfig.dynamicText.shoppingButtonText; document.getElementById('dynamicShoppingButtonLink').value = appConfig.dynamicText.shoppingButtonLink; }
+            const tierSelect = document.getElementById('target-tier'); tierSelect.innerHTML = (appConfig.userTiers || []).map(tier => `<option value="${tier.name}">${tier.name} (${tier.requiredPoints}+ Points)</option>`).join('');
             
-            // ============ নতুন যুক্ত সেটিংস রেন্ডার করা শুরু ============
-            document.getElementById('welcomeBonusEnabled').checked = appConfig.welcomeBonusEnabled;
-            document.getElementById('welcomeBonus').value = appConfig.welcomeBonus;
-            if (appConfig.dynamicText) {
-                document.getElementById('dynamicWelcomeMessage').value = appConfig.dynamicText.welcomeMessageTemplate;
-                document.getElementById('dynamicShoppingButtonText').value = appConfig.dynamicText.shoppingButtonText;
-                document.getElementById('dynamicShoppingButtonLink').value = appConfig.dynamicText.shoppingButtonLink;
-            }
-            // User Tier ড্রপডাউন পপুলেট করা
-            const tierSelect = document.getElementById('target-tier');
-            tierSelect.innerHTML = (appConfig.userTiers || [])
-                .map(tier => `<option value="${tier.name}">${tier.name} (${tier.requiredPoints}+ Points)</option>`)
-                .join('');
-            // ============ নতুন যুক্ত সেটিংস রেন্ডার করা শেষ ============
+            document.getElementById('themeColor').value = appConfig.theme?.primaryColor || '#6a11cb';
+            document.getElementById('withdrawalFeePercent').value = appConfig.withdrawalFeePercent || 0;
 
-            renderAdNetworksSection();
-            renderDailyCheckinSection();
-            renderTasksSection();
-            renderUserTiersSection();
-            renderWithdrawalMethodsSection();
+            renderAdNetworksSection(); renderDailyCheckinSection(); renderTasksSection();
+            renderUserTiersSection(); renderWithdrawalMethodsSection();
+            renderPointPackagesSection(); renderTextManagementSection();
         }
 
         function renderWithdrawals() {
             const tbody = document.getElementById('withdraw-table-body');
-            tbody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
             const filteredWithdrawals = Object.entries(allWithdrawals).filter(([id, data]) => data.status === currentWithdrawFilter);
-
-            if (filteredWithdrawals.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7">No ${currentWithdrawFilter} requests found.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = filteredWithdrawals.map(([id, req]) => `
-                <tr>
-                    <td data-label="User ID">${req.userId || 'N/A'}</td>
-                    <td data-label="Date">${new Date(req.date).toLocaleString()}</td>
-                    <td data-label="Method">${req.method}</td>
-                    <td data-label="Account">${req.number}</td>
-                    <td data-label="Amount">${req.amount} ${appConfig.currency || ''}</td>
-                    <td data-label="Status"><span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span></td>
-                    <td data-label="Actions">
-                        ${req.status === 'Pending' ? `
-                            <button class="action-btn btn-approve" onclick="window.manageWithdrawal('${id}', 'Approved')">Approve</button>
-                            <button class="action-btn btn-reject" onclick="window.manageWithdrawal('${id}', 'Rejected')">Reject</button>
-                        ` : '-'}
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = filteredWithdrawals.length === 0 ? `<tr><td colspan="7">No ${currentWithdrawFilter} requests found.</td></tr>` : filteredWithdrawals.map(([id, req]) => `<tr><td data-label="User ID">${req.userId || 'N/A'}</td><td data-label="Date">${new Date(req.date).toLocaleString()}</td><td data-label="Method">${req.method}</td><td data-label="Account">${req.number}</td><td data-label="Amount">${req.amount} ${appConfig.currency || ''}</td><td data-label="Status"><span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span></td><td data-label="Actions">${req.status === 'Pending' ? `<button class="action-btn btn-approve" onclick="window.manageWithdrawal('${id}', 'Approved')">Approve</button><button class="action-btn btn-reject" onclick="window.manageWithdrawal('${id}', 'Rejected')">Reject</button>` : (req.transactionId ? `TxID: ${req.transactionId}` : '-')}</td></tr>`).join('');
         }
         
+        // নতুন যুক্ত: উত্তোলনের অনুরোধ manage করার ফাংশনে ট্রানজেকশন আইডি যোগ করা
         window.manageWithdrawal = async (requestId, newStatus) => {
             if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) return;
             try {
                 const requestRef = ref(database, `app/withdraw_requests/${requestId}`);
-                await update(requestRef, { status: newStatus });
-                
-                if(newStatus === 'Rejected'){
-                    const requestSnapshot = await get(requestRef);
-                    const requestData = requestSnapshot.val();
-                    const userRef = ref(database, `app/users/${requestData.userId}`);
-                    const userSnapshot = await get(userRef);
-                    if(userSnapshot.exists()){
-                        const userData = userSnapshot.val();
-                        const pointsToRefund = requestData.amount * (appConfig.pointsPerCurrency || 100);
-                        await update(userRef, {
-                            balance: (userData.balance || 0) + pointsToRefund
-                        });
-                        alert(`Request rejected and ${pointsToRefund} points have been refunded to the user.`);
-                    }
+                if (newStatus === 'Approved') {
+                    const txId = prompt("Enter Transaction ID (optional):", "");
+                    await update(requestRef, { status: newStatus, transactionId: txId || 'N/A' });
                 } else {
-                     alert(`Request has been successfully ${newStatus.toLowerCase()}.`);
+                    await update(requestRef, { status: newStatus });
                 }
 
-            } catch (error) {
-                console.error("Error updating withdrawal status:", error);
-                alert("Failed to update status.");
-            }
+                if(newStatus === 'Rejected'){
+                    const requestSnapshot = await get(requestRef); const requestData = requestSnapshot.val(); const userRef = ref(database, `app/users/${requestData.userId}`); const userSnapshot = await get(userRef);
+                    if(userSnapshot.exists()){ const userData = userSnapshot.val(); const pointsToRefund = requestData.requestedAmount * (appConfig.pointsPerCurrency || 100); await update(userRef, { balance: (userData.balance || 0) + pointsToRefund }); alert(`Request rejected and ${pointsToRefund} points have been refunded.`); }
+                } else { alert(`Request has been successfully ${newStatus.toLowerCase()}.`); }
+            } catch (error) { console.error("Error updating withdrawal status:", error); alert("Failed to update status."); }
         };
 
-        function renderUsers() {
+        // নতুন যুক্ত: ব্যবহারকারী ফিল্টার করার জন্য renderUsers ফাংশনে পরিবর্তন
+        window.renderUsers = (resetFilters) => {
+            if (resetFilters) {
+                document.getElementById('userSearch').value = '';
+                document.getElementById('filter-status').value = '';
+                document.getElementById('filter-balance').value = '';
+            }
             const tbody = document.getElementById('users-table-body');
             const searchTerm = document.getElementById('userSearch').value.toLowerCase();
-            tbody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+            const statusFilter = document.getElementById('filter-status').value;
+            const balanceFilter = document.getElementById('filter-balance').value;
 
-            const filteredUsers = Object.entries(allUsers).filter(([id, data]) => {
+            let usersArray = Object.entries(allUsers);
+
+            // Filter logic
+            let filteredUsers = usersArray.filter(([id, data]) => {
+                if (statusFilter === 'active' && data.isBlocked) return false;
+                if (statusFilter === 'blocked' && !data.isBlocked) return false;
+                
                 if (!searchTerm) return true;
                 const name = (data.profile?.firstName || '') + ' ' + (data.profile?.lastName || '');
-                return id.toLowerCase().includes(searchTerm) ||
-                       name.toLowerCase().includes(searchTerm) ||
-                       (data.profile?.username || '').toLowerCase().includes(searchTerm);
+                return id.toLowerCase().includes(searchTerm) || name.toLowerCase().includes(searchTerm) || (data.profile?.username || '').toLowerCase().includes(searchTerm);
             });
-            
-            if (filteredUsers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5">No users found.</td></tr>';
-                return;
+
+            // Sort logic
+            if (balanceFilter === 'high') {
+                filteredUsers.sort(([, a], [, b]) => (b.balance || 0) - (a.balance || 0));
+            } else if (balanceFilter === 'low') {
+                filteredUsers.sort(([, a], [, b]) => (a.balance || 0) - (b.balance || 0));
             }
 
-            tbody.innerHTML = filteredUsers.map(([id, user]) => `
-                <tr>
-                    <td data-label="User ID">${id}</td>
-                    <td data-label="Name">${(user.profile?.firstName || 'N/A')} ${(user.profile?.lastName || '')}</td>
-                    <td data-label="Balance">${user.balance || 0}</td>
-                    <td data-label="Status">
-                        <span class="status-badge ${user.isBlocked ? 'status-blocked' : 'status-approved'}">
-                            ${user.isBlocked ? 'Blocked' : 'Active'}
-                        </span>
-                    </td>
-                    <td data-label="Actions">
-                        <button class="action-btn btn-view" onclick="window.openUserEditModal('${id}')">Edit</button>
-                        <button class="action-btn btn-history" onclick="window.openUserHistoryModal('${id}')">History</button>
-                        <button class="action-btn ${user.isBlocked ? 'btn-unblock' : 'btn-block'}" onclick="window.toggleUserBlock('${id}', ${user.isBlocked || false})">
-                            ${user.isBlocked ? 'Unblock' : 'Block'}
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+            tbody.innerHTML = filteredUsers.length === 0 ? '<tr><td colspan="6">No users found.</td></tr>' : filteredUsers.map(([id, user]) => `<tr><td data-label="Select"><input type="checkbox" class="user-checkbox" data-id="${id}"></td><td data-label="User ID">${id}</td><td data-label="Name">${(user.profile?.firstName || 'N/A')} ${(user.profile?.lastName || '')}</td><td data-label="Balance">${user.balance || 0}</td><td data-label="Status"><span class="status-badge ${user.isBlocked ? 'status-blocked' : 'status-approved'}">${user.isBlocked ? 'Blocked' : 'Active'}</span></td><td data-label="Actions"><button class="action-btn btn-view" onclick="window.openUserEditModal('${id}')">Edit</button><button class="action-btn btn-history" onclick="window.openUserHistoryModal('${id}')">History</button><button class="action-btn btn-info" onclick="window.openUserReferralsModal('${id}')">Referrals</button><button class="action-btn ${user.isBlocked ? 'btn-unblock' : 'btn-block'}" onclick="window.toggleUserBlock('${id}', ${user.isBlocked || false})">${user.isBlocked ? 'Unblock' : 'Block'}</button></td></tr>`).join('');
+        };
 
         window.openUserEditModal = (userId) => {
-            const user = allUsers[userId];
-            if (!user) return;
-            currentEditingUserId = userId;
-
-            const modal = document.getElementById('user-edit-modal');
-            document.getElementById('modal-user-name').textContent = `Edit User: ${user.profile?.firstName || userId}`;
-            const detailsContent = document.getElementById('user-details-content');
-            
-            const lastLogin = user.profile?.lastLogin;
-            const lastLoginTime = lastLogin?.timestamp ? new Date(lastLogin.timestamp).toLocaleString() : 'N/A';
-            const lastLoginIP = lastLogin?.ip || 'N/A';
-            
-            detailsContent.innerHTML = `
-                <p><strong>User ID:</strong> ${userId}</p>
-                <p><strong>Name:</strong> ${user.profile?.firstName || ''} ${user.profile?.lastName || ''}</p>
-                <p><strong>Username:</strong> @${user.profile?.username || 'N/A'}</p>
-                <p><strong>Current Balance:</strong> ${user.balance || 0} points</p>
-                <hr>
-                <p><strong>Last Login Time:</strong> ${lastLoginTime}</p>
-                <p><strong>Last Login IP:</strong> ${lastLoginIP} <small>(Client-reported, may not be accurate)</small></p>
-            `;
-            document.getElementById('points-to-add').value = '';
-            document.getElementById('transaction-reason').value = '';
-            document.getElementById('user-notification-message').value = '';
-            modal.classList.add('active');
+            const user = allUsers[userId]; if (!user) return; currentEditingUserId = userId; const modal = document.getElementById('user-edit-modal'); document.getElementById('modal-user-name').textContent = `Edit User: ${user.profile?.firstName || userId}`;
+            const lastLogin = user.profile?.lastLogin; const lastLoginTime = lastLogin?.timestamp ? new Date(lastLogin.timestamp).toLocaleString() : 'N/A'; const lastLoginIP = lastLogin?.ip || 'N/A';
+            let userDetailsHTML = `<p><strong>User ID:</strong> ${userId}</p><p><strong>Name:</strong> ${user.profile?.firstName || ''} ${user.profile?.lastName || ''}</p><p><strong>Username:</strong> @${user.profile?.username || 'N/A'}</p><p><strong>Current Balance:</strong> ${user.balance || 0} points</p><hr><p><strong>Last Login Time:</strong> ${lastLoginTime}</p><p><strong>Last Login IP:</strong> ${lastLoginIP}</p>`;
+            // নতুন যুক্ত: ব্লক করার কারণ দেখানো
+            if (user.isBlocked && user.blockReason) {
+                userDetailsHTML += `<p><strong>Block Reason:</strong> ${user.blockReason}</p>`;
+            }
+            document.getElementById('user-details-content').innerHTML = userDetailsHTML;
+            document.getElementById('points-to-add').value = ''; document.getElementById('transaction-reason').value = ''; document.getElementById('user-notification-message').value = ''; modal.classList.add('active');
         };
+        window.closeUserEditModal = () => document.getElementById('user-edit-modal').classList.remove('active');
 
-        window.closeUserEditModal = () => {
-            document.getElementById('user-edit-modal').classList.remove('active');
-            currentEditingUserId = null;
-        };
-        
         window.openUserHistoryModal = (userId) => {
+            const user = allUsers[userId]; if (!user) return; const modal = document.getElementById('user-history-modal'); document.getElementById('modal-history-user-name').textContent = `History for ${user.profile?.firstName || userId}`; const contentDiv = document.getElementById('user-history-content');
+            const history = user.transactionHistory; if (!history || Object.keys(history).length === 0) { contentDiv.innerHTML = '<p>No history found.</p>'; } else {
+                const historyItems = Object.entries(history).sort(([, a], [, b]) => new Date(b.date) - new Date(a.date));
+                contentDiv.innerHTML = `<ul class="history-list">${historyItems.map(([key, item]) => {
+                    const date = new Date(item.date).toLocaleString(); let iconClass, amountClass, amountPrefix, amountDisplay;
+                    switch(item.type) { case 'earning': iconClass = 'fa-solid fa-play'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'withdrawal': iconClass = 'fa-solid fa-arrow-down'; amountClass = 'negative'; amountPrefix = '-'; amountDisplay = `${item.amount} ${appConfig.currency}`; break; case 'referral': iconClass = 'fa-solid fa-users'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'login': iconClass = 'fa-solid fa-calendar-check'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'task': iconClass = 'fa-solid fa-tasks'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break; case 'manual': iconClass = 'fa-solid fa-user-pen'; amountClass = item.amount >= 0 ? 'positive' : 'negative'; amountPrefix = item.amount >= 0 ? '+' : ''; amountDisplay = `${item.amount} Points`; break; default: iconClass = 'fa-solid fa-question'; amountClass = ''; amountPrefix = ''; amountDisplay = `${item.amount}`; break; }
+                    return `<li class="history-item"><div class="icon ${item.type}"><i class="${iconClass}"></i></div><div class="info"><div class="title">${item.title || item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div><div class="date">${date}</div></div><div class="amount ${amountClass}">${amountPrefix}${amountDisplay}</div></li>`;
+                }).join('')}</ul>`;
+            } modal.classList.add('active');
+        };
+        window.closeUserHistoryModal = () => document.getElementById('user-history-modal').classList.remove('active');
+
+        // নতুন যুক্ত: রেফারেল তালিকা মোডাল খোলার এবং বন্ধ করার ফাংশন
+        window.openUserReferralsModal = (userId) => {
             const user = allUsers[userId];
             if (!user) return;
-
-            const modal = document.getElementById('user-history-modal');
-            document.getElementById('modal-history-user-name').textContent = `History for ${user.profile?.firstName || userId}`;
-            const contentDiv = document.getElementById('user-history-content');
-
-            const history = user.transactionHistory;
-            if (!history || Object.keys(history).length === 0) {
-                contentDiv.innerHTML = '<p>No transaction history found for this user.</p>';
+            const modal = document.getElementById('user-referrals-modal');
+            document.getElementById('modal-referrals-user-name').textContent = `Referrals of ${user.profile?.firstName || userId}`;
+            const contentDiv = document.getElementById('user-referrals-content');
+            const referralsList = user.referralsList || {};
+            if (Object.keys(referralsList).length === 0) {
+                contentDiv.innerHTML = '<p>This user has not referred anyone yet.</p>';
             } else {
-                const historyItems = Object.entries(history)
-                    .sort(([, a], [, b]) => new Date(b.date) - new Date(a.date));
-                
-                contentDiv.innerHTML = `<ul class="history-list">${historyItems.map(([key, item]) => {
-                    const date = new Date(item.date).toLocaleString();
-                    let iconClass, amountClass, amountPrefix, amountDisplay;
-                    
-                    switch(item.type) {
-                        case 'earning': iconClass = 'fa-solid fa-play'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break;
-                        case 'withdrawal': iconClass = 'fa-solid fa-arrow-down'; amountClass = 'negative'; amountPrefix = '-'; amountDisplay = `${item.amount} ${appConfig.currency}`; break;
-                        case 'referral': iconClass = 'fa-solid fa-users'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break;
-                        case 'login': iconClass = 'fa-solid fa-calendar-check'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break;
-                        case 'task': iconClass = 'fa-solid fa-tasks'; amountClass = 'positive'; amountPrefix = '+'; amountDisplay = `${item.amount} Points`; break;
-                        case 'manual': iconClass = 'fa-solid fa-user-pen'; amountClass = item.amount >= 0 ? 'positive' : 'negative'; amountPrefix = item.amount >= 0 ? '+' : ''; amountDisplay = `${item.amount} Points`; break;
-                        default: iconClass = 'fa-solid fa-question'; amountClass = ''; amountPrefix = ''; amountDisplay = `${item.amount}`; break;
-                    }
-                    
-                    return `
-                        <li class="history-item">
-                            <div class="icon ${item.type}"><i class="${iconClass}"></i></div>
-                            <div class="info">
-                                <div class="title">${item.title || item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div>
-                                <div class="date">${date}</div>
-                            </div>
-                            <div class="amount ${amountClass}">${amountPrefix}${amountDisplay}</div>
-                        </li>`;
-                }).join('')}</ul>`;
+                const referralItemsHTML = Object.keys(referralsList).map(refId => {
+                    const referredUser = allUsers[refId];
+                    const name = referredUser ? (referredUser.profile?.firstName || 'N/A') : 'Unknown User';
+                    const joinDate = referredUser ? new Date(referredUser.joinedAt).toLocaleDateString() : 'N/A';
+                    return `<li class="history-item"><div class="info"><div class="title">${name} (ID: ${refId})</div><div class="date">Joined on: ${joinDate}</div></div></li>`;
+                }).join('');
+                contentDiv.innerHTML = `<ul class="history-list">${referralItemsHTML}</ul>`;
             }
             modal.classList.add('active');
         };
-        
-        window.closeUserHistoryModal = () => {
-            document.getElementById('user-history-modal').classList.remove('active');
-        };
+        window.closeUserReferralsModal = () => document.getElementById('user-referrals-modal').classList.remove('active');
+
 
         async function saveUserChanges() {
-            if (!currentEditingUserId) return;
-            const pointsStr = document.getElementById('points-to-add').value;
-            const pointsToAdd = parseInt(pointsStr, 10);
-            
-            if (isNaN(pointsToAdd) || pointsToAdd === 0) {
-                return alert("Please enter a valid, non-zero number for points.");
-            }
-
+            if (!currentEditingUserId) return; const pointsStr = document.getElementById('points-to-add').value; const pointsToAdd = parseInt(pointsStr, 10);
+            if (isNaN(pointsToAdd) || pointsToAdd === 0) return alert("Please enter a valid, non-zero number.");
             const reason = document.getElementById('transaction-reason').value.trim() || 'Admin Adjustment';
-
             try {
-                const userRef = ref(database, `app/users/${currentEditingUserId}`);
-                const userSnapshot = await get(userRef);
-
+                const userRef = ref(database, `app/users/${currentEditingUserId}`); const userSnapshot = await get(userRef);
                 if (userSnapshot.exists()) {
-                    const currentBalance = userSnapshot.val().balance || 0;
-                    const newBalance = currentBalance + pointsToAdd;
-                    
-                    const updates = {};
-                    updates[`balance`] = newBalance;
-
-                    const historyRef = ref(database, `app/users/${currentEditingUserId}/transactionHistory`);
-                    const newHistoryRef = push(historyRef);
-                    updates[`transactionHistory/${newHistoryRef.key}`] = {
-                        type: 'manual',
-                        amount: pointsToAdd,
-                        title: reason,
-                        date: new Date().toISOString()
-                    };
-                    
-                    await update(userRef, updates);
-                    alert(`User balance updated to ${newBalance} points. Transaction added to history.`);
-                    closeUserEditModal();
+                    const currentBalance = userSnapshot.val().balance || 0; const newBalance = currentBalance + pointsToAdd;
+                    const updates = { balance: newBalance }; const newHistoryRef = push(ref(database, `app/users/${currentEditingUserId}/transactionHistory`));
+                    updates[`transactionHistory/${newHistoryRef.key}`] = { type: 'manual', amount: pointsToAdd, title: reason, date: new Date().toISOString() };
+                    await update(userRef, updates); alert(`User balance updated to ${newBalance} points.`); closeUserEditModal();
                 }
-            } catch (error) {
-                console.error("Error updating user balance:", error);
-                alert("Failed to update balance.");
-            }
+            } catch (error) { console.error("Error updating user balance:", error); alert("Failed to update balance."); }
         }
 
         window.sendUserNotification = async () => {
-            if (!currentEditingUserId) return;
-            const message = document.getElementById('user-notification-message').value.trim();
-            if (!message) {
-                return alert("Notification message cannot be empty.");
-            }
-
-            try {
-                const notificationsRef = ref(database, `app/users/${currentEditingUserId}/notifications`);
-                const newNotificationRef = push(notificationsRef);
-                await set(newNotificationRef, {
-                    message: message,
-                    date: new Date().toISOString(),
-                    read: false
-                });
-                alert("Notification sent successfully!");
-                document.getElementById('user-notification-message').value = '';
-            } catch(error) {
-                console.error("Error sending notification:", error);
-                alert("Failed to send notification. Check console for errors.");
-            }
+            if (!currentEditingUserId) return; const message = document.getElementById('user-notification-message').value.trim(); if (!message) return alert("Message cannot be empty.");
+            try { const notificationsRef = ref(database, `app/users/${currentEditingUserId}/notifications`); const newNotificationRef = push(notificationsRef); await set(newNotificationRef, { message: message, date: new Date().toISOString(), read: false }); alert("Notification sent!"); document.getElementById('user-notification-message').value = ''; } catch(error) { console.error("Error sending notification:", error); alert("Failed to send notification."); }
         };
 
+        // নতুন যুক্ত: ব্লক করার সময় কারণ যোগ করার ফাংশন
         window.toggleUserBlock = async (userId, isCurrentlyBlocked) => {
             const action = isCurrentlyBlocked ? 'unblock' : 'block';
             if (!confirm(`Are you sure you want to ${action} this user?`)) return;
 
+            let updates = { isBlocked: !isCurrentlyBlocked };
+            if (!isCurrentlyBlocked) { // If blocking
+                const reason = prompt("Enter reason for blocking this user (optional):", "");
+                if (reason) {
+                    updates.blockReason = reason;
+                }
+            } else { // If unblocking
+                updates.blockReason = null; // Remove the reason on unblock
+            }
+
             try {
-                const userRef = ref(database, `app/users/${userId}`);
-                await update(userRef, { isBlocked: !isCurrentlyBlocked });
+                await update(ref(database, `app/users/${userId}`), updates);
                 alert(`User has been successfully ${action}ed.`);
             } catch (error) {
                 console.error(`Error ${action}ing user:`, error);
@@ -1177,334 +879,89 @@
         };
 
         function renderSection(containerId, list, config) {
-            const container = document.getElementById(containerId);
-            const listHtml = (list || []).map(config.itemRenderer).join('');
-            
-            container.innerHTML = `
-                <div class="section-toggle">
-                    <label>${config.toggleLabel}</label>
-                    <label class="switch"><input type="checkbox" id="${config.enabledId}" ${appConfig[config.enabledFlag] ? 'checked' : ''}><span class="slider"></span></label>
-                </div>
-                <div id="${config.listContainerId}" style="padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;">
-                    ${listHtml}
-                    <button type="button" class="btn-add" onclick="${config.addFunction}"><i class="fas fa-plus"></i> ${config.addButtonLabel}</button>
-                </div>`;
-                
-            const switchEl = document.getElementById(config.enabledId);
-            const listContainerEl = document.getElementById(config.listContainerId);
-
-            listContainerEl.style.display = switchEl.checked ? 'block' : 'none';
-            switchEl.addEventListener('change', () => {
-                listContainerEl.style.display = switchEl.checked ? 'block' : 'none';
-            });
+            const container = document.getElementById(containerId); const listHtml = (list || []).map(config.itemRenderer).join('');
+            container.innerHTML = `<div class="section-toggle"><label>${config.toggleLabel}</label><label class="switch"><input type="checkbox" id="${config.enabledId}" ${appConfig[config.enabledFlag] ? 'checked' : ''}><span class="slider"></span></label></div><div id="${config.listContainerId}" style="padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;">${listHtml}<button type="button" class="btn-add" onclick="${config.addFunction}"><i class="fas fa-plus"></i> ${config.addButtonLabel}</button></div>`;
+            const switchEl = document.getElementById(config.enabledId), listContainerEl = document.getElementById(config.listContainerId); listContainerEl.style.display = switchEl.checked ? 'block' : 'none'; switchEl.addEventListener('change', () => { listContainerEl.style.display = switchEl.checked ? 'block' : 'none'; });
         }
-
-        function renderAdNetworksSection() {
-            renderSection('ad-networks-section', appConfig.adNetworks || [], {
-                toggleLabel: 'Enable Ad Networks Feature',
-                enabledId: 'adNetworksEnabled',
-                enabledFlag: 'adNetworksEnabled',
-                listContainerId: 'ad-networks-list',
-                itemRenderer: (item, index) => `
-                    <div class="ad-network-setting">
-                        <input type="text" data-type="adNetworkName" data-index="${index}" value="${item.name}" placeholder="Ad Network Name">
-                        <input type="text" data-type="adNetworkZoneId" data-index="${index}" value="${item.zoneId}" placeholder="Zone ID">
-                        <label class="switch"><input type="checkbox" data-type="adNetworkItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label>
-                        <button type="button" class="btn-remove" onclick="removeAdNetwork(${index})">&times;</button>
-                    </div>`,
-                addFunction: 'window.addAdNetwork()',
-                addButtonLabel: 'Add Ad Network'
-            });
-        }
-        window.addAdNetwork = () => { if (!appConfig.adNetworks) appConfig.adNetworks = []; appConfig.adNetworks.push({ name: '', zoneId: '', enabled: true }); renderAdNetworksSection(); };
-        window.removeAdNetwork = (index) => { if(confirm('Are you sure?')) { appConfig.adNetworks.splice(index, 1); renderAdNetworksSection(); } };
-
-        function renderDailyCheckinSection() {
-            const container = document.getElementById('daily-checkin-section');
-            container.innerHTML = `
-                <div class="section-toggle">
-                    <label>Enable Daily Check-in Feature</label>
-                    <label class="switch"><input type="checkbox" id="dailyCheckinEnabled" ${appConfig.dailyCheckinEnabled ? 'checked' : ''}><span class="slider"></span></label>
-                </div>
-                <div id="daily-checkin-list" style="padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;">
-                    <div class="days-grid">
-                        ${(appConfig.dailyCheckinRewards || []).map((item, index) => `
-                            <div class="daily-checkin-item">
-                                <div class="form-group">
-                                    <label class="day-label">Day ${item.day}</label>
-                                    <input type="number" step="0.01" data-type="checkinReward" data-index="${index}" value="${item.reward}">
-                                </div>
-                                <button type="button" class="btn-remove" onclick="removeCheckinDay(${index})">&times;</button>
-                            </div>`).join('')}
-                    </div>
-                    <button type="button" class="btn-add" onclick="addCheckinDay()"><i class="fas fa-plus"></i> Add New Day</button>
-                </div>`;
-
-            const switchEl = document.getElementById('dailyCheckinEnabled');
-            const listEl = document.getElementById('daily-checkin-list');
-            listEl.style.display = switchEl.checked ? 'block' : 'none';
-            switchEl.addEventListener('change', () => { listEl.style.display = switchEl.checked ? 'block' : 'none'; });
-        }
-        window.addCheckinDay = () => { if (!appConfig.dailyCheckinRewards) appConfig.dailyCheckinRewards = []; const nextDay = appConfig.dailyCheckinRewards.length + 1; appConfig.dailyCheckinRewards.push({ day: nextDay, reward: 0 }); renderDailyCheckinSection(); };
-        window.removeCheckinDay = (index) => { if(confirm('Are you sure?')) { appConfig.dailyCheckinRewards.splice(index, 1); appConfig.dailyCheckinRewards.forEach((item, i) => item.day = i + 1); renderDailyCheckinSection(); }};
+        function renderAdNetworksSection() { renderSection('ad-networks-section', appConfig.adNetworks || [], { toggleLabel: 'Enable Ad Networks Feature', enabledId: 'adNetworksEnabled', enabledFlag: 'adNetworksEnabled', listContainerId: 'ad-networks-list', itemRenderer: (item, index) => `<div class="ad-network-setting"><input type="text" data-type="adNetworkName" data-index="${index}" value="${item.name}" placeholder="Ad Network Name"><input type="text" data-type="adNetworkZoneId" data-index="${index}" value="${item.zoneId}" placeholder="Zone ID"><label class="switch"><input type="checkbox" data-type="adNetworkItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label><button type="button" class="btn-remove" onclick="removeAdNetwork(${index})">&times;</button></div>`, addFunction: 'window.addAdNetwork()', addButtonLabel: 'Add Ad Network' }); }
+        window.addAdNetwork = () => { if (!appConfig.adNetworks) appConfig.adNetworks = []; appConfig.adNetworks.push({ name: '', zoneId: '', enabled: true }); renderAdNetworksSection(); }; window.removeAdNetwork = (index) => { if(confirm('Are you sure?')) { appConfig.adNetworks.splice(index, 1); renderAdNetworksSection(); } };
+        function renderDailyCheckinSection() { const container = document.getElementById('daily-checkin-section'); container.innerHTML = `<div class="section-toggle"><label>Enable Daily Check-in Feature</label><label class="switch"><input type="checkbox" id="dailyCheckinEnabled" ${appConfig.dailyCheckinEnabled ? 'checked' : ''}><span class="slider"></span></label></div><div id="daily-checkin-list" style="padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;"><div class="days-grid">${(appConfig.dailyCheckinRewards || []).map((item, index) => `<div class="daily-checkin-item"><div class="form-group"><label class="day-label">Day ${item.day}</label><input type="number" step="0.01" data-type="checkinReward" data-index="${index}" value="${item.reward}"></div><button type="button" class="btn-remove" onclick="removeCheckinDay(${index})">&times;</button></div>`).join('')}</div><button type="button" class="btn-add" onclick="addCheckinDay()"><i class="fas fa-plus"></i> Add New Day</button></div>`; const switchEl = document.getElementById('dailyCheckinEnabled'), listEl = document.getElementById('daily-checkin-list'); listEl.style.display = switchEl.checked ? 'block' : 'none'; switchEl.addEventListener('change', () => { listEl.style.display = switchEl.checked ? 'block' : 'none'; }); }
+        window.addCheckinDay = () => { if (!appConfig.dailyCheckinRewards) appConfig.dailyCheckinRewards = []; const nextDay = appConfig.dailyCheckinRewards.length + 1; appConfig.dailyCheckinRewards.push({ day: nextDay, reward: 0 }); renderDailyCheckinSection(); }; window.removeCheckinDay = (index) => { if(confirm('Are you sure?')) { appConfig.dailyCheckinRewards.splice(index, 1); appConfig.dailyCheckinRewards.forEach((item, i) => item.day = i + 1); renderDailyCheckinSection(); }};
+        function renderTasksSection() { renderSection('tasks-section', appConfig.tasks || [], { toggleLabel: 'Enable Tasks Feature', enabledId: 'tasksEnabled', enabledFlag: 'tasksEnabled', listContainerId: 'tasks-list', itemRenderer: (item, index) => `<div class="task-setting"><input type="text" data-type="taskTitle" data-index="${index}" value="${item.title}" placeholder="Task Title"><input type="text" data-type="taskLink" data-index="${index}" value="${item.link}" placeholder="Task Link"><input type="number" step="0.01" data-type="taskReward" data-index="${index}" value="${item.reward}" placeholder="Reward"><label class="switch"><input type="checkbox" data-type="taskItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label><button type="button" class="btn-remove" onclick="removeTask(${index})">&times;</button></div>`, addFunction: 'window.addTask()', addButtonLabel: 'Add Task' }); }
+        window.addTask = () => { if (!appConfig.tasks) appConfig.tasks = []; appConfig.tasks.push({ id: Date.now(), title: '', link: '', reward: 0, enabled: true }); renderTasksSection(); }; window.removeTask = (index) => { if(confirm('Are you sure?')) { appConfig.tasks.splice(index, 1); renderTasksSection(); }};
+        function renderUserTiersSection() { renderSection('user-tiers-section', appConfig.userTiers || [], { toggleLabel: 'Enable User Tiers Feature', enabledId: 'userTiersEnabled', enabledFlag: 'userTiersEnabled', listContainerId: 'user-tiers-list', itemRenderer: (item, index) => `<div class="tier-setting"><input type="text" data-type="tierName" data-index="${index}" value="${item.name}" placeholder="Tier Name"><input type="number" data-type="tierRequiredPoints" data-index="${index}" value="${item.requiredPoints}" placeholder="Required Points"><input type="number" data-type="tierBonusPercent" data-index="${index}" value="${item.bonusPercent}" placeholder="Bonus %"><label class="switch"><input type="checkbox" data-type="tierItemEnabled" data-index="${index}" checked disabled><span class="slider"></span></label><button type="button" class="btn-remove" onclick="removeUserTier(${index})">&times;</button></div>`, addFunction: 'window.addUserTier()', addButtonLabel: 'Add Tier' }); }
+        window.addUserTier = () => { if (!appConfig.userTiers) appConfig.userTiers = []; appConfig.userTiers.push({ name: '', requiredPoints: 0, bonusPercent: 0 }); renderUserTiersSection(); }; window.removeUserTier = (index) => { if(confirm('Are you sure?')) { appConfig.userTiers.splice(index, 1); renderUserTiersSection(); }};
+        function renderWithdrawalMethodsSection() { renderSection('withdrawal-methods-section', appConfig.withdrawalMethods || [], { toggleLabel: 'Enable Withdrawal Methods', enabledId: 'withdrawalMethodsEnabled', enabledFlag: 'withdrawalMethodsEnabled', listContainerId: 'withdrawal-methods-list', itemRenderer: (item, index) => `<div class="method-setting"><input type="text" data-type="methodName" data-index="${index}" value="${item.name}" placeholder="Method Name"><input type="text" data-type="methodBnName" data-index="${index}" value="${item.bn_name}" placeholder="Bangla Name"><input type="text" data-type="methodLogo" data-index="${index}" value="${item.logo}" placeholder="Logo URL"><label class="switch"><input type="checkbox" data-type="methodItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label><button type="button" class="btn-remove" onclick="removeMethod(${index})">&times;</button></div>`, addFunction: 'window.addMethod()', addButtonLabel: 'Add Method' }); }
+        window.addMethod = () => { if (!appConfig.withdrawalMethods) appConfig.withdrawalMethods = []; appConfig.withdrawalMethods.push({ name: '', bn_name: '', logo: '', enabled: true }); renderWithdrawalMethodsSection(); }; window.removeMethod = (index) => { if(confirm('Are you sure?')) { appConfig.withdrawalMethods.splice(index, 1); renderWithdrawalMethodsSection(); }};
         
-        function renderTasksSection() {
-            renderSection('tasks-section', appConfig.tasks || [], {
-                toggleLabel: 'Enable Tasks Feature',
-                enabledId: 'tasksEnabled',
-                enabledFlag: 'tasksEnabled',
-                listContainerId: 'tasks-list',
-                itemRenderer: (item, index) => `
-                    <div class="task-setting">
-                        <input type="text" data-type="taskTitle" data-index="${index}" value="${item.title}" placeholder="Task Title">
-                        <input type="text" data-type="taskLink" data-index="${index}" value="${item.link}" placeholder="Task Link">
-                        <input type="number" step="0.01" data-type="taskReward" data-index="${index}" value="${item.reward}" placeholder="Reward">
-                        <label class="switch"><input type="checkbox" data-type="taskItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label>
-                        <button type="button" class="btn-remove" onclick="removeTask(${index})">&times;</button>
-                    </div>`,
-                addFunction: 'window.addTask()',
-                addButtonLabel: 'Add Task'
-            });
-        }
-        window.addTask = () => { if (!appConfig.tasks) appConfig.tasks = []; appConfig.tasks.push({ id: Date.now(), title: '', link: '', reward: 0, enabled: true }); renderTasksSection(); };
-        window.removeTask = (index) => { if(confirm('Are you sure?')) { appConfig.tasks.splice(index, 1); renderTasksSection(); }};
-        
-        function renderUserTiersSection() {
-            renderSection('user-tiers-section', appConfig.userTiers || [], {
-                toggleLabel: 'Enable User Tiers Feature',
-                enabledId: 'userTiersEnabled',
-                enabledFlag: 'userTiersEnabled',
-                listContainerId: 'user-tiers-list',
-                itemRenderer: (item, index) => `
-                    <div class="tier-setting">
-                        <input type="text" data-type="tierName" data-index="${index}" value="${item.name}" placeholder="Tier Name (e.g., Silver)">
-                        <input type="number" data-type="tierRequiredPoints" data-index="${index}" value="${item.requiredPoints}" placeholder="Required Points">
-                        <input type="number" data-type="tierBonusPercent" data-index="${index}" value="${item.bonusPercent}" placeholder="Bonus %">
-                        <label class="switch"><input type="checkbox" data-type="tierItemEnabled" data-index="${index}" checked disabled><span class="slider"></span></label>
-                        <button type="button" class="btn-remove" onclick="removeUserTier(${index})">&times;</button>
-                    </div>`,
-                addFunction: 'window.addUserTier()',
-                addButtonLabel: 'Add Tier'
-            });
-        }
-        window.addUserTier = () => { if (!appConfig.userTiers) appConfig.userTiers = []; appConfig.userTiers.push({ name: '', requiredPoints: 0, bonusPercent: 0 }); renderUserTiersSection(); };
-        window.removeUserTier = (index) => { if(confirm('Are you sure?')) { appConfig.userTiers.splice(index, 1); renderUserTiersSection(); }};
-
-        function renderWithdrawalMethodsSection() {
-            renderSection('withdrawal-methods-section', appConfig.withdrawalMethods || [], {
-                toggleLabel: 'Enable Withdrawal Methods',
-                enabledId: 'withdrawalMethodsEnabled',
-                enabledFlag: 'withdrawalMethodsEnabled',
-                listContainerId: 'withdrawal-methods-list',
-                itemRenderer: (item, index) => `
-                    <div class="method-setting">
-                        <input type="text" data-type="methodName" data-index="${index}" value="${item.name}" placeholder="Method Name">
-                        <input type="text" data-type="methodBnName" data-index="${index}" value="${item.bn_name}" placeholder="Bangla Name">
-                        <input type="text" data-type="methodLogo" data-index="${index}" value="${item.logo}" placeholder="Logo URL">
-                        <label class="switch"><input type="checkbox" data-type="methodItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label>
-                        <button type="button" class="btn-remove" onclick="removeMethod(${index})">&times;</button>
-                    </div>`,
-                addFunction: 'window.addMethod()',
-                addButtonLabel: 'Add Method'
-            });
-        }
-        window.addMethod = () => { if (!appConfig.withdrawalMethods) appConfig.withdrawalMethods = []; appConfig.withdrawalMethods.push({ name: '', bn_name: '', logo: '', enabled: true }); renderWithdrawalMethodsSection(); };
-        window.removeMethod = (index) => { if(confirm('Are you sure?')) { appConfig.withdrawalMethods.splice(index, 1); renderWithdrawalMethodsSection(); }};
-        
-        // ======================================================================
-        // ============== নতুন যুক্ত ফাংশন: Promo Code Management শুরু ============
-        // ======================================================================
         function renderPromoCodes(codes) {
-            const tbody = document.getElementById('promo-codes-table-body');
-            const codeEntries = Object.entries(codes);
-
-            if (codeEntries.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5">No promo codes created yet.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = codeEntries.map(([code, data]) => {
-                const usage = `${data.timesUsed || 0} / ${data.usageLimit}`;
-                const isActive = (data.timesUsed || 0) < data.usageLimit;
-                return `
-                    <tr>
-                        <td data-label="Code"><strong>${code}</strong></td>
-                        <td data-label="Reward">${data.reward}</td>
-                        <td data-label="Usage">${usage}</td>
-                        <td data-label="Status">
-                            <span class="status-badge ${isActive ? 'status-approved' : 'status-blocked'}">
-                                ${isActive ? 'Active' : 'Expired'}
-                            </span>
-                        </td>
-                        <td data-label="Actions">
-                            <button class="action-btn btn-reject" onclick="window.deletePromoCode('${code}')">Delete</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            const tbody = document.getElementById('promo-codes-table-body'); const codeEntries = Object.entries(codes);
+            tbody.innerHTML = codeEntries.length === 0 ? `<tr><td colspan="5">No promo codes created.</td></tr>` : codeEntries.map(([code, data]) => { const usage = `${data.timesUsed || 0} / ${data.usageLimit}`; const isActive = (data.timesUsed || 0) < data.usageLimit; return `<tr><td data-label="Code"><strong>${code}</strong></td><td data-label="Reward">${data.reward}</td><td data-label="Usage">${usage}</td><td data-label="Status"><span class="status-badge ${isActive ? 'status-approved' : 'status-blocked'}">${isActive ? 'Active' : 'Expired'}</span></td><td data-label="Actions"><button class="action-btn btn-reject" onclick="window.deletePromoCode('${code}')">Delete</button></td></tr>`; }).join('');
         }
-
         window.createPromoCode = async () => {
-            const codeInput = document.getElementById('promo-code-name');
-            const rewardInput = document.getElementById('promo-code-reward');
-            const limitInput = document.getElementById('promo-code-limit');
-
-            const code = codeInput.value.trim().toUpperCase();
-            const reward = parseInt(rewardInput.value, 10);
-            const usageLimit = parseInt(limitInput.value, 10);
-
-            if (!code || isNaN(reward) || reward <= 0 || isNaN(usageLimit) || usageLimit <= 0) {
-                return alert("Please fill all fields with valid data.");
-            }
-            if (/\s/.test(code)) {
-                return alert("Promo code cannot contain spaces.");
-            }
-
-            const codeRef = ref(database, `app/promo_codes/${code}`);
-            const snapshot = await get(codeRef);
-            if (snapshot.exists()) {
-                return alert("This promo code already exists.");
-            }
-
-            try {
-                await set(codeRef, {
-                    reward: reward,
-                    usageLimit: usageLimit,
-                    timesUsed: 0,
-                    users: {}
-                });
-                alert(`Promo code "${code}" created successfully!`);
-                codeInput.value = '';
-                rewardInput.value = '';
-                limitInput.value = '';
-            } catch (error) {
-                console.error("Error creating promo code:", error);
-                alert("Failed to create promo code.");
-            }
+            const codeInput = document.getElementById('promo-code-name'), rewardInput = document.getElementById('promo-code-reward'), limitInput = document.getElementById('promo-code-limit');
+            const code = codeInput.value.trim().toUpperCase(), reward = parseInt(rewardInput.value, 10), usageLimit = parseInt(limitInput.value, 10);
+            if (!code || isNaN(reward) || reward <= 0 || isNaN(usageLimit) || usageLimit <= 0) return alert("Please fill all fields with valid data.");
+            if (/\s/.test(code)) return alert("Promo code cannot contain spaces.");
+            const codeRef = ref(database, `app/promo_codes/${code}`); const snapshot = await get(codeRef); if (snapshot.exists()) return alert("This promo code already exists.");
+            try { await set(codeRef, { reward: reward, usageLimit: usageLimit, timesUsed: 0, users: {} }); alert(`Promo code "${code}" created!`); codeInput.value = ''; rewardInput.value = ''; limitInput.value = ''; } catch (error) { console.error("Error creating promo code:", error); alert("Failed to create promo code."); }
         };
+        window.deletePromoCode = async (code) => { if (confirm(`Are you sure you want to delete "${code}"?`)) { try { await remove(ref(database, `app/promo_codes/${code}`)); alert(`Promo code "${code}" deleted.`); } catch (error) { console.error("Error deleting promo code:", error); alert("Failed to delete promo code."); } } };
         
-        window.deletePromoCode = async (code) => {
-            if (!confirm(`Are you sure you want to delete the promo code "${code}"? This action cannot be undone.`)) {
-                return;
-            }
-            try {
-                const codeRef = ref(database, `app/promo_codes/${code}`);
-                await remove(codeRef);
-                alert(`Promo code "${code}" has been deleted.`);
-            } catch (error) {
-                console.error("Error deleting promo code:", error);
-                alert("Failed to delete promo code.");
-            }
-        };
-        // ======================================================================
-        // =============== নতুন যুক্ত ফাংশন: Promo Code Management শেষ ============
-        // ======================================================================
-        
-        // ======================================================================
-        // =========== নতুন যুক্ত ফাংশন: User Segmentation শুরু ================
-        // ======================================================================
-        function handleSegmentChange() {
-            const segment = document.getElementById('target-segment').value;
-            document.getElementById('tier-select-group').style.display = segment === 'tier' ? 'block' : 'none';
-            document.getElementById('inactive-days-group').style.display = segment === 'inactive' ? 'block' : 'none';
-        }
-
-        function handleActionChange() {
-            const action = document.getElementById('action-type').value;
-            document.getElementById('action-notification-group').style.display = action === 'notification' ? 'block' : 'none';
-            document.getElementById('action-bonus-group').style.display = action === 'bonus' ? 'block' : 'none';
-        }
-
+        function handleSegmentChange() { const segment = document.getElementById('target-segment').value; document.getElementById('tier-select-group').style.display = segment === 'tier' ? 'block' : 'none'; document.getElementById('inactive-days-group').style.display = segment === 'inactive' ? 'block' : 'none'; }
+        function handleActionChange() { const action = document.getElementById('action-type').value; document.getElementById('action-notification-group').style.display = action === 'notification' ? 'block' : 'none'; document.getElementById('action-bonus-group').style.display = action === 'bonus' ? 'block' : 'none'; }
         window.executeTargetedAction = async () => {
-            const segment = document.getElementById('target-segment').value;
-            const action = document.getElementById('action-type').value;
-
-            // 1. Get Target Users
-            let targetUserIds = [];
-            const activeUsers = Object.entries(allUsers).filter(([, user]) => !user.isBlocked);
-
-            if (segment === 'all') {
-                targetUserIds = activeUsers.map(([id]) => id);
-            } else if (segment === 'tier') {
-                const targetTierName = document.getElementById('target-tier').value;
-                const tiersSorted = [...(appConfig.userTiers || [])].sort((a,b) => a.requiredPoints - b.requiredPoints);
-                
-                activeUsers.forEach(([id, user]) => {
-                    let currentUserTier = tiersSorted[0];
-                    for (const tier of tiersSorted) {
-                        if ((user.totalEarnings || 0) >= tier.requiredPoints) {
-                            currentUserTier = tier;
-                        } else { break; }
-                    }
-                    if (currentUserTier && currentUserTier.name === targetTierName) {
-                        targetUserIds.push(id);
-                    }
-                });
-
-            } else if (segment === 'inactive') {
-                const days = parseInt(document.getElementById('inactive-days').value, 10);
-                if (isNaN(days) || days <= 0) return alert("Please enter a valid number of days.");
-                
-                const threshold = Date.now() - (days * 24 * 60 * 60 * 1000);
-                activeUsers.forEach(([id, user]) => {
-                    const lastLoginTimestamp = user.profile?.lastLogin?.timestamp;
-                    if (!lastLoginTimestamp || new Date(lastLoginTimestamp).getTime() < threshold) {
-                        targetUserIds.push(id);
-                    }
-                });
-            }
-
-            if (targetUserIds.length === 0) {
-                return alert("No users found for the selected segment.");
-            }
-            
-            if (!confirm(`This action will affect ${targetUserIds.length} user(s). Are you sure you want to proceed?`)) {
-                return;
-            }
-
-            // 2. Perform Action
+            const segment = document.getElementById('target-segment').value, action = document.getElementById('action-type').value; let targetUserIds = []; const activeUsers = Object.entries(allUsers).filter(([, user]) => !user.isBlocked);
+            if (segment === 'all') { targetUserIds = activeUsers.map(([id]) => id); }
+            else if (segment === 'tier') { const targetTierName = document.getElementById('target-tier').value; const tiersSorted = [...(appConfig.userTiers || [])].sort((a,b) => a.requiredPoints - b.requiredPoints); activeUsers.forEach(([id, user]) => { let currentUserTier = tiersSorted[0]; for (const tier of tiersSorted) { if ((user.totalEarnings || 0) >= tier.requiredPoints) currentUserTier = tier; else break; } if (currentUserTier && currentUserTier.name === targetTierName) targetUserIds.push(id); }); }
+            else if (segment === 'inactive') { const days = parseInt(document.getElementById('inactive-days').value, 10); if (isNaN(days) || days <= 0) return alert("Invalid number of days."); const threshold = Date.now() - (days * 24 * 60 * 60 * 1000); activeUsers.forEach(([id, user]) => { const lastLoginTimestamp = user.profile?.lastLogin?.timestamp; if (!lastLoginTimestamp || new Date(lastLoginTimestamp).getTime() < threshold) targetUserIds.push(id); }); }
+            if (targetUserIds.length === 0) return alert("No users found for this segment.");
+            if (!confirm(`This action will affect ${targetUserIds.length} user(s). Proceed?`)) return;
             let successCount = 0;
-            if (action === 'notification') {
-                const message = document.getElementById('action-notification-message').value.trim();
-                if (!message) return alert("Notification message cannot be empty.");
-
-                for (const userId of targetUserIds) {
-                    const notificationsRef = ref(database, `app/users/${userId}/notifications`);
-                    const newNotificationRef = push(notificationsRef);
-                    await set(newNotificationRef, {
-                        message: message,
-                        date: new Date().toISOString(),
-                        read: false
-                    });
-                    successCount++;
-                }
-            } else if (action === 'bonus') {
-                const points = parseInt(document.getElementById('action-bonus-points').value, 10);
-                const reason = document.getElementById('action-bonus-reason').value.trim() || 'Bonus from Admin';
-                if (isNaN(points) || points <= 0) return alert("Please enter a valid bonus amount.");
-
-                for (const userId of targetUserIds) {
-                    const userRef = ref(database, `app/users/${userId}`);
-                    const userSnapshot = await get(userRef);
-                    if (userSnapshot.exists()) {
-                        const currentBalance = userSnapshot.val().balance || 0;
-                        const updates = {
-                            balance: currentBalance + points
-                        };
-                        const newHistoryRef = push(ref(database, `app/users/${userId}/transactionHistory`));
-                        updates[`transactionHistory/${newHistoryRef.key}`] = {
-                            type: 'manual', amount: points, title: reason, date: new Date().toISOString()
-                        };
-                        await update(userRef, updates);
-                        successCount++;
-                    }
-                }
-            }
-            alert(`Action successfully executed for ${successCount} user(s).`);
+            if (action === 'notification') { const message = document.getElementById('action-notification-message').value.trim(); if (!message) return alert("Message cannot be empty."); for (const userId of targetUserIds) { await set(push(ref(database, `app/users/${userId}/notifications`)), { message: message, date: new Date().toISOString(), read: false }); successCount++; } }
+            else if (action === 'bonus') { const points = parseInt(document.getElementById('action-bonus-points').value, 10); const reason = document.getElementById('action-bonus-reason').value.trim() || 'Bonus from Admin'; if (isNaN(points) || points <= 0) return alert("Invalid bonus amount."); for (const userId of targetUserIds) { const userRef = ref(database, `app/users/${userId}`); const userSnapshot = await get(userRef); if (userSnapshot.exists()) { const currentBalance = userSnapshot.val().balance || 0; const updates = { balance: currentBalance + points }; const newHistoryRef = push(ref(database, `app/users/${userId}/transactionHistory`)); updates[`transactionHistory/${newHistoryRef.key}`] = { type: 'manual', amount: points, title: reason, date: new Date().toISOString() }; await update(userRef, updates); successCount++; } } }
+            alert(`Action executed for ${successCount} user(s).`);
         };
-        // ======================================================================
-        // ============ নতুন যুক্ত ফাংশন: User Segmentation শেষ =================
-        // ======================================================================
+        
+        window.applyBulkAction = async () => {
+            const selectedAction = document.getElementById('bulk-action-select').value;
+            const selectedUsers = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(cb => cb.dataset.id);
+            if (!selectedAction || selectedUsers.length === 0) return alert("Please select an action and at least one user.");
+            if (!confirm(`Are you sure you want to perform '${selectedAction}' on ${selectedUsers.length} users?`)) return;
+            let successCount = 0;
+            if (selectedAction === 'block' || selectedAction === 'unblock') {
+                const isBlocked = selectedAction === 'block';
+                for (const userId of selectedUsers) { await update(ref(database, `app/users/${userId}`), { isBlocked: isBlocked }); successCount++; }
+            } else if (selectedAction === 'bonus') {
+                const points = parseInt(prompt("Enter points to give (positive for bonus, negative to deduct):"), 10);
+                if (isNaN(points) || points === 0) return alert("Invalid amount.");
+                const reason = prompt("Enter reason for this bonus:", "Bulk bonus from admin");
+                for (const userId of selectedUsers) { const userRef = ref(database, `app/users/${userId}`); const snapshot = await get(userRef); if (snapshot.exists()) { const currentBalance = snapshot.val().balance || 0; const updates = { balance: currentBalance + points }; const historyRef = push(ref(database, `app/users/${userId}/transactionHistory`)); updates[`transactionHistory/${historyRef.key}`] = { type: 'manual', amount: points, title: reason, date: new Date().toISOString() }; await update(userRef, updates); successCount++; } }
+            }
+            alert(`${successCount} users have been updated.`);
+        };
+        window.showFraudulentUsers = () => {
+            const threshold = parseInt(prompt("Show users who watched more than X ads today:", "500"), 10);
+            if (isNaN(threshold)) return;
+            const tbody = document.getElementById('users-table-body');
+            const suspiciousUsers = Object.entries(allUsers).filter(([id, user]) => (user.dailyStats?.adsWatched || 0) > threshold);
+            tbody.innerHTML = suspiciousUsers.length === 0 ? `<tr><td colspan="6">No users found over ${threshold} ads.</td></tr>` : suspiciousUsers.map(([id, user]) => `<tr>... (user row HTML) ...</tr>`).join('');
+            alert(`Showing ${suspiciousUsers.length} users who watched more than ${threshold} ads today.`);
+        };
+        function renderPointPackagesSection() { renderSection('point-packages-section', appConfig.pointPackages || [], { toggleLabel: 'Enable Point Store Feature', enabledId: 'storeEnabled', enabledFlag: 'storeEnabled', listContainerId: 'point-packages-list', itemRenderer: (item, index) => `<div class="package-setting"><input type="text" data-type="packagePrice" data-index="${index}" value="${item.price}" placeholder="Price (e.g., 100)"><input type="text" data-type="packageCurrency" data-index="${index}" value="${item.currency}" placeholder="Currency (BDT)"><input type="number" data-type="packagePoints" data-index="${index}" value="${item.points}" placeholder="Points"><button type="button" class="btn-remove" onclick="removePointPackage(${index})">&times;</button></div>`, addFunction: 'window.addPointPackage()', addButtonLabel: 'Add Package' }); }
+        window.addPointPackage = () => { if (!appConfig.pointPackages) appConfig.pointPackages = []; appConfig.pointPackages.push({ price: 0, currency: 'BDT', points: 0, enabled: true }); renderPointPackagesSection(); };
+        window.removePointPackage = (index) => { if (confirm('Are you sure?')) { appConfig.pointPackages.splice(index, 1); renderPointPackagesSection(); } };
+        function renderTextManagementSection() {
+            const container = document.getElementById('text-management-section'); const strings = appConfig.textStrings || {};
+            container.innerHTML = `
+                <div class="text-setting"><label>Nav: Home</label><input type="text" id="text-navHome" value="${strings.navHome || ''}"></div>
+                <div class="text-setting"><label>Nav: Earn</label><input type="text" id="text-navEarn" value="${strings.navEarn || ''}"></div>
+                <div class="text-setting"><label>Nav: Refer</label><input type="text" id="text-navRefer" value="${strings.navRefer || ''}"></div>
+                <div class="text-setting"><label>Nav: Profile</label><input type="text" id="text-navProfile" value="${strings.navProfile || ''}"></div>
+                <div class="text-setting"><label>Refer Page Title</label><input type="text" id="text-referTitle" value="${strings.referTitle || ''}"></div>
+                <div class="text-setting"><label>Refer Link Title</label><input type="text" id="text-referLinkTitle" value="${strings.referLinkTitle || ''}"></div>
+            `;
+        }
 
         async function saveAllSettings(e) {
             e.preventDefault();
@@ -1522,106 +979,42 @@
             appConfig.hourlyAdsLimit = parseInt(document.getElementById('hourlyAdsLimit').value);
             appConfig.minReferralsForWithdrawal = parseInt(document.getElementById('minReferralsForWithdrawal').value);
             appConfig.maintenanceMode = document.getElementById('maintenanceMode').checked;
-
-            // ============ নতুন যুক্ত সেটিংস সেভ করা শুরু ============
             appConfig.welcomeBonusEnabled = document.getElementById('welcomeBonusEnabled').checked;
             appConfig.welcomeBonus = parseInt(document.getElementById('welcomeBonus').value, 10);
-            appConfig.dynamicText = {
-                welcomeMessageTemplate: document.getElementById('dynamicWelcomeMessage').value,
-                shoppingButtonText: document.getElementById('dynamicShoppingButtonText').value,
-                shoppingButtonLink: document.getElementById('dynamicShoppingButtonLink').value
-            };
-            // ============ নতুন যুক্ত সেটিংস সেভ করা শেষ ============
-
-            appConfig.adNetworksEnabled = document.getElementById('adNetworksEnabled').checked;
-            appConfig.adNetworks = appConfig.adNetworks || [];
-            appConfig.adNetworks.forEach((item, index) => {
-                item.name = document.querySelector(`[data-type="adNetworkName"][data-index="${index}"]`).value;
-                item.zoneId = document.querySelector(`[data-type="adNetworkZoneId"][data-index="${index}"]`).value;
-                item.enabled = document.querySelector(`[data-type="adNetworkItemEnabled"][data-index="${index}"]`).checked;
-            });
-
-            appConfig.dailyCheckinEnabled = document.getElementById('dailyCheckinEnabled').checked;
-            appConfig.dailyCheckinRewards = appConfig.dailyCheckinRewards || [];
-            appConfig.dailyCheckinRewards.forEach((item, index) => {
-                item.reward = parseFloat(document.querySelector(`[data-type="checkinReward"][data-index="${index}"]`).value);
-            });
-
-            appConfig.tasksEnabled = document.getElementById('tasksEnabled').checked;
-            appConfig.tasks = appConfig.tasks || [];
-            appConfig.tasks.forEach((item, index) => {
-                item.title = document.querySelector(`[data-type="taskTitle"][data-index="${index}"]`).value;
-                item.link = document.querySelector(`[data-type="taskLink"][data-index="${index}"]`).value;
-                item.reward = parseFloat(document.querySelector(`[data-type="taskReward"][data-index="${index}"]`).value);
-                item.enabled = document.querySelector(`[data-type="taskItemEnabled"][data-index="${index}"]`).checked;
-            });
+            appConfig.dynamicText = { welcomeMessageTemplate: document.getElementById('dynamicWelcomeMessage').value, shoppingButtonText: document.getElementById('dynamicShoppingButtonText').value, shoppingButtonLink: document.getElementById('dynamicShoppingButtonLink').value };
             
-            appConfig.userTiersEnabled = document.getElementById('userTiersEnabled').checked;
-            appConfig.userTiers = appConfig.userTiers || [];
-            const tempTiers = [];
-            document.querySelectorAll('.tier-setting').forEach((el, index) => {
-                const tier = {
-                    name: el.querySelector(`[data-type="tierName"]`).value,
-                    requiredPoints: parseInt(el.querySelector(`[data-type="tierRequiredPoints"]`).value),
-                    bonusPercent: parseInt(el.querySelector(`[data-type="tierBonusPercent"]`).value)
-                };
-                tempTiers.push(tier);
-            });
-            appConfig.userTiers = tempTiers.sort((a,b) => a.requiredPoints - b.requiredPoints);
+            appConfig.theme = { primaryColor: document.getElementById('themeColor').value };
+            appConfig.withdrawalFeePercent = parseFloat(document.getElementById('withdrawalFeePercent').value) || 0;
+            appConfig.storeEnabled = document.getElementById('storeEnabled').checked;
+            appConfig.pointPackages = Array.from(document.querySelectorAll('.package-setting')).map((el, index) => ({ price: parseFloat(el.querySelector('[data-type="packagePrice"]').value), currency: el.querySelector('[data-type="packageCurrency"]').value, points: parseInt(el.querySelector('[data-type="packagePoints"]').value), enabled: true }));
+            appConfig.textStrings = { navHome: document.getElementById('text-navHome').value, navEarn: document.getElementById('text-navEarn').value, navRefer: document.getElementById('text-navRefer').value, navProfile: document.getElementById('text-navProfile').value, referTitle: document.getElementById('text-referTitle').value, referLinkTitle: document.getElementById('text-referLinkTitle').value };
 
-            appConfig.withdrawalMethodsEnabled = document.getElementById('withdrawalMethodsEnabled').checked;
-            appConfig.withdrawalMethods = appConfig.withdrawalMethods || [];
-            appConfig.withdrawalMethods.forEach((item, index) => {
-                item.name = document.querySelector(`[data-type="methodName"][data-index="${index}"]`).value;
-                item.bn_name = document.querySelector(`[data-type="methodBnName"][data-index="${index}"]`).value;
-                item.logo = document.querySelector(`[data-type="methodLogo"][data-index="${index}"]`).value;
-                item.enabled = document.querySelector(`[data-type="methodItemEnabled"][data-index="${index}"]`).checked;
-            });
+            appConfig.adNetworksEnabled = document.getElementById('adNetworksEnabled').checked; appConfig.adNetworks = (appConfig.adNetworks || []).map((item, index) => ({ ...item, name: document.querySelector(`[data-type="adNetworkName"][data-index="${index}"]`).value, zoneId: document.querySelector(`[data-type="adNetworkZoneId"][data-index="${index}"]`).value, enabled: document.querySelector(`[data-type="adNetworkItemEnabled"][data-index="${index}"]`).checked }));
+            appConfig.dailyCheckinEnabled = document.getElementById('dailyCheckinEnabled').checked; appConfig.dailyCheckinRewards = (appConfig.dailyCheckinRewards || []).map((item, index) => ({ ...item, reward: parseFloat(document.querySelector(`[data-type="checkinReward"][data-index="${index}"]`).value) }));
+            appConfig.tasksEnabled = document.getElementById('tasksEnabled').checked; appConfig.tasks = (appConfig.tasks || []).map((item, index) => ({ ...item, title: document.querySelector(`[data-type="taskTitle"][data-index="${index}"]`).value, link: document.querySelector(`[data-type="taskLink"][data-index="${index}"]`).value, reward: parseFloat(document.querySelector(`[data-type="taskReward"][data-index="${index}"]`).value), enabled: document.querySelector(`[data-type="taskItemEnabled"][data-index="${index}"]`).checked }));
+            appConfig.userTiersEnabled = document.getElementById('userTiersEnabled').checked; const tempTiers = []; document.querySelectorAll('.tier-setting').forEach((el, index) => { tempTiers.push({ name: el.querySelector(`[data-type="tierName"]`).value, requiredPoints: parseInt(el.querySelector(`[data-type="tierRequiredPoints"]`).value), bonusPercent: parseInt(el.querySelector(`[data-type="tierBonusPercent"]`).value) }); }); appConfig.userTiers = tempTiers.sort((a,b) => a.requiredPoints - b.requiredPoints);
+            appConfig.withdrawalMethodsEnabled = document.getElementById('withdrawalMethodsEnabled').checked; appConfig.withdrawalMethods = (appConfig.withdrawalMethods || []).map((item, index) => ({ ...item, name: document.querySelector(`[data-type="methodName"][data-index="${index}"]`).value, bn_name: document.querySelector(`[data-type="methodBnName"][data-index="${index}"]`).value, logo: document.querySelector(`[data-type="methodLogo"][data-index="${index}"]`).value, enabled: document.querySelector(`[data-type="methodItemEnabled"][data-index="${index}"]`).checked }));
 
             await saveConfigToFirebase();
         }
 
         function toggleMenu() { sideNav.classList.toggle('open'); overlay.classList.toggle('active'); }
-        function handleNavClick(e) {
-            e.preventDefault();
-            navigateToPage(this.getAttribute('href').substring(1));
-            if (window.innerWidth <= 768) toggleMenu();
-        }
-        window.navigateToPage = function(targetId) {
-            pages.forEach(p => p.classList.remove('active'));
-            document.getElementById(targetId).classList.add('active');
-            navLinks.forEach(l => {
-                l.classList.toggle('active', l.getAttribute('href') === `#${targetId}`);
-            });
-        }
+        function handleNavClick(e) { e.preventDefault(); navigateToPage(this.getAttribute('href').substring(1)); if (window.innerWidth <= 768) toggleMenu(); }
+        window.navigateToPage = function(targetId) { pages.forEach(p => p.classList.remove('active')); document.getElementById(targetId).classList.add('active'); navLinks.forEach(l => { l.classList.toggle('active', l.getAttribute('href') === `#${targetId}`); }); }
         function updateDashboardData() {
-            const currency = appConfig.currency || 'BDT';
-            const pointsPerCurrency = appConfig.pointsPerCurrency || 100;
-            const pendingWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'Pending');
-            const approvedWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'Approved');
+            const currency = appConfig.currency || 'BDT', pointsPerCurrency = appConfig.pointsPerCurrency || 100;
+            const pendingWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'Pending'), approvedWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'Approved');
             const totalApprovedAmount = approvedWithdrawals.reduce((sum, w) => sum + (w.amount || 0), 0);
-            
-            let totalEarningsPoints = 0; let totalReferrals = 0; let totalAdsWatched = 0; let totalCommissionPoints = 0;
-
-            Object.values(allUsers).forEach(user => {
-                totalEarningsPoints += user.totalEarnings || 0;
-                totalReferrals += user.referralsList ? Object.keys(user.referralsList).length : 0;
-                totalAdsWatched += user.totalAdsWatched || 0;
-                totalCommissionPoints += user.totalReferralCommission || 0;
-            });
-            const totalEarningsBdt = totalEarningsPoints / pointsPerCurrency;
-            const totalCommissionBdt = totalCommissionPoints / pointsPerCurrency;
-
+            let totalEarningsPoints = 0, totalReferrals = 0, totalAdsWatched = 0, totalCommissionPoints = 0;
+            Object.values(allUsers).forEach(user => { totalEarningsPoints += user.totalEarnings || 0; totalReferrals += user.referralsList ? Object.keys(user.referralsList).length : 0; totalAdsWatched += user.totalAdsWatched || 0; totalCommissionPoints += user.totalReferralCommission || 0; });
             document.getElementById('db-total-users').textContent = Object.keys(allUsers).length;
             document.getElementById('db-ads-watched').textContent = totalAdsWatched;
-            document.getElementById('db-total-earnings').textContent = `${currency} ${totalEarningsBdt.toFixed(2)}`;
-            document.getElementById('db-total-commission').textContent = `${currency} ${totalCommissionBdt.toFixed(2)}`;
+            document.getElementById('db-total-earnings').textContent = `${currency} ${(totalEarningsPoints / pointsPerCurrency).toFixed(2)}`;
+            document.getElementById('db-total-commission').textContent = `${currency} ${(totalCommissionPoints / pointsPerCurrency).toFixed(2)}`;
             document.getElementById('db-total-referrals').textContent = totalReferrals;
             document.getElementById('db-req-withdraw').textContent = pendingWithdrawals.length;
             document.getElementById('db-approved-withdraw').textContent = `${currency} ${totalApprovedAmount.toFixed(2)}`;
-            if (appConfig.withdrawalMethods) {
-                document.getElementById('db-withdraw-methods').textContent = appConfig.withdrawalMethods.length;
-            }
+            if (appConfig.withdrawalMethods) document.getElementById('db-withdraw-methods').textContent = appConfig.withdrawalMethods.length;
         }
 
         init();
@@ -1629,4 +1022,4 @@
 </script>
 
 </body>
-</html>
+</html>```

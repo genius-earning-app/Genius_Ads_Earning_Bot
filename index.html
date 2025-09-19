@@ -130,15 +130,19 @@
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.3s; }
     .modal-overlay.active { display: flex; }
-    .modal-content { background: var(--card-bg); padding: 25px; border-radius: 16px; width: 90%; max-width: 360px; text-align: left; animation: slideIn 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+    .modal-content { background: var(--card-bg); padding: 25px; border-radius: 16px; width: 90%; max-width: 360px; text-align: left; animation: slideIn 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; max-height: 80vh; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; }
+    .modal-header h3 { margin: 0; font-size: 20px; color: var(--text-color); }
+    .modal-header .action-button { margin-top: 0; padding: 8px 15px; font-size: 14px; }
+    .modal-body { overflow-y: auto; }
     @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .modal-content h3 { margin-top: 0; font-size: 20px; color: var(--text-color); text-align: center; margin-bottom: 20px; }
     #global-notification-modal .modal-content p { line-height: 1.6; color: var(--text-muted-color); text-align: center; }
     .modal-actions { display: flex; gap: 10px; margin-top: 25px;}
 
     .form-group { margin-bottom: 15px; }
     .form-group label { display: block; font-weight: 600; color: var(--text-muted-color); margin-bottom: 8px; font-size: 14px; }
-    .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; font-size: 15px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; font-size: 15px; }
+    .form-group textarea { resize: vertical; min-height: 100px; }
     
     .payment-method-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .payment-method-selector input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
@@ -166,11 +170,11 @@
     .history-item.earning .amount, .history-item.referral .amount, .history-item.login .amount, .history-item.task .amount { color: var(--status-success); }
     .history-item.withdrawal .amount { color: var(--status-failed); }
     .history-item .status { font-weight: 600; padding: 3px 8px; border-radius: 12px; font-size: 11px; }
-    .status-pending { background-color: rgba(255, 193, 7, 0.2); color: #856404; }
-    .status-approved { background-color: rgba(40, 167, 69, 0.2); color: var(--status-success); }
-    .status-rejected { background-color: rgba(220, 53, 69, 0.2); color: var(--status-failed); }
-    .no-history, .no-referrals { text-align: center; color: var(--text-muted-color); padding: 50px 20px; background: var(--card-bg); border-radius: 12px; }
-    .no-history i, .no-referrals i { font-size: 48px; margin-bottom: 15px; color: #ccc; }
+    .status-pending, .status-open { background-color: rgba(255, 193, 7, 0.2); color: #856404; }
+    .status-approved, .status-replied { background-color: rgba(40, 167, 69, 0.2); color: var(--status-success); }
+    .status-rejected, .status-closed { background-color: rgba(220, 53, 69, 0.2); color: var(--status-failed); }
+    .no-history, .no-referrals, .no-data { text-align: center; color: var(--text-muted-color); padding: 50px 20px; background: var(--card-bg); border-radius: 12px; }
+    .no-history i, .no-referrals i, .no-data i { font-size: 48px; margin-bottom: 15px; color: #ccc; }
 
     .timer-notification-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 9999999; animation: fadeIn 0.3s; }
     .timer-notification-content { color: white; font-size: 28px; font-weight: bold; padding: 25px 35px; background: rgba(0, 0, 0, 0.75); border-radius: 15px; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
@@ -243,6 +247,21 @@
     
     #announcement-banner { background-color: var(--primary-color); color: white; padding: 12px; text-align: center; font-size: 14px; position: relative; }
     #announcement-banner button { position: absolute; top: 5px; right: 10px; background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+
+    .ticket-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+    .ticket-list-item:hover { background-color: #f9f9f9; }
+    .ticket-list-item .info .subject { font-weight: 600; }
+    .ticket-list-item .info .date { font-size: 0.8rem; color: #777; }
+    .ticket-details-container { background-color: #f9f9f9; border-radius: 8px; padding: 15px; margin-bottom: 20px; word-break: break-word; }
+    .ticket-details-container p { margin: 0 0 10px; }
+    .ticket-details-container strong { color: var(--primary-color); }
+    .ticket-replies-list { max-height: 200px; overflow-y: auto; }
+    .ticket-reply-item { margin-bottom: 15px; padding: 10px; border-radius: 8px; }
+    .ticket-reply-item.user-reply { background-color: #e9ecef; }
+    .ticket-reply-item.admin-reply { background-color: #d1e7dd; }
+    .reply-meta { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #555; }
+    .reply-message { font-size: 0.95rem; white-space: pre-wrap; }
+
   </style>
 </head>
 <body>
@@ -297,6 +316,7 @@
                 <h3 id="refer-title">Refer & Earn Forever</h3>
                 <span class="badge" id="referral-commission-badge">...%</span>
             </div>
+            <p id="referral-limit-message" style="color: var(--status-failed); font-weight: bold; display: none;"></p>
             <p id="referral-description-p">Earn a commission from your friends' earnings for life! Follow these simple steps to start:</p>
             <ul class="steps-list">
                 <li class="step-item"><div class="icon"><i class="fa-solid fa-link"></i></div><div class="text"><h4>1. Copy Your Link</h4><p>Grab your unique referral link below.</p></div></li>
@@ -356,6 +376,7 @@
             <button class="profile-action-button" onclick="window.openWithdrawModal()"><i class="fa-solid fa-wallet"></i> <span>Request Withdrawal</span> <i class="fa-solid fa-chevron-right"></i></button>
             <button class="profile-action-button" onclick="window.showView('history-view')"><i class="fa-solid fa-history"></i> <span>Transaction History</span> <i class="fa-solid fa-chevron-right"></i></button>
             <button class="profile-action-button" onclick="window.redeemPromoCode()"><i class="fa-solid fa-gift" style="color: var(--status-task);"></i> <span>Redeem Promo Code</span> <i class="fa-solid fa-chevron-right"></i></button>
+            <button class="profile-action-button" onclick="window.openMyTicketsModal()"><i class="fa-solid fa-life-ring" style="color: var(--status-referral);"></i> <span>Support</span> <i class="fa-solid fa-chevron-right"></i></button>
         </div>
       </div>
     </main>
@@ -371,27 +392,66 @@
   
   <div class="modal-overlay" id="withdraw-modal">
     <div class="modal-content">
-        <h3>Request Withdrawal</h3>
-        <div class="form-group"><label>Payment Method</label><div class="payment-method-selector" id="payment-method-selector-container"><p>Loading...</p></div></div>
-        <div class="form-group"><label for="withdraw-number">Account Number</label><input type="tel" id="withdraw-number" placeholder="e.g., 01700000000"></div>
-        <div class="form-group"><label for="withdraw-amount">Amount (<span class="currency-symbol-modal">...</span>)</label><input type="number" id="withdraw-amount" placeholder="Enter amount"></div>
-        <div class="withdraw-summary" id="withdraw-summary" style="display: none;"></div>
-        <div class="modal-actions"><button class="action-button secondary-button" onclick="window.closeWithdrawModal()">Cancel</button><button class="action-button primary-button" onclick="window.requestWithdraw()">Confirm</button></div>
+        <div class="modal-header"><h3>Request Withdrawal</h3></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Payment Method</label><div class="payment-method-selector" id="payment-method-selector-container"><p>Loading...</p></div></div>
+            <div class="form-group"><label for="withdraw-number">Account Number</label><input type="tel" id="withdraw-number" placeholder="e.g., 01700000000"></div>
+            <div class="form-group"><label for="withdraw-amount">Amount (<span class="currency-symbol-modal">...</span>)</label><input type="number" id="withdraw-amount" placeholder="Enter amount"></div>
+            <div class="withdraw-summary" id="withdraw-summary" style="display: none;"></div>
+        </div>
+        <div class="modal-actions"><button class="action-button secondary-button" onclick="window.closeModal('withdraw-modal')">Cancel</button><button class="action-button primary-button" onclick="window.requestWithdraw()">Confirm</button></div>
     </div>
+  </div>
+
+  <div class="modal-overlay" id="support-modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>Contact Support</h3></div>
+        <div class="modal-body">
+            <div class="form-group"><label for="support-subject">Subject</label><input type="text" id="support-subject" placeholder="e.g., Problem with withdrawal"></div>
+            <div class="form-group"><label for="support-message">Message</label><textarea id="support-message" placeholder="Please describe your issue in detail..."></textarea></div>
+        </div>
+        <div class="modal-actions">
+            <button class="action-button secondary-button" onclick="window.closeModal('support-modal')">Cancel</button>
+            <button class="action-button primary-button" onclick="window.submitSupportTicket()">Submit Ticket</button>
+        </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="my-tickets-modal">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3>My Support Tickets</h3>
+              <button class="action-button primary-button" onclick="window.openSupportModal()">New Ticket</button>
+          </div>
+          <div class="modal-body" id="my-tickets-list"></div>
+      </div>
+  </div>
+
+  <div class="modal-overlay" id="ticket-details-modal">
+      <div class="modal-content">
+          <div class="modal-header"><h3 id="ticket-details-subject">Ticket Details</h3></div>
+          <div class="modal-body">
+              <div class="ticket-details-container" id="ticket-details-content"></div>
+              <div class="ticket-replies-list" id="ticket-replies-list"></div>
+          </div>
+          <div class="modal-actions">
+              <button class="action-button secondary-button" onclick="window.closeModal('ticket-details-modal')">Close</button>
+          </div>
+      </div>
   </div>
 
   <div class="timer-notification-overlay" id="timer-notification-overlay"><div class="timer-notification-content" id="timer-notification-content"></div></div>
   <div class="modal-overlay" id="global-notification-modal">
     <div class="modal-content">
-        <h3><i class="fa-solid fa-bell" style="color: var(--primary-color); margin-right: 10px;"></i>Admin Notice</h3>
-        <p id="global-notification-text">This is a notice from the admin.</p>
-        <div class="modal-actions" style="justify-content: center;"><button class="action-button primary-button" style="width: auto; padding: 10px 30px;" onclick="window.closeGlobalNotificationModal()">OK</button></div>
+        <div class="modal-header"><h3><i class="fa-solid fa-bell" style="color: var(--primary-color); margin-right: 10px;"></i>Admin Notice</h3></div>
+        <div class="modal-body"><p id="global-notification-text">This is a notice from the admin.</p></div>
+        <div class="modal-actions" style="justify-content: center;"><button class="action-button primary-button" style="width: auto; padding: 10px 30px;" onclick="window.closeModal('global-notification-modal')">OK</button></div>
     </div>
   </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue, set, get, update, push, runTransaction, onChildAdded } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, onValue, set, get, update, push, runTransaction, onChildAdded, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDfn1veuHMeHCbqgYQs_KEREDgwVmBxSHw",
@@ -407,11 +467,12 @@
     const database = getDatabase(app);
     
     const configRef = ref(database, 'app/config');
-    const usersRef = ref(database, 'app/users'); // To fetch all users for referral list
+    const usersRef = ref(database, 'app/users');
     let userRef;
     const withdrawRequestsRef = ref(database, 'app/withdraw_requests');
     const globalNotificationRef = ref(database, 'app/global_notification');
     const promoCodesRef = ref(database, 'app/promo_codes');
+    const supportTicketsRef = ref(database, 'app/support_tickets');
 
     const clientVersion = "1.0.0"; 
     let appConfig = {}; 
@@ -430,7 +491,7 @@
             tgUser = Telegram.WebApp.initDataUnsafe.user;
         } else {
             console.warn("Telegram Web App not found. Using mock user.");
-            tgUser = { id: 12345678, first_name: 'Test', last_name: 'User', username: 'testuser', photo_url: 'https://i.pravatar.cc/150?u=12345678'};
+            tgUser = { id: 123456789, first_name: 'Test', last_name: 'User', username: 'testuser', photo_url: 'https://i.pravatar.cc/150?u=123456789'};
         }
 
         if (!tgUser) {
@@ -443,25 +504,15 @@
         onValue(configRef, (snapshot) => {
             if (snapshot.exists()) {
                 appConfig = snapshot.val();
-                console.log("Firebase config loaded:", appConfig);
-
-                if (appConfig.maintenanceMode) {
-                    document.getElementById('loading-overlay').style.display = 'none';
-                    document.getElementById('maintenance-overlay').style.display = 'flex';
-                    return; 
-                }
-
                 if (!isConfigLoaded) {
                     isConfigLoaded = true;
                     if (checkVersionAndNotice()) return;
                     initializeUser();
                 }
-                
                 applyTheme(appConfig);
                 updateDynamicElements();
                 updateDisplay();
             } else {
-                console.error("Could not load config from Firebase.");
                 document.getElementById('loading-overlay').innerHTML = "<p>Error: Could not load app settings.</p>";
             }
         });
@@ -479,7 +530,6 @@
             if (snapshot.exists()) {
                 userData = snapshot.val();
             } else {
-                console.log("New user detected. Creating profile...");
                 const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
                 let initialBalance = 0; let initialHistory = {};
                 if (appConfig.welcomeBonusEnabled && appConfig.welcomeBonus > 0) {
@@ -491,22 +541,30 @@
                     balance: initialBalance, totalEarnings: initialBalance, totalAdsWatched: 0, totalReferralCommission: 0,
                     referralsList: {}, transactionHistory: initialHistory, tasksState: {},
                     checkinState: { streak: 0, lastClaimTimestamp: null },
-                    adTracking: { monetag: { dailyCount: 0, hourlyCount: 0, lastAdTimestamp: null } },
+                    adTracking: { dailyCount: 0, hourlyCount: 0, lastAdTimestamp: null },
                     dailyStats: { adsWatched: 0, referralCommission: 0, lastReset: new Date().toISOString() },
                     isBlocked: false, joinedAt: new Date().toISOString(), blockReason: null
                 };
                 
-                // If referred, update the referrer's list
                 if (startParam) {
-                    const referrerRef = ref(database, `app/users/${startParam}/referralsList`);
-                    await set(push(referrerRef), { userId: tgUser.id, joinedAt: new Date().toISOString() });
-                }
+                    const referrerRef = ref(database, `app/users/${startParam}`);
+                    const referrerSnapshot = await get(referrerRef);
+                    if (referrerSnapshot.exists()) {
+                        const referrerData = referrerSnapshot.val();
+                        const maxReferrals = appConfig.referralControl?.maxReferrals || 0;
+                        const currentReferrals = Object.keys(referrerData.referralsList || {}).length;
 
+                        if (maxReferrals > 0 && currentReferrals >= maxReferrals) {
+                           newUser.profile.referredBy = null;
+                        } else {
+                           await set(push(ref(database, `app/users/${startParam}/referralsList`)), { userId: tgUser.id, joinedAt: new Date().toISOString() });
+                        }
+                    }
+                }
                 await set(userRef, newUser);
                 userData = newUser;
             }
             
-            // নতুন যুক্ত: ব্লক করার কারণ প্রদর্শন
             if (userData.isBlocked) {
                 const blockedOverlay = document.getElementById('blocked-overlay');
                 let reasonHtml = `<h2>Access Denied</h2><p>Your account has been blocked by the administrator.</p>`;
@@ -514,14 +572,12 @@
                     reasonHtml += `<p style="font-size: 14px; color: #ccc; margin-top: 10px; padding: 0 20px;">Reason: ${userData.blockReason}</p>`;
                 }
                 blockedOverlay.querySelector('div').innerHTML = reasonHtml;
-
                 document.querySelector('.container').style.display = 'none';
                 blockedOverlay.style.display = 'flex';
                 return;
             }
 
             if (!isUserLoaded) { isUserLoaded = true; initializeAppUI(); }
-            
             await checkAndResetDailyStats();
             updateDisplay();
         });
@@ -533,7 +589,7 @@
             const response = await fetch('https://api.ipify.org?format=json'); const data = await response.json(); const ip = data.ip;
             await update(userRef, { 'profile/lastLogin': { timestamp: new Date().toISOString(), ip: ip } });
         } catch (error) {
-            console.warn("Could not track user IP:", error); await update(userRef, { 'profile/lastLogin/timestamp': new Date().toISOString() });
+            await update(userRef, { 'profile/lastLogin/timestamp': new Date().toISOString() });
         }
     }
 
@@ -560,10 +616,9 @@
             }
         });
     }
-    window.closeGlobalNotificationModal = () => document.getElementById('global-notification-modal').classList.remove('active');
 
     function initializeAppUI() {
-        loadTelegramUser(); showView('home-view'); initializeInAppAds(); initializeEventListeners();
+        loadTelegramUser(); showView('home-view'); initializeEventListeners();
         listenForNotifications(); listenForGlobalNotifications(); trackUserLogin();
         document.getElementById('loading-overlay').style.opacity = '0';
         setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; document.querySelector('.container').style.display = 'flex'; }, 500);
@@ -606,20 +661,19 @@
         if (appConfig.dailyCheckinEnabled) { document.getElementById('daily-checkin-section').style.display = 'block'; renderCheckinDays(); } else { document.getElementById('daily-checkin-section').style.display = 'none'; }
         if (appConfig.tasksEnabled) { document.getElementById('tasks-section').style.display = 'block'; renderTasks(); } else { document.getElementById('tasks-section').style.display = 'none'; }
     }
-    
-    function initializeInAppAds() {
-        if (typeof show_9892740 === 'function') { show_9892740({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } }); } else { setTimeout(initializeInAppAds, 2000); }
-    }
-    
+        
     function isNewDay(timestamp) { if (!timestamp) return true; const today = new Date().setHours(0, 0, 0, 0); const thatDay = new Date(timestamp).setHours(0, 0, 0, 0); return today > thatDay; }
-    async function checkAndResetDailyStats() { if (!userData.dailyStats || isNewDay(userData.dailyStats.lastReset)) { await update(userRef, { 'dailyStats': { adsWatched: 0, referralCommission: 0, lastReset: new Date().toISOString() }, 'adTracking/monetag/dailyCount': 0, 'adTracking/monetag/hourlyCount': 0 }); } }
+    async function checkAndResetDailyStats() { if (!userData.dailyStats || isNewDay(userData.dailyStats.lastReset)) { await update(userRef, { 'dailyStats': { adsWatched: 0, referralCommission: 0, lastReset: new Date().toISOString() }, 'adTracking/dailyCount': 0, 'adTracking/hourlyCount': 0 }); } }
 
     window.showView = (viewId) => {
         if (!isConfigLoaded || !isUserLoaded) return; 
         document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         document.querySelectorAll('.nav-button').forEach(btn => { btn.classList.remove('active'); if (btn.getAttribute('onclick').includes(viewId)) { btn.classList.add('active'); } });
-        if (viewId === 'earn-view') updateDynamicElements(); if (viewId === 'refer-view') window.renderReferralsList(); if (viewId === 'history-view') renderHistory(); if (viewId === 'store-view') renderStore();
+        if (viewId === 'earn-view') updateDynamicElements(); 
+        if (viewId === 'refer-view') { window.renderReferralsList(); updateReferralView(); }
+        if (viewId === 'history-view') renderHistory(); 
+        if (viewId === 'store-view') renderStore();
         updateDisplay(); 
     };
     
@@ -641,7 +695,7 @@
         document.getElementById('home-total-tasks-completed').textContent = userData.tasksState ? Object.keys(userData.tasksState).filter(k => userData.tasksState[k].completed).length : 0;
         document.getElementById('home-total-commission').textContent = `${userData.totalReferralCommission || 0} Points`;
         const dailyAdsLimit = appConfig.adsLimit || 250, hourlyLimit = appConfig.hourlyAdsLimit || 25;
-        const adTracking = userData.adTracking?.monetag || { dailyCount: 0, hourlyCount: 0 };
+        const adTracking = userData.adTracking || { dailyCount: 0, hourlyCount: 0 };
         document.querySelectorAll('.ad-network-card').forEach(card => {
             const watchButton = card.querySelector(`.watch-ad-button`);
             if (watchButton) {
@@ -680,61 +734,87 @@
         }
     }
 
-    // নতুন যুক্ত: রেফারেল কমিশন দেওয়ার জন্য ফাংশন
-    async function grantCommission(basePointsEarned) {
-        const referrerId = userData.profile?.referredBy;
-        if (referrerId && appConfig.refferBonus > 0) {
-            const commissionRate = appConfig.refferBonus / 100;
-            const commissionAmount = Math.floor(basePointsEarned * commissionRate);
+    async function grantCommission(basePointsEarned, referredUserData) {
+        const referrerId = referredUserData.profile?.referredBy;
+        if (!referrerId || !(appConfig.refferBonus > 0)) return;
+        
+        const activationRequirement = appConfig.referralControl?.commissionActivation?.adsWatched || 0;
+        if (activationRequirement > 0 && (referredUserData.totalAdsWatched || 0) < activationRequirement) {
+            return; 
+        }
 
-            if (commissionAmount > 0) {
-                const referrerRef = ref(database, `app/users/${referrerId}`);
-                const referrerSnapshot = await get(referrerRef);
-                if (referrerSnapshot.exists()) {
-                    const referrerData = referrerSnapshot.val();
-                    const updates = {
-                        'balance': (referrerData.balance || 0) + commissionAmount,
-                        'totalReferralCommission': (referrerData.totalReferralCommission || 0) + commissionAmount,
-                        'dailyStats/referralCommission': (referrerData.dailyStats?.referralCommission || 0) + commissionAmount
-                    };
-                    updates[`transactionHistory/ref_${Date.now()}`] = {
-                        type: 'referral',
-                        amount: commissionAmount,
-                        title: `Commission from ${userData.profile.firstName || 'user'}`,
-                        date: new Date().toISOString()
-                    };
-                    await update(referrerRef, updates);
-                }
+        const commissionRate = appConfig.refferBonus / 100;
+        const commissionAmount = Math.floor(basePointsEarned * commissionRate);
+
+        if (commissionAmount > 0) {
+            const referrerRef = ref(database, `app/users/${referrerId}`);
+            const referrerSnapshot = await get(referrerRef);
+            if (referrerSnapshot.exists()) {
+                const referrerData = referrerSnapshot.val();
+                const updates = {
+                    'balance': (referrerData.balance || 0) + commissionAmount,
+                    'totalReferralCommission': (referrerData.totalReferralCommission || 0) + commissionAmount,
+                    'dailyStats/referralCommission': (referrerData.dailyStats?.referralCommission || 0) + commissionAmount
+                };
+                updates[`transactionHistory/ref_${Date.now()}`] = {
+                    type: 'referral',
+                    amount: commissionAmount,
+                    title: `Commission from ${referredUserData.profile.firstName || 'user'}`,
+                    date: new Date().toISOString()
+                };
+                await update(referrerRef, updates);
             }
         }
     }
 
     async function grantReward(adNetwork, baseRewardPoints) {
         const tier = getCurrentUserTier(), bonusPoints = Math.floor(baseRewardPoints * (tier.bonusPercent / 100));
-        const totalReward = baseRewardPoints + bonusPoints; const transactionTitle = bonusPoints > 0 ? `${adNetwork} Ad Reward (+${bonusPoints} bonus)` : `${adNetwork} Ad Reward`;
+        const totalReward = baseRewardPoints + bonusPoints; const transactionTitle = bonusPoints > 0 ? `${adNetwork.name} Ad Reward (+${bonusPoints} bonus)` : `${adNetwork.name} Ad Reward`;
+        
+        const tempUpdatedUserData = JSON.parse(JSON.stringify(userData));
+        tempUpdatedUserData.balance = (tempUpdatedUserData.balance || 0) + totalReward;
+        tempUpdatedUserData.totalEarnings = (tempUpdatedUserData.totalEarnings || 0) + totalReward;
+        tempUpdatedUserData.totalAdsWatched = (tempUpdatedUserData.totalAdsWatched || 0) + 1;
+        
         const updates = {
-            'balance': (userData.balance || 0) + totalReward, 'totalEarnings': (userData.totalEarnings || 0) + totalReward, 'totalAdsWatched': (userData.totalAdsWatched || 0) + 1,
-            'dailyStats/adsWatched': (userData.dailyStats?.adsWatched || 0) + 1, 'adTracking/monetag/dailyCount': (userData.adTracking?.monetag.dailyCount || 0) + 1,
-            'adTracking/monetag/hourlyCount': (userData.adTracking?.monetag.hourlyCount || 0) + 1, 'adTracking/monetag/lastAdTimestamp': new Date().toISOString()
+            'balance': tempUpdatedUserData.balance, 
+            'totalEarnings': tempUpdatedUserData.totalEarnings, 
+            'totalAdsWatched': tempUpdatedUserData.totalAdsWatched,
+            'dailyStats/adsWatched': (userData.dailyStats?.adsWatched || 0) + 1, 
+            'adTracking/dailyCount': (userData.adTracking?.dailyCount || 0) + 1,
+            'adTracking/hourlyCount': (userData.adTracking?.hourlyCount || 0) + 1, 
+            'adTracking/lastAdTimestamp': new Date().toISOString()
         };
         updates[`transactionHistory/earn_${Date.now()}`] = { type: 'earning', amount: totalReward, title: transactionTitle, date: new Date().toISOString() };
+        
         await update(userRef, updates);
-        await grantCommission(baseRewardPoints); // কমিশন দেওয়া
+        await grantCommission(baseRewardPoints, tempUpdatedUserData);
+        
         if (window.Telegram?.WebApp?.HapticFeedback) Telegram.WebApp.HapticFeedback.notificationOccurred('success');
     }
     
-    window.startAdCycleFor = (network) => {
-        const adTracking = userData.adTracking?.monetag || { dailyCount: 0, hourlyCount: 0 };
+    window.startAdCycleFor = (networkName) => {
+        const network = (appConfig.adNetworks || []).find(n => n.name === networkName);
+        if (!network) return;
+
+        const adTracking = userData.adTracking || { dailyCount: 0, hourlyCount: 0 };
         if (adTracking.dailyCount >= (appConfig.adsLimit || 250) || adTracking.hourlyCount >= (appConfig.hourlyAdsLimit || 25)) return;
+        
         const overlay = document.getElementById('timer-notification-overlay'), overlayContent = document.getElementById('timer-notification-content');
-        const adTimerSeconds = appConfig.adWatchTimerSeconds || 30;
-        show_9892740().catch(e => console.error("Ad SDK error:", e));
+        const adTimerSeconds = network.timer || appConfig.adWatchTimerSeconds || 30;
+        
+        if (typeof show_9892740 === 'function') {
+            show_9892740().catch(e => console.error("Ad SDK error:", e));
+        } else {
+            console.warn("Ad SDK function not found.");
+        }
+
         overlay.style.display = 'flex'; let countdown = adTimerSeconds;
         overlayContent.innerHTML = `<div class="icon"><i class="fa-solid fa-hourglass-half"></i></div><div>${countdown}</div>`;
         const intervalId = setInterval(() => { countdown--; overlayContent.innerHTML = `<div class="icon"><i class="fa-solid fa-hourglass-half"></i></div><div>${countdown}</div>`; if (countdown <= 0) clearInterval(intervalId); }, 1000);
         setTimeout(async () => {
             clearInterval(intervalId);
-            let rewardPoints = appConfig.adsReward || 1;
+            let rewardPoints = network.reward || appConfig.adsReward || 1;
             const totalRewardWithBonus = rewardPoints + Math.floor(rewardPoints * (getCurrentUserTier().bonusPercent / 100));
             await grantReward(network, rewardPoints);
             overlayContent.innerHTML = `<div class="icon" style="color: var(--status-success);"><i class="fa-solid fa-check-circle"></i></div><div>+${totalRewardWithBonus} Points!</div>`;
@@ -766,13 +846,20 @@
                 let reward = dayInfo.reward;
                 const tier = getCurrentUserTier(), bonusPoints = Math.floor(reward * (tier.bonusPercent / 100)), totalReward = reward + bonusPoints;
                 const transactionTitle = bonusPoints > 0 ? `Daily Check-in: Day ${streak + 1} (+${bonusPoints} bonus)` : `Daily Check-in: Day ${streak + 1}`;
+                
+                const tempUpdatedUserData = JSON.parse(JSON.stringify(userData));
+                tempUpdatedUserData.balance = (tempUpdatedUserData.balance || 0) + totalReward;
+                tempUpdatedUserData.totalEarnings = (tempUpdatedUserData.totalEarnings || 0) + totalReward;
+
                 const updates = {
-                    'balance': (userData.balance || 0) + totalReward, 'totalEarnings': (userData.totalEarnings || 0) + totalReward,
-                    'checkinState/streak': streak + 1, 'checkinState/lastClaimTimestamp': new Date().getTime(),
+                    'balance': tempUpdatedUserData.balance, 
+                    'totalEarnings': tempUpdatedUserData.totalEarnings,
+                    'checkinState/streak': streak + 1, 
+                    'checkinState/lastClaimTimestamp': new Date().getTime(),
                 };
                 updates[`transactionHistory/checkin_${Date.now()}`] = { type: 'login', amount: totalReward, title: transactionTitle, date: new Date().toISOString() };
                 await update(userRef, updates);
-                await grantCommission(reward); // কমিশন দেওয়া
+                await grantCommission(reward, tempUpdatedUserData); 
                 const overlay = document.getElementById('timer-notification-overlay'); overlay.style.display = 'flex';
                 overlay.querySelector('.timer-notification-content').innerHTML = `<div class="icon" style="color: var(--status-login);"><i class="fa-solid fa-calendar-check"></i></div><div>+${totalReward} Points!</div>`;
                 setTimeout(() => { overlay.style.display = 'none'; }, 2500);
@@ -804,10 +891,20 @@
             let reward = task.reward; const tier = getCurrentUserTier();
             const bonusPoints = Math.floor(reward * (tier.bonusPercent / 100)), totalReward = reward + bonusPoints;
             const transactionTitle = bonusPoints > 0 ? `Task: ${task.title} (+${bonusPoints} bonus)` : `Task: ${task.title}`;
-            const updates = { 'balance': (userData.balance || 0) + totalReward, 'totalEarnings': (userData.totalEarnings || 0) + totalReward, [`tasksState/${taskId}/completed`]: true, [`tasksState/${taskId}/pendingClaim`]: false };
+            
+            const tempUpdatedUserData = JSON.parse(JSON.stringify(userData));
+            tempUpdatedUserData.balance = (tempUpdatedUserData.balance || 0) + totalReward;
+            tempUpdatedUserData.totalEarnings = (tempUpdatedUserData.totalEarnings || 0) + totalReward;
+
+            const updates = { 
+                'balance': tempUpdatedUserData.balance, 
+                'totalEarnings': tempUpdatedUserData.totalEarnings, 
+                [`tasksState/${taskId}/completed`]: true, 
+                [`tasksState/${taskId}/pendingClaim`]: false 
+            };
             updates[`transactionHistory/task_${Date.now()}`] = { type: 'task', amount: totalReward, title: transactionTitle, date: new Date().toISOString() };
             await update(userRef, updates);
-            await grantCommission(reward); // কমিশন দেওয়া
+            await grantCommission(reward, tempUpdatedUserData);
             const overlay = document.getElementById('timer-notification-overlay'); overlay.style.display = 'flex';
             overlay.querySelector('.timer-notification-content').innerHTML = `<div class="icon" style="color: var(--status-task);"><i class="fa-solid fa-check-double"></i></div><div>+${totalReward} Points!</div>`;
             setTimeout(() => { overlay.style.display = 'none'; }, 2500);
@@ -844,9 +941,12 @@
         } catch (error) {
             if (error.message === 'expired') { alert("This promo code has expired."); }
             else if (error.message === 'used') { alert("You have already used this promo code."); }
-            else { console.error("Error redeeming promo code:", error); alert("An error occurred."); }
+            else { alert("An error occurred."); }
         }
     };
+
+    window.openModal = (modalId) => document.getElementById(modalId).classList.add('active');
+    window.closeModal = (modalId) => document.getElementById(modalId).classList.remove('active');
 
     window.openWithdrawModal = () => {
         if (!appConfig.withdrawalMethodsEnabled) return alert("Withdrawals are temporarily disabled.");
@@ -856,9 +956,8 @@
         document.querySelectorAll('.currency-symbol-modal').forEach(el => el.textContent = appConfig.currency || 'BDT');
         document.getElementById('withdraw-amount').value = '';
         updateWithdrawSummary();
-        document.getElementById('withdraw-modal').classList.add('active');
+        openModal('withdraw-modal');
     };
-    window.closeWithdrawModal = () => document.getElementById('withdraw-modal').classList.remove('active');
     
     function updateWithdrawSummary() {
         const amountInput = document.getElementById('withdraw-amount');
@@ -884,13 +983,23 @@
         summaryDiv.style.display = 'block';
     }
 
+    function getErrorMessage(key, params = {}) {
+        let message = appConfig.textStrings?.errorMessages?.[key] || "An error occurred.";
+        for (const param in params) {
+            message = message.replace(`{${param}}`, params[param]);
+        }
+        return message;
+    }
+
     window.requestWithdraw = async () => {
-        const minWithdraw = appConfig.minWithdraw || 500;
         const currencySymbol = appConfig.currency || 'BDT';
         const pointsPerCurrency = appConfig.pointsPerCurrency || 100;
+        const minWithdraw = appConfig.minWithdraw || 500;
         const minReferrals = appConfig.minReferralsForWithdrawal || 3;
 
-        if ((userData.referralsList ? Object.keys(userData.referralsList).length : 0) < minReferrals) { return alert(`Minimum ${minReferrals} referrals required.`); }
+        if ((userData.referralsList ? Object.keys(userData.referralsList).length : 0) < minReferrals) {
+            return alert(getErrorMessage('minReferrals', { count: minReferrals }));
+        }
         
         const balanceInBdt = (userData.balance || 0) / pointsPerCurrency;
         const selectedMethodEl = document.querySelector('input[name="payment-method"]:checked');
@@ -898,9 +1007,15 @@
         const number = document.getElementById('withdraw-number').value.trim();
         const amountInBdt = parseFloat(document.getElementById('withdraw-amount').value);
 
-        if (!method || !number || isNaN(amountInBdt) || amountInBdt <= 0) return alert("Please fill all fields correctly.");
-        if (amountInBdt < minWithdraw) return alert(`Minimum withdrawal is ${currencySymbol} ${minWithdraw.toFixed(2)}.`);
-        if (amountInBdt > balanceInBdt) return alert("Insufficient balance.");
+        if (!method || !number || isNaN(amountInBdt) || amountInBdt <= 0) {
+            return alert(getErrorMessage('fillAllFields'));
+        }
+        if (amountInBdt < minWithdraw) {
+            return alert(getErrorMessage('minWithdrawal', { amount: minWithdraw.toFixed(2), currency: currencySymbol }));
+        }
+        if (amountInBdt > balanceInBdt) {
+            return alert(getErrorMessage('insufficientBalance'));
+        }
 
         const feePercent = appConfig.withdrawalFeePercent || 0;
         const fee = (amountInBdt * feePercent) / 100;
@@ -915,7 +1030,7 @@
         updates[`transactionHistory/${newRequestRef.key}`] = { type: 'withdrawal', method, number, amount: amountInBdt, date: newRequest.date, status: 'Pending' };
         await update(userRef, updates);
         
-        closeWithdrawModal();
+        closeModal('withdraw-modal');
         alert("Withdrawal request submitted successfully.");
     };
     
@@ -954,7 +1069,7 @@
     function renderStore() {
         const container = document.getElementById('store-packages-container');
         if (!appConfig.storeEnabled || !appConfig.pointPackages || appConfig.pointPackages.length === 0) {
-            container.innerHTML = `<div class="no-history"><i class="fa-solid fa-shop-slash"></i><p>The store is currently empty.</p></div>`;
+            container.innerHTML = `<div class="no-data"><i class="fa-solid fa-shop-slash"></i><p>The store is currently empty.</p></div>`;
             return;
         }
         container.innerHTML = appConfig.pointPackages.filter(p => p.enabled).map(pkg => `
@@ -970,7 +1085,21 @@
         alert(`Buying ${points} points for ${price} is not implemented yet. Please contact admin.`);
     };
 
-    // নতুন যুক্ত: রেফারেল তালিকা রেন্ডার করার সম্পূর্ণ ফাংশন
+    function updateReferralView() {
+        const maxReferrals = appConfig.referralControl?.maxReferrals || 0;
+        const currentReferrals = Object.keys(userData.referralsList || {}).length;
+        const limitMessage = document.getElementById('referral-limit-message');
+
+        if (maxReferrals > 0 && currentReferrals >= maxReferrals) {
+            document.querySelectorAll('.share-btn, .copy-button').forEach(btn => btn.disabled = true);
+            limitMessage.textContent = `You have reached your maximum referral limit of ${maxReferrals}.`;
+            limitMessage.style.display = 'block';
+        } else {
+            document.querySelectorAll('.share-btn, .copy-button').forEach(btn => btn.disabled = false);
+            limitMessage.style.display = 'none';
+        }
+    }
+
     window.renderReferralsList = async () => {
         const container = document.getElementById('referrals-list-container');
         const searchInput = document.getElementById('referral-search-input').value.toLowerCase();
@@ -986,16 +1115,18 @@
         let listHtml = '';
         let todayReferralsCount = 0;
         const today = new Date().setHours(0, 0, 0, 0);
+        
+        const userPromises = referralEntries.map(ref => get(ref(database, `app/users/${ref.userId}`)));
+        const userSnapshots = await Promise.all(userPromises);
 
-        for (const ref of referralEntries) {
-            const userSnapshot = await get(ref(database, `app/users/${ref.userId}`));
+        userSnapshots.forEach(userSnapshot => {
             if(userSnapshot.exists()){
                 const referredUser = userSnapshot.val();
                 const name = `${referredUser.profile?.firstName || ''} ${referredUser.profile?.lastName || ''}`.trim() || 'No Name';
                 const username = referredUser.profile?.username || '';
                 
                 if (searchInput && !name.toLowerCase().includes(searchInput) && !username.toLowerCase().includes(searchInput)) {
-                    continue;
+                    return;
                 }
                 
                 const joinDate = new Date(referredUser.joinedAt);
@@ -1014,7 +1145,7 @@
                         </div>
                     </div>`;
             }
-        }
+        });
         
         container.innerHTML = listHtml || `<div class="no-referrals"><p>No matching referrals found.</p></div>`;
         document.getElementById('refer-today-referrals').textContent = todayReferralsCount;
@@ -1028,6 +1159,89 @@
         if (platform === 'twitter') url = `https://twitter.com/intent/tweet?text=${text}&url=${link}`;
         if (url) window.open(url, '_blank');
     };
+    
+    window.openSupportModal = () => {
+        document.getElementById('support-subject').value = '';
+        document.getElementById('support-message').value = '';
+        openModal('support-modal');
+    };
+    window.submitSupportTicket = async () => {
+        const subject = document.getElementById('support-subject').value.trim();
+        const message = document.getElementById('support-message').value.trim();
+
+        if (!subject || !message) {
+            return alert("Please fill in both the subject and message fields.");
+        }
+
+        const newTicket = {
+            userId: tgUser.id,
+            userName: `${userData.profile.firstName || ''} ${userData.profile.lastName || ''}`.trim(),
+            userUsername: userData.profile.username || 'N/A',
+            subject: subject,
+            message: message,
+            timestamp: new Date().toISOString(),
+            status: 'Open'
+        };
+
+        try {
+            await push(supportTicketsRef, newTicket);
+            alert("Support ticket submitted successfully! Our team will get back to you soon.");
+            closeModal('support-modal');
+        } catch (error) {
+            alert("There was an error submitting your ticket. Please try again later.");
+        }
+    };
+
+    window.openMyTicketsModal = async () => {
+        const listContainer = document.getElementById('my-tickets-list');
+        listContainer.innerHTML = `<div class="spinner" style="margin: 20px auto;"></div>`;
+        openModal('my-tickets-modal');
+
+        const userTicketsQuery = query(supportTicketsRef, orderByChild('userId'), equalTo(tgUser.id));
+        const snapshot = await get(userTicketsQuery);
+
+        if (!snapshot.exists()) {
+            listContainer.innerHTML = `<div class="no-data"><i class="fa-solid fa-ticket"></i><p>You haven't submitted any tickets yet.</p></div>`;
+            return;
+        }
+        
+        const tickets = snapshot.val();
+        const sortedTickets = Object.entries(tickets).sort(([,a],[,b]) => new Date(b.timestamp) - new Date(a.timestamp));
+        listContainer.innerHTML = sortedTickets.map(([id, ticket]) => `
+            <div class="ticket-list-item" onclick="window.openTicketDetails('${id}')">
+                <div class="info">
+                    <div class="subject">${ticket.subject}</div>
+                    <div class="date">${new Date(ticket.timestamp).toLocaleString()}</div>
+                </div>
+                <span class="status status-${ticket.status.toLowerCase()}">${ticket.status}</span>
+            </div>
+        `).join('');
+    };
+
+    window.openTicketDetails = async (ticketId) => {
+        const snapshot = await get(ref(database, `app/support_tickets/${ticketId}`));
+        if (!snapshot.exists()) return;
+
+        const ticket = snapshot.val();
+        document.getElementById('ticket-details-subject').textContent = ticket.subject;
+        document.getElementById('ticket-details-content').innerHTML = `
+            <p><strong>Date:</strong> ${new Date(ticket.timestamp).toLocaleString()}</p>
+            <p><strong>Original Message:</strong></p>
+            <p>${ticket.message}</p>
+        `;
+
+        const repliesList = document.getElementById('ticket-replies-list');
+        const replies = ticket.replies || {};
+        repliesList.innerHTML = Object.values(replies).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp)).map(reply => `
+            <div class="ticket-reply-item ${reply.isAdmin ? 'admin-reply' : 'user-reply'}">
+                <div class="reply-meta">${reply.isAdmin ? 'Admin' : 'You'} replied at ${new Date(reply.timestamp).toLocaleString()}</div>
+                <div class="reply-message">${reply.message}</div>
+            </div>
+        `).join('');
+
+        openModal('ticket-details-modal');
+    };
+
 </script>
 </body>
 </html>

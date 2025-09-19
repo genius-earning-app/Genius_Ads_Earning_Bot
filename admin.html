@@ -111,7 +111,8 @@
         .ad-network-setting { grid-template-columns: 2fr 1fr 1fr 1fr auto auto auto; }
         .task-setting-grid { grid-template-columns: 2fr 2fr 1fr auto auto auto; }
         .method-setting { grid-template-columns: 1fr 1fr 1fr auto auto auto; }
-        .tier-setting { grid-template-columns: 2fr 2fr 1fr auto auto auto; }
+        /* === MODIFIED: Added more columns for new tier settings === */
+        .tier-setting { grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr auto auto auto; }
         .package-setting { grid-template-columns: 2fr 1fr 1fr auto; }
         .text-setting, .error-message-setting, .asset-setting { grid-template-columns: 1fr 2fr; }
         .leaderboard-reward-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
@@ -233,6 +234,7 @@
         .toast.info { border-left: 5px solid var(--blue); }
         .toast-message { margin: 0; margin-left: 10px; }
 
+        /* === NEW: PAGINATION STYLES === */
         .pagination-container { display: flex; justify-content: center; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 5px; }
         .pagination-container button { background-color: var(--primary-bg); color: white; border: none; padding: 8px 15px; margin: 0 3px; cursor: pointer; border-radius: 4px; transition: background-color 0.2s; }
         .pagination-container button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
@@ -433,6 +435,7 @@
                                     <tbody id="users-table-body"></tbody>
                                 </table>
                             </div>
+                            <!-- === NEW: PAGINATION CONTAINER === -->
                             <div id="pagination-container" class="pagination-container"></div>
                         </div>
                     </div>
@@ -535,6 +538,7 @@
                             </div>
                         </div>
                         
+                        <!-- === NEW SECTION: Asset Management === -->
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsAssetManagement"><i class="fas fa-image"></i>Asset Management (App Images)<i class="fas fa-chevron-down toggle-icon"></i></div>
                             <div class="section-body collapsed">
@@ -687,6 +691,18 @@
                                 <div id="withdrawal-methods-section"></div>
                             </div>
                         </div>
+                        
+                        <!-- === NEW SECTION: Offerwall Management === -->
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-gifts"></i>Offerwall Management<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed" id="offerwall-section"></div>
+                        </div>
+                        
+                        <!-- === NEW SECTION: Lottery System === -->
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-ticket-alt"></i>Lottery System<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed" id="lottery-section"></div>
+                        </div>
 
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsLeaderboard"><i class="fas fa-trophy"></i>Leaderboard Management<i class="fas fa-chevron-down toggle-icon"></i></div>
@@ -824,6 +840,9 @@
     const taskSubmissionsRef = ref(database, 'app/task_submissions'); 
     const globalNotificationRef = ref(database, 'app/global_notification');
     const promoCodesRef = ref(database, 'app/promo_codes');
+    // === NEW: Firebase Reference for Lottery ===
+    const lotteryRef = ref(database, 'app/lottery');
+
 
     document.addEventListener('DOMContentLoaded', function () {
         const menuToggle = document.getElementById('menuToggle');
@@ -842,6 +861,7 @@
         let userGrowthChart = null, dailyEarningsChart = null, earningSourcesChart = null, userRetentionChart = null;
 
         const originalDocTitle = document.title;
+        // === NEW: State variables for pagination ===
         let currentPage = 1;
         const usersPerPage = 50;
 
@@ -937,9 +957,10 @@
             withdrawalMethods: [ { name: 'bKash', bn_name: 'বিকাশ', logo: 'bkash.png', enabled: true } ],
             userTiersEnabled: false,
             userTiers: [
-                { name: 'Bronze', requiredPoints: 0, bonusPercent: 0 },
-                { name: 'Silver', requiredPoints: 50000, bonusPercent: 2 },
-                { name: 'Gold', requiredPoints: 200000, bonusPercent: 5 }
+                // === NEW: Default values for new tier settings ===
+                { name: 'Bronze', requiredPoints: 0, bonusPercent: 0, minWithdraw: 500, dailyWithdrawLimit: 1000 },
+                { name: 'Silver', requiredPoints: 50000, bonusPercent: 2, minWithdraw: 400, dailyWithdrawLimit: 2000 },
+                { name: 'Gold', requiredPoints: 200000, bonusPercent: 5, minWithdraw: 300, dailyWithdrawLimit: 5000 }
             ],
             welcomeBonus: 100, welcomeBonusEnabled: true,
             dynamicText: {
@@ -978,9 +999,20 @@
             },
             fraudDetection: { ipSharingLimit: 3 },
             referralControl: { maxReferrals: 0, commissionActivation: { adsWatched: 10 } },
+            // === NEW: Default values for Asset Management ===
             assets: {
                 adNetworkLogo: "https://i.ibb.co/Lh2SFvmH/Untitled-design-20250825-163934-0000.png",
                 defaultAvatar: "https://i.pravatar.cc/150"
+            },
+            // === NEW: Default values for Offerwall & Lottery ===
+            offerwall: {
+                enabled: false,
+                code: '<!-- Paste your Offerwall HTML/JS code here -->'
+            },
+            lottery: {
+                enabled: false,
+                ticketPrice: 100,
+                prizeAmount: 5000
             }
         };
         
@@ -1052,7 +1084,7 @@
             });
             onValue(usersRef, (snapshot) => { 
                 allUsers = snapshot.val() || {}; 
-                renderUsers(true); 
+                renderUsers(false); // Changed to false to not reset filters on every data change
                 updateDashboardData(); 
                 processAnalyticsData(); 
                 renderDashboardAnalytics();
@@ -1073,6 +1105,9 @@
             onValue(promoCodesRef, (snapshot) => { renderPromoCodes(snapshot.val() || {}); });
             onValue(supportTicketsRef, (snapshot) => { renderSupportTickets(snapshot.val() || {}); });
             onValue(taskSubmissionsRef, (snapshot) => { renderTaskSubmissions(snapshot.val() || {}); });
+            // === NEW: Listener for lottery data ===
+            onValue(lotteryRef, (snapshot) => { renderLotterySection(snapshot.val()); });
+
 
             menuToggle.addEventListener('click', toggleMenu);
             overlay.addEventListener('click', toggleMenu);
@@ -1325,7 +1360,7 @@
             } 
         }
         
-        // === BUG FIX: RENDERUSERS AND HELPER FUNCTIONS RE-ADDED ===
+        // === MODIFIED: renderUsers with Pagination Logic ===
         function renderUsers(reset = false) {
             if (reset) {
                 document.getElementById('userSearch').value = '';
@@ -1378,6 +1413,7 @@
             renderPaginationControls(filteredUsers.length, currentPage);
         }
 
+        // === NEW: PAGINATION RENDERING FUNCTION ===
         function renderPaginationControls(totalUsers, page) {
             const container = document.getElementById('pagination-container');
             const totalPages = Math.ceil(totalUsers / usersPerPage);
@@ -1396,15 +1432,17 @@
             container.innerHTML = html;
         }
 
+        // === NEW: Page change handler ===
         window.changePage = function(newPage, totalPages) {
             if (newPage < 1 || newPage > totalPages) return;
             currentPage = newPage;
             renderUsers(false);
         }
-        // === END BUG FIX ===
 
         function renderAllSettings() {
             if (!appConfig || Object.keys(appConfig).length === 0) return;
+            
+            // === NEW: Populate Asset Management fields ===
             if (appConfig.assets) {
                 document.getElementById('asset-ad-logo').value = appConfig.assets.adNetworkLogo || '';
                 document.getElementById('asset-default-avatar').value = appConfig.assets.defaultAvatar || '';
@@ -1439,6 +1477,7 @@
             renderErrorMessageSection();
             renderLeaderboardSection();
             renderAdvancedTextManagementSection();
+            renderOfferwallSection();
         }
 
         function renderWithdrawals() {
@@ -1760,11 +1799,25 @@
 
         window.addTask = () => { if (!appConfig.tasks) appConfig.tasks = []; appConfig.tasks.push({ id: Date.now(), title: '', link: '', reward: 0, enabled: true, type: 'join_claim', iconUrl: '' }); renderTasksSection(); }; window.removeTask = (index) => { if(confirm('Are you sure?')) { appConfig.tasks.splice(index, 1); renderTasksSection(); }};
         
+        // === MODIFIED: renderUserTiersSection with new fields ===
         function renderUserTiersSection() { 
             const list = appConfig.userTiers || [];
-            renderSection('user-tiers-section', list, { toggleLabel: 'Enable User Tiers Feature', enabledId: 'userTiersEnabled', enabledFlag: 'userTiersEnabled', listContainerId: 'user-tiers-list', itemRenderer: (item, index) => `<div class="tier-setting"><input type="text" data-type="tierName" data-index="${index}" value="${item.name}" placeholder="Tier Name"><input type="number" data-type="tierRequiredPoints" data-index="${index}" value="${item.requiredPoints}" placeholder="Required Points"><input type="number" data-type="tierBonusPercent" data-index="${index}" value="${item.bonusPercent}" placeholder="Bonus %"><label class="switch"><input type="checkbox" data-type="tierItemEnabled" data-index="${index}" checked disabled><span class="slider"></span></label><div class="order-controls"><button type="button" class="btn-order" onclick="window.moveItem('userTiers', ${index}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button><button type="button" class="btn-order" onclick="window.moveItem('userTiers', ${index}, 'down')" ${index === list.length - 1 ? 'disabled' : ''}>▼</button></div><button type="button" class="btn-remove" onclick="removeUserTier(${index})">&times;</button></div>`, addFunction: 'window.addUserTier()', addButtonLabel: 'Add Tier' }); 
+            renderSection('user-tiers-section', list, { toggleLabel: 'Enable User Tiers Feature', enabledId: 'userTiersEnabled', enabledFlag: 'userTiersEnabled', listContainerId: 'user-tiers-list', 
+                itemRenderer: (item, index) => `<div class="tier-setting">
+                    <input type="text" data-type="tierName" data-index="${index}" value="${item.name}" placeholder="Tier Name">
+                    <input type="number" data-type="tierRequiredPoints" data-index="${index}" value="${item.requiredPoints}" placeholder="Required Points">
+                    <input type="number" data-type="tierBonusPercent" data-index="${index}" value="${item.bonusPercent}" placeholder="Bonus %">
+                    <input type="number" data-type="tierMinWithdraw" data-index="${index}" value="${item.minWithdraw || ''}" placeholder="Min Withdraw">
+                    <input type="number" data-type="tierDailyLimit" data-index="${index}" value="${item.dailyWithdrawLimit || ''}" placeholder="Daily Limit">
+                    <label class="switch"><input type="checkbox" data-type="tierItemEnabled" data-index="${index}" checked disabled><span class="slider"></span></label>
+                    <div class="order-controls"><button type="button" class="btn-order" onclick="window.moveItem('userTiers', ${index}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button><button type="button" class="btn-order" onclick="window.moveItem('userTiers', ${index}, 'down')" ${index === list.length - 1 ? 'disabled' : ''}>▼</button></div>
+                    <button type="button" class="btn-remove" onclick="removeUserTier(${index})">&times;</button>
+                </div>`, 
+                addFunction: 'window.addUserTier()', 
+                addButtonLabel: 'Add Tier' 
+            }); 
         }
-        window.addUserTier = () => { if (!appConfig.userTiers) appConfig.userTiers = []; appConfig.userTiers.push({ name: '', requiredPoints: 0, bonusPercent: 0 }); renderUserTiersSection(); }; window.removeUserTier = (index) => { if(confirm('Are you sure?')) { appConfig.userTiers.splice(index, 1); renderUserTiersSection(); }};
+        window.addUserTier = () => { if (!appConfig.userTiers) appConfig.userTiers = []; appConfig.userTiers.push({ name: '', requiredPoints: 0, bonusPercent: 0, minWithdraw: 0, dailyWithdrawLimit: 0 }); renderUserTiersSection(); }; window.removeUserTier = (index) => { if(confirm('Are you sure?')) { appConfig.userTiers.splice(index, 1); renderUserTiersSection(); }};
         
         function renderWithdrawalMethodsSection() { 
             const list = appConfig.withdrawalMethods || [];
@@ -1923,11 +1976,119 @@
             `;
         }
 
+        // === NEW: Render Offerwall Section ===
+        function renderOfferwallSection() {
+            const container = document.getElementById('offerwall-section');
+            const config = appConfig.offerwall || { enabled: false, code: '' };
+            container.innerHTML = `
+                <div class="section-toggle">
+                    <label>Enable Offerwall Feature</label>
+                    <label class="switch"><input type="checkbox" id="offerwallEnabled" ${config.enabled ? 'checked' : ''}><span class="slider"></span></label>
+                </div>
+                <div id="offerwall-settings-container" style="display: ${config.enabled ? 'block' : 'none'}; padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;">
+                    <div class="form-group">
+                        <label for="offerwallCode">Offerwall HTML/JS Code</label>
+                        <textarea id="offerwallCode" rows="8" placeholder="Paste your Offerwall provider's code here...">${config.code || ''}</textarea>
+                    </div>
+                </div>`;
+
+            document.getElementById('offerwallEnabled').addEventListener('change', (e) => {
+                document.getElementById('offerwall-settings-container').style.display = e.target.checked ? 'block' : 'none';
+            });
+        }
+
+        // === NEW: Render Lottery Section ===
+        function renderLotterySection(lotteryData) {
+            const container = document.getElementById('lottery-section');
+            const config = appConfig.lottery || { enabled: false, ticketPrice: 100, prizeAmount: 5000 };
+            
+            const participants = lotteryData?.current_round?.participants || {};
+            const ticketCount = Object.keys(participants).length;
+
+            container.innerHTML = `
+                <div class="section-toggle">
+                    <label>Enable Lottery System</label>
+                    <label class="switch"><input type="checkbox" id="lotteryEnabled" ${config.enabled ? 'checked' : ''}><span class="slider"></span></label>
+                </div>
+                <div id="lottery-settings-container" style="display: ${config.enabled ? 'block' : 'none'}; padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;">
+                    <div class="form-group"><label for="lotteryTicketPrice">Ticket Price (Points)</label><input type="number" id="lotteryTicketPrice" value="${config.ticketPrice}"></div>
+                    <div class="form-group"><label for="lotteryPrizeAmount">Total Prize (Points)</label><input type="number" id="lotteryPrizeAmount" value="${config.prizeAmount}"></div>
+                    <hr>
+                    <h4>Current Round Status</h4>
+                    <p><strong>Tickets Sold:</strong> <span id="lottery-tickets-sold">${ticketCount}</span></p>
+                    <button type="button" class="update-btn" style="background-color: var(--purple);" onclick="window.drawLotteryWinner()" ${ticketCount === 0 ? 'disabled' : ''}>Draw Winner & Start New Round</button>
+                </div>`;
+
+            document.getElementById('lotteryEnabled').addEventListener('change', (e) => {
+                document.getElementById('lottery-settings-container').style.display = e.target.checked ? 'block' : 'none';
+            });
+        }
+        
+        // === NEW: Draw Lottery Winner Function ===
+        window.drawLotteryWinner = async () => {
+            if (!confirm("Are you sure you want to draw the lottery winner now? This will end the current round.")) return;
+
+            try {
+                const lotterySnapshot = await get(lotteryRef);
+                const lotteryData = lotterySnapshot.val();
+                const participantsObj = lotteryData?.current_round?.participants;
+
+                if (!participantsObj) {
+                    return showToast("No participants in the current lottery round.", "info");
+                }
+
+                const participants = Object.keys(participantsObj);
+                const winnerId = participants[Math.floor(Math.random() * participants.length)];
+                
+                const prizeAmount = appConfig.lottery.prizeAmount || 0;
+                const winnerRef = ref(database, `app/users/${winnerId}`);
+                const winnerSnapshot = await get(winnerRef);
+
+                if (!winnerSnapshot.exists()) {
+                    return showToast(`Winner (${winnerId}) not found. Refunding tickets is recommended.`, "error");
+                }
+                
+                // Grant prize to winner
+                const winnerData = winnerSnapshot.val();
+                const newBalance = (winnerData.balance || 0) + prizeAmount;
+                const historyRef = push(ref(database, `app/users/${winnerId}/transactionHistory`));
+                const updates = {
+                    balance: newBalance,
+                    [`transactionHistory/${historyRef.key}`]: {
+                        type: 'manual',
+                        amount: prizeAmount,
+                        title: 'Lottery Prize Winner!',
+                        date: new Date().toISOString()
+                    }
+                };
+                await update(winnerRef, updates);
+
+                // Archive the winner and start a new round
+                const pastWinnersRef = push(ref(database, 'app/lottery/past_winners'));
+                await set(pastWinnersRef, {
+                    winnerId: winnerId,
+                    prizeAmount: prizeAmount,
+                    participantsCount: participants.length,
+                    date: new Date().toISOString()
+                });
+
+                // Clear current round
+                await remove(ref(database, 'app/lottery/current_round'));
+
+                showToast(`Congratulations! The winner is User ID: ${winnerId}. Prize of ${prizeAmount} points has been sent.`, "success");
+
+            } catch (error) {
+                console.error("Error drawing lottery winner:", error);
+                showToast("An error occurred while drawing the winner.", "error");
+            }
+        };
+
         async function saveAllSettings(e) {
             e.preventDefault();
             const pInt = (val) => parseInt(val) || 0;
             const pFlt = (val) => parseFloat(val) || 0;
 
+            // === NEW: Saving Asset Management fields ===
             appConfig.assets = {
                 adNetworkLogo: document.getElementById('asset-ad-logo').value.trim(),
                 defaultAvatar: document.getElementById('asset-default-avatar').value.trim()
@@ -1999,11 +2160,14 @@
             });
             
             appConfig.userTiersEnabled = document.getElementById('userTiersEnabled').checked; 
+            // === MODIFIED: Saving new tier settings ===
             const tempTiers = (appConfig.userTiers || []).map((item, index) => ({
                 ...item,
                 name: document.querySelector(`.tier-setting [data-type="tierName"][data-index="${index}"]`).value,
                 requiredPoints: pInt(document.querySelector(`.tier-setting [data-type="tierRequiredPoints"][data-index="${index}"]`).value),
-                bonusPercent: pInt(document.querySelector(`.tier-setting [data-type="tierBonusPercent"][data-index="${index}"]`).value)
+                bonusPercent: pInt(document.querySelector(`.tier-setting [data-type="tierBonusPercent"][data-index="${index}"]`).value),
+                minWithdraw: pInt(document.querySelector(`.tier-setting [data-type="tierMinWithdraw"][data-index="${index}"]`).value),
+                dailyWithdrawLimit: pInt(document.querySelector(`.tier-setting [data-type="tierDailyLimit"][data-index="${index}"]`).value)
             }));
             appConfig.userTiers = tempTiers.sort((a,b) => a.requiredPoints - b.requiredPoints);
             
@@ -2032,6 +2196,17 @@
             appConfig.referralControl = {
                 maxReferrals: pInt(document.getElementById('maxReferrals').value),
                 commissionActivation: { adsWatched: pInt(document.getElementById('referralCommissionActivation').value) }
+            };
+
+            // === NEW: Saving Offerwall and Lottery config ===
+            appConfig.offerwall = {
+                enabled: document.getElementById('offerwallEnabled').checked,
+                code: document.getElementById('offerwallCode').value
+            };
+            appConfig.lottery = {
+                enabled: document.getElementById('lotteryEnabled').checked,
+                ticketPrice: pInt(document.getElementById('lotteryTicketPrice').value),
+                prizeAmount: pInt(document.getElementById('lotteryPrizeAmount').value)
             };
 
             await saveConfigToFirebase();

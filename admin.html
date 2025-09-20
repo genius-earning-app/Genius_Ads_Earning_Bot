@@ -64,7 +64,7 @@
         .lang-switcher button { background: none; border: none; padding: 8px 15px; cursor: pointer; font-weight: 600; font-family: 'Hind Siliguri', sans-serif; font-size: 0.9rem; transition: background-color 0.3s, color 0.3s; }
         .lang-switcher button.active { background-color: var(--primary-bg); color: var(--text-light); }
 
-        .content-area { flex-grow: 1; padding: 20px; overflow-y: auto; }
+        .content-area { flex-grow: 1; padding: 20px; overflow-y: auto; padding-bottom: 100px; /* Add padding for the sticky button */ }
         .page { display: none; }
         .page.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -96,14 +96,52 @@
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; font-family: 'Hind Siliguri', sans-serif; }
         .form-group textarea { resize: vertical; min-height: 100px; }
         .form-group input[type="color"] { padding: 5px; height: 48px; }
-
-        .update-btn { width: 100%; padding: 15px; background: var(--green); color: var(--text-light); border: none; border-radius: 5px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
-        .update-btn:hover { background-color: #27ae60; }
+        
+        /* --- NEW & MODIFIED STYLES --- */
+        .global-save-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+        .update-btn-global {
+            padding: 15px 25px;
+            background: var(--green);
+            color: var(--text-light);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .update-btn-global:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        .section-save-btn {
+            display: block;
+            margin-left: auto;
+            margin-top: 15px;
+            padding: 8px 18px;
+            background: var(--blue);
+            color: var(--text-light);
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .section-save-btn:hover {
+            background-color: #2980b9;
+        }
         
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
         .overlay.active { opacity: 1; visibility: visible; }
         
-        .ad-network-setting, .method-setting, .tier-setting, .package-setting, .text-setting, .error-message-setting, .asset-setting { 
+        .ad-network-setting, .method-setting, .tier-setting, .package-setting, .text-setting, .error-message-setting, .asset-setting, .firebase-config-setting { 
             display: grid; gap: 15px; align-items: center;
             margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color);
         }
@@ -111,10 +149,9 @@
         .ad-network-setting { grid-template-columns: 2fr 1fr 1fr 1fr auto auto auto; }
         .task-setting-grid { grid-template-columns: 2fr 2fr 1fr auto auto auto; }
         .method-setting { grid-template-columns: 1fr 1fr 1fr auto auto auto; }
-        /* === MODIFIED: Added more columns for new tier settings === */
         .tier-setting { grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr auto auto auto; }
         .package-setting { grid-template-columns: 2fr 1fr 1fr auto; }
-        .text-setting, .error-message-setting, .asset-setting { grid-template-columns: 1fr 2fr; }
+        .text-setting, .error-message-setting, .asset-setting, .firebase-config-setting { grid-template-columns: 1fr 2fr; }
         .leaderboard-reward-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
 
         .btn-remove { padding: 8px 12px; background: var(--red); color: white; border: none; border-radius: 5px; cursor: pointer; }
@@ -164,7 +201,7 @@
         .status-open { background-color: var(--blue); }
         .status-closed { background-color: #7f8c8d; }
 
-        .tab-nav { display: flex; gap: 10px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        .tab-nav { display: flex; gap: 10px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; /* --- FIX: Added flex-wrap --- */ }
         .tab-btn { padding: 10px 20px; background: none; border: none; cursor: pointer; font-size: 1rem; font-weight: 600; color: var(--text-dark); border-radius: 5px 5px 0 0;}
         .tab-btn.active { background-color: var(--primary-bg); color: var(--text-light); }
         .tab-content { display: none; }
@@ -234,7 +271,6 @@
         .toast.info { border-left: 5px solid var(--blue); }
         .toast-message { margin: 0; margin-left: 10px; }
 
-        /* === NEW: PAGINATION STYLES === */
         .pagination-container { display: flex; justify-content: center; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 5px; }
         .pagination-container button { background-color: var(--primary-bg); color: white; border: none; padding: 8px 15px; margin: 0 3px; cursor: pointer; border-radius: 4px; transition: background-color 0.2s; }
         .pagination-container button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
@@ -248,10 +284,12 @@
         .analytics-filter-container { background-color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
         .analytics-filter-container label { font-weight: 600; }
         .analytics-filter-container select { padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); }
+        
+        .multi-level-referral-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px; }
 
 
         @media (max-width: 768px) {
-            .ad-network-setting, .method-setting, .tier-setting, .package-setting, .text-setting, .error-message-setting, .asset-setting { grid-template-columns: 1fr; gap: 10px; }
+            .ad-network-setting, .method-setting, .tier-setting, .package-setting, .text-setting, .error-message-setting, .asset-setting, .firebase-config-setting { grid-template-columns: 1fr; gap: 10px; }
             .task-setting-grid { grid-template-columns: 1fr; }
             .method-setting .btn-remove, .task-setting .btn-remove, .ad-network-setting .btn-remove, .tier-setting .btn-remove, .package-setting .btn-remove { margin-top: 5px; width: 100%; }
             .promo-code-form { grid-template-columns: 1fr; }
@@ -263,6 +301,15 @@
             .data-table td:last-child { border-bottom: none; }
             .data-table td::before { content: attr(data-label); position: absolute; left: 10px; width: 45%; padding-right: 10px; white-space: nowrap; text-align: left; font-weight: bold; color: var(--primary-bg); }
             .data-table .action-btn { margin-bottom: 5px; }
+
+            .global-save-container {
+                right: 10px;
+                bottom: 10px;
+            }
+            .update-btn-global {
+                font-size: 1rem;
+                padding: 12px 20px;
+            }
         }
     </style>
 </head>
@@ -435,7 +482,6 @@
                                     <tbody id="users-table-body"></tbody>
                                 </table>
                             </div>
-                            <!-- === NEW: PAGINATION CONTAINER === -->
                             <div id="pagination-container" class="pagination-container"></div>
                         </div>
                     </div>
@@ -523,11 +569,35 @@
                 
                 <!-- Settings Page -->
                 <div id="settings" class="page">
-                    <div class="form-group" style="margin-bottom: 25px;">
-                        <input type="text" id="settingsSearch" placeholder="🔍 Search settings sections...">
-                    </div>
+                    <form id="settingsForm" onsubmit="event.preventDefault(); window.saveAllSettings();">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <input type="text" id="settingsSearch" placeholder="🔍 Search settings sections...">
+                        </div>
+                        
+                        <!-- NEW SECTION FOR TECHNICAL SETTINGS -->
+                        <div class="section-card">
+                            <div class="section-header"><i class="fas fa-code"></i>Technical Settings<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div class="section-toggle">
+                                    <label>Enable Telegram Web App Script (telegram.org/js/telegram-web-app.js)</label>
+                                    <label class="switch"><input type="checkbox" id="telegramScriptEnabled"><span class="slider"></span></label>
+                                </div>
+                                <hr>
+                                <h4>Firebase Configuration <span style="color: var(--red); font-weight: bold;">(DANGER: Edit with extreme caution!)</span></h4>
+                                <div id="firebase-config-container">
+                                    <div class="firebase-config-setting"><label for="fb-apiKey">apiKey</label><input type="text" id="fb-apiKey"></div>
+                                    <div class="firebase-config-setting"><label for="fb-authDomain">authDomain</label><input type="text" id="fb-authDomain"></div>
+                                    <div class="firebase-config-setting"><label for="fb-databaseURL">databaseURL</label><input type="text" id="fb-databaseURL"></div>
+                                    <div class="firebase-config-setting"><label for="fb-projectId">projectId</label><input type="text" id="fb-projectId"></div>
+                                    <div class="firebase-config-setting"><label for="fb-storageBucket">storageBucket</label><input type="text" id="fb-storageBucket"></div>
+                                    <div class="firebase-config-setting"><label for="fb-messagingSenderId">messagingSenderId</label><input type="text" id="fb-messagingSenderId"></div>
+                                    <div class="firebase-config-setting"><label for="fb-appId">appId</label><input type="text" id="fb-appId"></div>
+                                    <div class="firebase-config-setting"><label for="fb-measurementId">measurementId</label><input type="text" id="fb-measurementId"></div>
+                                </div>
+                                <button type="button" class="section-save-btn" onclick="window.saveTechnicalSettings()">Save Changes</button>
+                            </div>
+                        </div>
 
-                    <form id="settingsForm">
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsDataManagement"><i class="fas fa-database"></i>Data Management<i class="fas fa-chevron-down toggle-icon"></i></div>
                             <div class="section-body collapsed">
@@ -538,7 +608,6 @@
                             </div>
                         </div>
                         
-                        <!-- === NEW SECTION: Asset Management === -->
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsAssetManagement"><i class="fas fa-image"></i>Asset Management (App Images)<i class="fas fa-chevron-down toggle-icon"></i></div>
                             <div class="section-body collapsed">
@@ -551,6 +620,7 @@
                                    <label for="asset-default-avatar" data-lang-key="assetDefaultAvatar">Default User Avatar URL</label>
                                    <input type="text" id="asset-default-avatar" placeholder="URL for users without a profile picture">
                                </div>
+                               <button type="button" class="section-save-btn" onclick="window.saveAssetSettings()">Save Changes</button>
                             </div>
                         </div>
 
@@ -558,8 +628,15 @@
                             <div class="section-header" data-lang-key="settingsAppControl"><i class="fas fa-bullhorn"></i>App Control<i class="fas fa-chevron-down toggle-icon"></i></div>
                             <div class="section-body collapsed">
                                 <div class="form-group"><label for="appVersion" data-lang-key="labelAppVersion">App Version</label><input type="text" id="appVersion" placeholder="e.g., 1.0.0"></div>
+                                <div class="form-group">
+                                    <label for="appUpdateMessage" data-lang-key="labelAppUpdateMessage">App Update Message</label>
+                                    <textarea id="appUpdateMessage" placeholder="e.g., A new version is available. Please restart the bot to get the latest features."></textarea>
+                                    <small data-lang-key="appUpdateMessageDesc">ব্যবহারকারীরা অ্যাপের পুরনো সংস্করণ ব্যবহার করলে এই বার্তাটি দেখতে পাবে।</small>
+                                </div>
+                                <hr>
                                 <div class="form-group"><label for="botUsername" data-lang-key="labelBotUsername">Telegram Bot Username (without @)</label><input type="text" id="botUsername" placeholder="e.g., YourBotUsername"></div>
                                 <div class="form-group"><label for="announcement" data-lang-key="labelAnnouncement">Announcement / Notice</label><textarea id="announcement" placeholder="অ্যাপের ব্যবহারকারীদের জন্য ঘোষণা..."></textarea></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveAppControlSettings()">Save Changes</button>
                             </div>
                         </div>
 
@@ -588,6 +665,7 @@
                                 <div class="form-group"><label for="dynamicWelcomeMessage" data-lang-key="labelWelcomeMessageTemplate">Welcome Message Template</label><input type="text" id="dynamicWelcomeMessage" placeholder="e.g., Welcome, {name}!"><small>Use <code>{name}</code> to insert the user's first name.</small></div>
                                 <div class="form-group"><label for="dynamicShoppingButtonText" data-lang-key="labelShoppingButtonText">Shopping Button Text</label><input type="text" id="dynamicShoppingButtonText" placeholder="e.g., Start Shopping Now"></div>
                                 <div class="form-group"><label for="dynamicShoppingButtonLink" data-lang-key="labelShoppingButtonLink">Shopping Button Link</label><input type="text" id="dynamicShoppingButtonLink" placeholder="e.g., https://your-shop.com"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveAppCustomizationSettings()">Save Changes</button>
                             </div>
                         </div>
 
@@ -596,10 +674,10 @@
                             <div class="section-body collapsed">
                                 <div class="form-group"><label for="adsReward" data-lang-key="labelAdsReward">Ads Reward (Default)</label><input type="number" step="0.01" id="adsReward"></div>
                                 <div class="form-group"><label for="adsLimit" data-lang-key="labelDailyAdsLimit">Daily Ads Limit</label><input type="number" id="adsLimit"></div>
-                                <div class="form-group"><label for="refferBonus" data-lang-key="labelReferralCommission">Referral Commission in %</label><input type="number" id="refferBonus"></div>
-                                <div class="form-group"><label for="refferJoinBonus" data-lang-key="labelReferralJoinBonus">Referral Join Bonus</label><input type="number" step="0.01" id="refferJoinBonus"></div>
+                                <div class="form-group"><label for="refferBonus" data-lang-key="labelReferralCommission">Referral Commission in % (Level 1)</label><input type="number" id="refferBonus"></div>
                                 <div class="form-group"><label for="currency" data-lang-key="labelCurrencySymbol">Currency Symbol</label><input type="text" id="currency"></div>
                                 <div class="form-group"><label for="pointsPerCurrency">Points per <span id="currency-label">Currency</span></label><input type="number" id="pointsPerCurrency" placeholder="e.g., 100"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveManageSettings()">Save Changes</button>
                             </div>
                         </div>
                         
@@ -615,6 +693,27 @@
                                     <input type="number" id="referralCommissionActivation" placeholder="e.g., 10 (0 to disable)">
                                     <small data-lang-key="referralCommissionActivationDesc">রেফার করা ব্যবহারকারী এই সংখ্যক বিজ্ঞাপন দেখার পরই রেফারার কমিশন পাওয়া শুরু করবে।</small>
                                 </div>
+                                <hr>
+                                <div id="multi-level-referral-section">
+                                    <div class="section-toggle">
+                                        <label data-lang-key="labelEnableMultiLevelReferral">Enable Multi-Level Referral Commission</label>
+                                        <label class="switch"><input type="checkbox" id="multiLevelReferralEnabled"><span class="slider"></span></label>
+                                    </div>
+                                    <div id="multi-level-referral-inputs" style="display: none;">
+                                        <p><small data-lang-key="multiLevelReferralDesc">আপনার ব্যবহারকারীরা আরও রেফার করতে উৎসাহিত হবে। লেভেল ২ মানে হলো আপনার রেফার করা ব্যবহারকারী যাকে রেফার করেছে।</small></p>
+                                        <div class="multi-level-referral-grid">
+                                            <div class="form-group">
+                                                <label for="referral-level2-commission" data-lang-key="labelLevel2Commission">Level 2 Commission (%)</label>
+                                                <input type="number" id="referral-level2-commission" placeholder="e.g., 2">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="referral-level3-commission" data-lang-key="labelLevel3Commission">Level 3 Commission (%)</label>
+                                                <input type="number" id="referral-level3-commission" placeholder="e.g., 1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="section-save-btn" onclick="window.saveReferralControlSettings()">Save Changes</button>
                             </div>
                         </div>
 
@@ -645,6 +744,7 @@
                                 <div class="form-group"><label for="minReferralsForWithdrawal" data-lang-key="labelMinReferralsForWithdrawal">Minimum Referrals for Withdrawal</label><input type="number" id="minReferralsForWithdrawal" placeholder="e.g., 3"></div>
                                 <hr>
                                 <div class="section-toggle"><label data-lang-key="labelEnableMaintenance">Enable Maintenance Mode</label><label class="switch"><input type="checkbox" id="maintenanceMode"><span class="slider"></span></label></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveAdvancedControlSettings()">Save Changes</button>
                             </div>
                         </div>
                         
@@ -656,6 +756,25 @@
                                     <input type="number" id="ipSharingLimit" placeholder="e.g., 3">
                                     <small data-lang-key="ipSharingLimitDesc">একই IP ঠিকানা থেকে সর্বোচ্চ কতজন ব্যবহারকারীকে অনুমতি দেওয়া হবে। এর বেশি হলে তাদের সন্দেহজনক হিসেবে দেখানো হবে।</small>
                                 </div>
+                                <hr>
+                                <div id="vpn-detection-section">
+                                    <div class="section-toggle">
+                                        <label data-lang-key="labelEnableVpnDetection">Enable VPN/Proxy Detection</label>
+                                        <label class="switch"><input type="checkbox" id="vpnDetectionEnabled"><span class="slider"></span></label>
+                                    </div>
+                                    <div id="vpn-detection-options" style="display: none;">
+                                        <div class="form-group">
+                                            <label for="vpn-detection-action" data-lang-key="labelVpnAction">Action on Detection</label>
+                                            <select id="vpn-detection-action">
+                                                <option value="warn" data-lang-key="vpnActionWarn">Warn the User</option>
+                                                <option value="block_earning" data-lang-key="vpnActionBlockEarning">Block from Earning</option>
+                                                <option value="block_account" data-lang-key="vpnActionBlockAccount">Block Account Automatically</option>
+                                            </select>
+                                            <small data-lang-key="vpnActionDesc">VPN ব্যবহারকারী শনাক্ত হলে সিস্টেম কী পদক্ষেপ নেবে তা নির্ধারণ করুন।</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="section-save-btn" onclick="window.saveFraudDetectionSettings()">Save Changes</button>
                             </div>
                         </div>
                         
@@ -674,10 +793,45 @@
                             </div>
                         </div>
 
-                        <div class="section-card"><div class="section-header" data-lang-key="settingsAdNetworks"><i class="fas fa-ad"></i>Ad Network Zone IDs<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="ad-networks-section"></div></div>
-                        <div class="section-card"><div class="section-header" data-lang-key="settingsDailyCheckin"><i class="fas fa-calendar-check"></i>Daily Check-in Bonus<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="daily-checkin-section"></div></div>
-                        <div class="section-card"><div class="section-header" data-lang-key="settingsTasks"><i class="fas fa-tasks"></i>Complete Tasks<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="tasks-section"></div></div>
-                        <div class="section-card"><div class="section-header" data-lang-key="settingsUserTiers"><i class="fas fa-layer-group"></i>ব্যবহারকারীর স্তর (User Tiers)<i class="fas fa-chevron-down toggle-icon"></i></div><div class="section-body collapsed" id="user-tiers-section"></div></div>
+                        <div class="section-card">
+                            <div class="section-header" data-lang-key="settingsAdNetworks"><i class="fas fa-ad"></i>Ad Network Zone IDs<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <!-- NEW FIELD ADDED HERE -->
+                                <div class="form-group">
+                                    <label for="libtlZoneId">LibTL Ad Network Zone ID</label>
+                                    <input type="text" id="libtlZoneId" placeholder="e.g., 9892740">
+                                    <small>এই আইডিটি userM10.html ফাইলের libtl.com স্ক্রিপ্টে ব্যবহৃত হবে।</small>
+                                </div>
+                                <hr>
+                                <!-- Existing Section Content -->
+                                <div id="ad-networks-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveAdNetworkSettings()">Save Changes</button>
+                            </div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header" data-lang-key="settingsDailyCheckin"><i class="fas fa-calendar-check"></i>Daily Check-in Bonus<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div id="daily-checkin-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveDailyCheckinSettings()">Save Changes</button>
+                            </div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header" data-lang-key="settingsTasks"><i class="fas fa-tasks"></i>Complete Tasks<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div id="tasks-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveTasksSettings()">Save Changes</button>
+                            </div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header" data-lang-key="settingsUserTiers"><i class="fas fa-layer-group"></i>ব্যবহারকারীর স্তর (User Tiers)<i class="fas fa-chevron-down toggle-icon"></i></div>
+                            <div class="section-body collapsed">
+                                <div id="user-tiers-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveUserTiersSettings()">Save Changes</button>
+                            </div>
+                        </div>
 
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsWithdrawalMonetization"><i class="fas fa-wallet"></i>Withdrawal & Monetization<i class="fas fa-chevron-down toggle-icon"></i></div>
@@ -689,48 +843,70 @@
                                 </div>
                                 <hr>
                                 <div id="withdrawal-methods-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveWithdrawalSettings()">Save Changes</button>
                             </div>
                         </div>
                         
-                        <!-- === NEW SECTION: Offerwall Management === -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-gifts"></i>Offerwall Management<i class="fas fa-chevron-down toggle-icon"></i></div>
-                            <div class="section-body collapsed" id="offerwall-section"></div>
+                            <div class="section-body collapsed">
+                                <div id="offerwall-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveOfferwallSettings()">Save Changes</button>
+                            </div>
                         </div>
                         
-                        <!-- === NEW SECTION: Lottery System === -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-ticket-alt"></i>Lottery System<i class="fas fa-chevron-down toggle-icon"></i></div>
-                            <div class="section-body collapsed" id="lottery-section"></div>
+                            <div class="section-body collapsed">
+                                <div id="lottery-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveLotterySettings()">Save Changes</button>
+                            </div>
                         </div>
 
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsLeaderboard"><i class="fas fa-trophy"></i>Leaderboard Management<i class="fas fa-chevron-down toggle-icon"></i></div>
-                            <div class="section-body collapsed" id="leaderboard-section"></div>
+                            <div class="section-body collapsed">
+                                <div id="leaderboard-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveLeaderboardSettings()">Save Changes</button>
+                            </div>
                         </div>
 
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsPointStore"><i class="fas fa-store"></i>পয়েন্ট স্টোর (Store)<i class="fas fa-chevron-down toggle-icon"></i></div>
-                            <div class="section-body collapsed" id="point-packages-section"></div>
+                            <div class="section-body collapsed">
+                                <div id="point-packages-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveStoreSettings()">Save Changes</button>
+                            </div>
                         </div>
 
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsTextManagement"><i class="fas fa-edit"></i>অ্যাপের টেক্সট পরিবর্তন (Text Management)<i class="fas fa-chevron-down toggle-icon"></i></div>
-                            <div class="section-body collapsed" id="text-management-section"></div>
+                            <div class="section-body collapsed">
+                                <div id="text-management-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveTextManagementSettings()">Save Changes</button>
+                            </div>
                         </div>
                         
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsAdvancedTextManagement"><i class="fas fa-language"></i>Advanced Text Management (UI Labels)<i class="fas fa-chevron-down toggle-icon"></i></div>
-                            <div class="section-body collapsed" id="advanced-text-management-section"></div>
+                            <div class="section-body collapsed">
+                                <div id="advanced-text-management-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveAdvancedTextSettings()">Save Changes</button>
+                            </div>
                         </div>
                         
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsErrorMessages"><i class="fas fa-exclamation-triangle"></i>ত্রুটির বার্তা নিয়ন্ত্রণ (Error Messages)<i class="fas fa-chevron-down toggle-icon"></i></div>
-                            <div class="section-body collapsed" id="error-message-section">
+                            <div class="section-body collapsed">
+                                <div id="error-message-section"></div>
+                                <button type="button" class="section-save-btn" onclick="window.saveErrorMessagesSettings()">Save Changes</button>
                             </div>
                         </div>
                         
-                        <button type="submit" class="update-btn" data-lang-key="btnUpdateAllSettings">UPDATE ALL SETTINGS</button>
+                        <!-- Main Update Button Moved to a Fixed Container -->
+                        <div class="global-save-container">
+                             <button type="submit" class="update-btn-global" data-lang-key="btnUpdateAllSettings">UPDATE ALL SETTINGS</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -816,32 +992,42 @@
 <!-- Firebase SDKs -->
 <script type="module">
     // --- Firebase Configuration ---
+    // This is a fallback. The primary config will be loaded from the database.
     const firebaseConfig = {
-    apiKey: "AIzaSyBIyRCpm3tLVxgsN7W_OFNBr6v5CX3HcYg",
-    authDomain: "genius-earning-bot.firebaseapp.com",
-    databaseURL: "https://genius-earning-bot-default-rtdb.firebaseio.com",
-    projectId: "genius-earning-bot",
-    storageBucket: "genius-earning-bot.firebasestorage.app",
-    messagingSenderId: "1063434671346",
-    appId: "1:1063434671346:web:ed06bda4e9ef76d4f52c6b"
+    apiKey: "AIzaSyDfn1veuHMeHCbqgYQs_KEREDgwVmBxSHw",
+    authDomain: "the-arafat-earnings.firebaseapp.com",
+    databaseURL: "https://the-arafat-earnings-default-rtdb.firebaseio.com",
+    projectId: "the-arafat-earnings",
+    storageBucket: "the-arafat-earnings.firebasestorage.app",
+    messagingSenderId: "1082223011616",
+    appId: "1:1082223011616:web:3de7e7438ca002dda6d945",
+    measurementId: "G-T9NY7D2RW8"
     };
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, onValue, update, get, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+    // Initialize with fallback
+    let app = initializeApp(firebaseConfig);
+    let database = getDatabase(app);
     
-    const dbRef = ref(database);
-    const configRef = ref(database, 'app/config'); 
-    const usersRef = ref(database, 'app/users');
-    const withdrawRequestsRef = ref(database, 'app/withdraw_requests');
-    const supportTicketsRef = ref(database, 'app/support_tickets');
-    const taskSubmissionsRef = ref(database, 'app/task_submissions'); 
-    const globalNotificationRef = ref(database, 'app/global_notification');
-    const promoCodesRef = ref(database, 'app/promo_codes');
-    // === NEW: Firebase Reference for Lottery ===
-    const lotteryRef = ref(database, 'app/lottery');
+    // --- MODIFIED: Database references are now initialized after config load ---
+    let dbRef, configRef, usersRef, withdrawRequestsRef, supportTicketsRef, taskSubmissionsRef, globalNotificationRef, promoCodesRef, lotteryRef;
+
+    function initializeDbRefs() {
+        dbRef = ref(database);
+        configRef = ref(database, 'app/config'); 
+        usersRef = ref(database, 'app/users');
+        withdrawRequestsRef = ref(database, 'app/withdraw_requests');
+        supportTicketsRef = ref(database, 'app/support_tickets');
+        taskSubmissionsRef = ref(database, 'app/task_submissions'); 
+        globalNotificationRef = ref(database, 'app/global_notification');
+        promoCodesRef = ref(database, 'app/promo_codes');
+        lotteryRef = ref(database, 'app/lottery');
+    }
+    
+    // Initial call with fallback config
+    initializeDbRefs();
 
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -861,7 +1047,6 @@
         let userGrowthChart = null, dailyEarningsChart = null, earningSourcesChart = null, userRetentionChart = null;
 
         const originalDocTitle = document.title;
-        // === NEW: State variables for pagination ===
         let currentPage = 1;
         const usersPerPage = 50;
 
@@ -881,14 +1066,16 @@
                 supportDesc: "View messages or issues sent by users here.", tableSubject: "Subject",
                 settingsDataManagement: "Data Management", backupLabel: "Download a full backup of your app's data.", btnDownloadBackup: "Download Data Backup (JSON)",
                 settingsAssetManagement: "Asset Management (App Images)", assetManagementDesc: "Change the links for images or icons shown in the user app here. After changing, the userM7.html file might also need to be updated.", assetAdLogo: "Ad Network Logo URL", assetDefaultAvatar: "Default User Avatar URL",
-                settingsAppControl: "App Control", labelAppVersion: "App Version", labelBotUsername: "Telegram Bot Username (without @)", labelAnnouncement: "Announcement / Notice",
+                settingsAppControl: "App Control", labelAppVersion: "App Version", labelBotUsername: "Telegram Bot Username (without @)", labelAnnouncement: "Announcement / Notice", labelAppUpdateMessage: "App Update Message", appUpdateMessageDesc: "Users on older app versions will see this message.",
                 settingsGlobalNotification: "Send Notification to All Users", labelNotificationMessage: "Notification Message", btnSendGlobalNotification: "Send Global Notification",
                 settingsAppCustomization: "App Customization", labelThemeColor: "App Primary Theme Color", labelEnableWelcomeBonus: "Enable Welcome Bonus for New Users", labelWelcomeBonus: "Welcome Bonus (Points)", labelWelcomeMessageTemplate: "Welcome Message Template", labelShoppingButtonText: "Shopping Button Text", labelShoppingButtonLink: "Shopping Button Link",
-                settingsManageSettings: "Manage Settings", labelAdsReward: "Ads Reward (Default)", labelDailyAdsLimit: "Daily Ads Limit", labelReferralCommission: "Referral Commission in %", labelReferralJoinBonus: "Referral Join Bonus", labelCurrencySymbol: "Currency Symbol",
+                settingsManageSettings: "Manage Settings", labelAdsReward: "Ads Reward (Default)", labelDailyAdsLimit: "Daily Ads Limit", labelReferralCommission: "Referral Commission in % (Level 1)", labelCurrencySymbol: "Currency Symbol",
                 settingsReferralControl: "Referral System Control", labelMaxReferrals: "Maximum Referrals Limit per User", labelReferralCommissionActivation: "Minimum Ads Watched by Referred User to Activate Commission", referralCommissionActivationDesc: "The referrer will start earning commission only after the referred user watches this number of ads.",
+                labelEnableMultiLevelReferral: "Enable Multi-Level Referral Commission", multiLevelReferralDesc: "Encourage users to refer more. Level 2 means a user referred by your referral.", labelLevel2Commission: "Level 2 Commission (%)", labelLevel3Commission: "Level 3 Commission (%)",
                 settingsPromoCode: "Promo Code Management", titleExistingPromoCodes: "Existing Promo Codes", tableCode: "Code", tableReward: "Reward (Points)", tableUsage: "Usage", labelNewCode: "New Code", labelRewardPoints: "Reward (Points)", labelUsageLimit: "Usage Limit", btnCreateCode: "Create Code",
                 settingsAdvancedControl: "Advanced Control", labelAdWatchTimer: "Ad Watch Timer (Seconds) - Default", labelHourlyAdsLimit: "Hourly Ads Limit", labelMinReferralsForWithdrawal: "Minimum Referrals for Withdrawal", labelEnableMaintenance: "Enable Maintenance Mode",
                 settingsFraudDetection: "Advanced Fraud Detection Settings", labelIpSharingLimit: "IP Sharing Limit", ipSharingLimitDesc: "Maximum number of users allowed from the same IP address. More than this will be shown as suspicious.",
+                labelEnableVpnDetection: "Enable VPN/Proxy Detection", labelVpnAction: "Action on Detection", vpnActionWarn: "Warn the User", vpnActionBlockEarning: "Block from Earning", vpnActionBlockAccount: "Block Account Automatically", vpnActionDesc: "Determine what action the system will take when a VPN user is detected.",
                 settingsTargetedActions: "Targeted Actions (User Segmentation)", labelSelectTargetSegment: "Select Target Segment", segmentAllUsers: "All Active Users", segmentUsersByTier: "Users by Tier", segmentInactiveUsers: "Inactive Users", labelSelectTier: "Select Tier", labelInactiveForDays: "Inactive for more than (days)",
                 labelSelectAction: "Select Action", actionSendNotification: "Send Notification", actionGiveBonus: "Give Bonus Points", labelBonusPoints: "Bonus Points", labelReasonForBonus: "Reason for Bonus", btnExecuteAction: "Execute Action",
                 settingsAdNetworks: "Ad Network Zone IDs", settingsDailyCheckin: "Daily Check-in Bonus", settingsTasks: "Complete Tasks", settingsUserTiers: "User Tiers",
@@ -917,14 +1104,16 @@
                 supportDesc: "এখানে ব্যবহারকারীদের পাঠানো বার্তা বা সমস্যাগুলো দেখা যাবে।", tableSubject: "বিষয়",
                 settingsDataManagement: "ডেটা ম্যানেজমেন্ট", backupLabel: "আপনার অ্যাপের ডেটার একটি সম্পূর্ণ ব্যাকআপ ডাউনলোড করুন।", btnDownloadBackup: "ডেটা ব্যাকআপ ডাউনলোড করুন (JSON)",
                 settingsAssetManagement: "অ্যাপের ছবি পরিচালনা", assetManagementDesc: "ব্যবহারকারী অ্যাপে দেখানো ছবি বা আইকনের লিঙ্ক এখানে পরিবর্তন করুন। পরিবর্তনের পর userM7.html ফাইলটিও আপডেট করতে হতে পারে।", assetAdLogo: "বিজ্ঞাপন নেটওয়ার্ক লোগো URL", assetDefaultAvatar: "ডিফল্ট ব্যবহারকারী অ্যাভাটার URL",
-                settingsAppControl: "অ্যাপ নিয়ন্ত্রণ", labelAppVersion: "অ্যাপ সংস্করণ", labelBotUsername: "টেলিগ্রাম বট ইউজারনেম (@ ছাড়া)", labelAnnouncement: "ঘোষণা / নোটিশ",
+                settingsAppControl: "অ্যাপ নিয়ন্ত্রণ", labelAppVersion: "অ্যাপ সংস্করণ", labelBotUsername: "টেলিগ্রাম বট ইউজারনেম (@ ছাড়া)", labelAnnouncement: "ঘোষণা / নোটিশ", labelAppUpdateMessage: "অ্যাপ আপডেট বার্তা", appUpdateMessageDesc: "ব্যবহারকারীরা অ্যাপের পুরনো সংস্করণ ব্যবহার করলে এই বার্তাটি দেখতে পাবে।",
                 settingsGlobalNotification: "সকল ব্যবহারকারীকে নোটিফিকেশন পাঠান", labelNotificationMessage: "নোটিফিকেশন বার্তা", btnSendGlobalNotification: "গ্লোবাল নোটিফিকেশন পাঠান",
                 settingsAppCustomization: "অ্যাপ কাস্টমাইজেশন", labelThemeColor: "অ্যাপের প্রাথমিক থিম রঙ", labelEnableWelcomeBonus: "নতুন ব্যবহারকারীদের জন্য স্বাগতম বোনাস সক্ষম করুন", labelWelcomeBonus: "স্বাগতম বোনাস (পয়েন্ট)", labelWelcomeMessageTemplate: "স্বাগতম বার্তার টেমপ্লেট", labelShoppingButtonText: "শপিং বাটনের লেখা", labelShoppingButtonLink: "শপিং বাটনের লিঙ্ক",
-                settingsManageSettings: "সেটিংস পরিচালনা", labelAdsReward: "বিজ্ঞাপন পুরস্কার (ডিফল্ট)", labelDailyAdsLimit: "দৈনিক বিজ্ঞাপন দেখার সীমা", labelReferralCommission: "রেফারেল কমিশন %", labelReferralJoinBonus: "রেফারেল যোগদান বোনাস", labelCurrencySymbol: "কারেন্সি প্রতীক",
+                settingsManageSettings: "সেটিংস পরিচালনা", labelAdsReward: "বিজ্ঞাপন পুরস্কার (ডিফল্ট)", labelDailyAdsLimit: "দৈনিক বিজ্ঞাপন দেখার সীমা", labelReferralCommission: "রেফারেল কমিশন % (লেভেল ১)", labelCurrencySymbol: "কারেন্সি প্রতীক",
                 settingsReferralControl: "রেফারেল সিস্টেম নিয়ন্ত্রণ", labelMaxReferrals: "ব্যবহারকারী প্রতি সর্বোচ্চ রেফারেল সীমা", labelReferralCommissionActivation: "কমিশন সক্রিয় করতে রেফার করা ব্যবহারকারীর সর্বনিম্ন বিজ্ঞাপন দেখার সংখ্যা", referralCommissionActivationDesc: "রেফার করা ব্যবহারকারী এই সংখ্যক বিজ্ঞাপন দেখার পরই রেফারার কমিশন পাওয়া শুরু করবে।",
+                labelEnableMultiLevelReferral: "একাধিক স্তরের রেফারেল কমিশন চালু করুন", multiLevelReferralDesc: "আপনার ব্যবহারকারীরা আরও রেফার করতে উৎসাহিত হবে। লেভেল ২ মানে হলো আপনার রেফার করা ব্যবহারকারী যাকে রেফার করেছে।", labelLevel2Commission: "লেভেল ২ কমিশন (%)", labelLevel3Commission: "লেভেল ৩ কমিশন (%)",
                 settingsPromoCode: "প্রোমো কোড ম্যানেজমেন্ট", titleExistingPromoCodes: "বিদ্যমান প্রোমো কোড", tableCode: "কোড", tableReward: "পুরস্কার (পয়েন্ট)", tableUsage: "ব্যবহার", labelNewCode: "নতুন কোড", labelRewardPoints: "পুরস্কার (পয়েন্ট)", labelUsageLimit: "ব্যবহারের সীমা", btnCreateCode: "কোড তৈরি করুন",
                 settingsAdvancedControl: "অ্যাডভান্সড নিয়ন্ত্রণ", labelAdWatchTimer: "বিজ্ঞাপন দেখার টাইমার (সেকেন্ড) - ডিফল্ট", labelHourlyAdsLimit: "ঘণ্টায় বিজ্ঞাপন দেখার সীমা", labelMinReferralsForWithdrawal: "টাকা তোলার জন্য সর্বনিম্ন রেফারেল", labelEnableMaintenance: "রক্ষণাবেক্ষণ মোড সক্ষম করুন",
                 settingsFraudDetection: "অ্যাডভান্সড জালিয়াতি সনাক্তকরণ সেটিংস", labelIpSharingLimit: "আইপি শেয়ারিং সীমা", ipSharingLimitDesc: "একই IP ঠিকানা থেকে সর্বোচ্চ কতজন ব্যবহারকারীকে অনুমতি দেওয়া হবে। এর বেশি হলে তাদের সন্দেহজনক হিসেবে দেখানো হবে।",
+                labelEnableVpnDetection: "VPN/Proxy শনাক্তকরণ চালু করুন", labelVpnAction: "শনাক্ত হলে করণীয়", vpnActionWarn: "ব্যবহারকারীকে সতর্ক করুন", vpnActionBlockEarning: "আয় করা থেকে বিরত রাখুন", vpnActionBlockAccount: "অ্যাকাউন্ট স্বয়ংক্রিয়ভাবে ব্লক করুন", vpnActionDesc: "VPN ব্যবহারকারী শনাক্ত হলে সিস্টেম কী পদক্ষেপ নেবে তা নির্ধারণ করুন।",
                 settingsTargetedActions: "টার্গেটেড অ্যাকশন (ব্যবহারকারী বিভাজন)", labelSelectTargetSegment: "টার্গেট অংশ নির্বাচন করুন", segmentAllUsers: "সকল সক্রিয় ব্যবহারকারী", segmentUsersByTier: "স্তর অনুযায়ী ব্যবহারকারী", segmentInactiveUsers: "নিষ্ক্রিয় ব্যবহারকারী", labelSelectTier: "স্তর নির্বাচন করুন", labelInactiveForDays: "এর বেশি দিন নিষ্ক্রিয় (দিন)",
                 labelSelectAction: "অ্যাকশন নির্বাচন করুন", actionSendNotification: "নোটিফিকেশন পাঠান", actionGiveBonus: "বোনাস পয়েন্ট দিন", labelBonusPoints: "বোনাস পয়েন্ট", labelReasonForBonus: "বোনাসের কারণ", btnExecuteAction: "অ্যাকশন চালান",
                 settingsAdNetworks: "বিজ্ঞাপন নেটওয়ার্ক জোন আইডি", settingsDailyCheckin: "দৈনিক চেক-ইন বোনাস", settingsTasks: "টাস্ক সম্পন্ন করুন", settingsUserTiers: "ব্যবহারকারীর স্তর (User Tiers)",
@@ -942,11 +1131,13 @@
 
         const DEFAULT_CONFIG = {
             adsReward: 1.0, adsLimit: 100, refferBonus: 10,
-            refferJoinBonus: 5.0, currency: 'BDT', minWithdraw: 500,
+            currency: 'BDT', minWithdraw: 500,
             appVersion: '1.0.0', announcement: '',
+            appUpdateMessage: 'A new version is available. Please restart the bot to get the latest features.',
             botUsername: 'YourBotUsername', pointsPerCurrency: 100,
             adWatchTimerSeconds: 30, hourlyAdsLimit: 25,
             minReferralsForWithdrawal: 3, maintenanceMode: false,
+            libtlZoneId: '9892740',
             adNetworksEnabled: true,
             adNetworks: [ { name: 'Monetag Ads', zoneId: '9704633', reward: 1, timer: 30, enabled: true } ],
             dailyCheckinEnabled: true,
@@ -957,7 +1148,6 @@
             withdrawalMethods: [ { name: 'bKash', bn_name: 'বিকাশ', logo: 'bkash.png', enabled: true } ],
             userTiersEnabled: false,
             userTiers: [
-                // === NEW: Default values for new tier settings ===
                 { name: 'Bronze', requiredPoints: 0, bonusPercent: 0, minWithdraw: 500, dailyWithdrawLimit: 1000 },
                 { name: 'Silver', requiredPoints: 50000, bonusPercent: 2, minWithdraw: 400, dailyWithdrawLimit: 2000 },
                 { name: 'Gold', requiredPoints: 200000, bonusPercent: 5, minWithdraw: 300, dailyWithdrawLimit: 5000 }
@@ -997,14 +1187,26 @@
                 requestWithdrawalBtn: "Request Withdrawal",
                 transactionHistoryBtn: "Transaction History"
             },
-            fraudDetection: { ipSharingLimit: 3 },
-            referralControl: { maxReferrals: 0, commissionActivation: { adsWatched: 10 } },
-            // === NEW: Default values for Asset Management ===
+            fraudDetection: { 
+                ipSharingLimit: 3,
+                vpnDetection: {
+                    enabled: false,
+                    action: 'warn'
+                }
+            },
+            referralControl: { 
+                maxReferrals: 0, 
+                commissionActivation: { adsWatched: 10 },
+                multiLevel: {
+                    enabled: false,
+                    level2_commission: 2,
+                    level3_commission: 1
+                }
+            },
             assets: {
                 adNetworkLogo: "https://i.ibb.co/Lh2SFvmH/Untitled-design-20250825-163934-0000.png",
                 defaultAvatar: "https://i.pravatar.cc/150"
             },
-            // === NEW: Default values for Offerwall & Lottery ===
             offerwall: {
                 enabled: false,
                 code: '<!-- Paste your Offerwall HTML/JS code here -->'
@@ -1013,7 +1215,12 @@
                 enabled: false,
                 ticketPrice: 100,
                 prizeAmount: 5000
-            }
+            },
+            // --- NEW: Added default configs ---
+            telegramScript: {
+                enabled: true
+            },
+            firebaseConfig: { ...firebaseConfig } // Store the hardcoded config as default
         };
         
         function setLanguage(lang) {
@@ -1069,62 +1276,46 @@
 
         function init() {
             initLanguage();
-            onValue(configRef, (snapshot) => {
+            // --- MODIFIED: Load config and then initialize listeners ---
+            onValue(ref(database, 'app/config'), (snapshot) => {
                 const data = snapshot.val();
                 appConfig = data ? { ...DEFAULT_CONFIG, ...data } : { ...DEFAULT_CONFIG };
+
+                // Re-initialize app if firebaseConfig is different
+                if (JSON.stringify(appConfig.firebaseConfig) !== JSON.stringify(firebaseConfig)) {
+                    console.log("Firebase config changed. Re-initializing...");
+                    app = initializeApp(appConfig.firebaseConfig, "admin-panel-reinit");
+                    database = getDatabase(app);
+                    initializeDbRefs();
+                }
+
+                // Ensure nested default objects exist if they are missing from Firebase
                 if (!appConfig.textStrings.errorMessages) appConfig.textStrings.errorMessages = DEFAULT_CONFIG.textStrings.errorMessages;
                 if (!appConfig.leaderboard) appConfig.leaderboard = DEFAULT_CONFIG.leaderboard;
                 if (!appConfig.uiStrings) appConfig.uiStrings = DEFAULT_CONFIG.uiStrings;
                 if (!appConfig.assets) appConfig.assets = DEFAULT_CONFIG.assets;
+                if (!appConfig.fraudDetection) appConfig.fraudDetection = DEFAULT_CONFIG.fraudDetection;
+                if (!appConfig.referralControl) appConfig.referralControl = DEFAULT_CONFIG.referralControl;
+                if (!appConfig.referralControl.multiLevel) appConfig.referralControl.multiLevel = DEFAULT_CONFIG.referralControl.multiLevel;
+                if (!appConfig.fraudDetection.vpnDetection) appConfig.fraudDetection.vpnDetection = DEFAULT_CONFIG.fraudDetection.vpnDetection;
+                if (!appConfig.telegramScript) appConfig.telegramScript = DEFAULT_CONFIG.telegramScript;
+                if (!appConfig.firebaseConfig) appConfig.firebaseConfig = DEFAULT_CONFIG.firebaseConfig;
+
+
                 if (!data) {
                     set(configRef, appConfig);
                 }
                 renderAllSettings();
                 updateDashboardData();
-            });
-            onValue(usersRef, (snapshot) => { 
-                allUsers = snapshot.val() || {}; 
-                renderUsers(false); // Changed to false to not reset filters on every data change
-                updateDashboardData(); 
-                processAnalyticsData(); 
-                renderDashboardAnalytics();
-                renderTopTasksAnalytics();
-            });
-            onValue(withdrawRequestsRef, (snapshot) => { 
-                allWithdrawals = snapshot.val() || {}; 
-                renderWithdrawals(); 
-                updateDashboardData(); 
                 
-                const pendingCount = Object.values(allWithdrawals).filter(w => w.status === 'Pending').length;
-                if (pendingCount > 0) {
-                    document.title = `(${pendingCount}) ${originalDocTitle}`;
-                } else {
-                    document.title = originalDocTitle;
-                }
-            });
-            onValue(promoCodesRef, (snapshot) => { renderPromoCodes(snapshot.val() || {}); });
-            onValue(supportTicketsRef, (snapshot) => { renderSupportTickets(snapshot.val() || {}); });
-            onValue(taskSubmissionsRef, (snapshot) => { renderTaskSubmissions(snapshot.val() || {}); });
-            // === NEW: Listener for lottery data ===
-            onValue(lotteryRef, (snapshot) => { renderLotterySection(snapshot.val()); });
+                // Initialize listeners that depend on config
+                setupDynamicListeners();
 
+            }, { onlyOnce: true }); // Load config only once to avoid loops on save
 
             menuToggle.addEventListener('click', toggleMenu);
             overlay.addEventListener('click', toggleMenu);
             navLinks.forEach(link => link.addEventListener('click', handleNavClick));
-            settingsForm.addEventListener('submit', saveAllSettings);
-
-            document.getElementById('withdraw-tab-nav').addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { document.querySelectorAll('#withdraw-tab-nav .tab-btn').forEach(btn => btn.classList.remove('active')); e.target.classList.add('active'); currentWithdrawFilter = e.target.dataset.status; renderWithdrawals(); } });
-            document.getElementById('userSearch').addEventListener('input', () => { currentPage = 1; renderUsers(false); });
-            document.getElementById('filter-status').addEventListener('change', () => { currentPage = 1; renderUsers(false); });
-            document.getElementById('filter-balance').addEventListener('change', () => { currentPage = 1; renderUsers(false); });
-            
-            document.getElementById('select-all-users').addEventListener('change', (e) => { document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = e.target.checked); });
-            document.getElementById('save-user-changes-btn').addEventListener('click', saveUserChanges);
-            document.getElementById('currency').addEventListener('input', (e) => { document.getElementById('currency-label').textContent = e.target.value || 'Currency'; });
-            document.getElementById('send-global-notification-btn').addEventListener('click', sendGlobalNotification);
-            document.getElementById('target-segment').addEventListener('change', handleSegmentChange);
-            document.getElementById('action-type').addEventListener('change', handleActionChange);
             
             document.getElementById('settingsSearch').addEventListener('keyup', filterSettings);
             document.querySelectorAll('#settings .section-header').forEach(header => {
@@ -1138,6 +1329,41 @@
             document.getElementById('analytics-time-filter').addEventListener('change', processAnalyticsData);
             
             initCharts();
+        }
+
+        // --- NEW: Setup listeners that depend on data ---
+        function setupDynamicListeners() {
+            onValue(usersRef, (snapshot) => { 
+                allUsers = snapshot.val() || {}; 
+                renderUsers(false);
+                updateDashboardData(); 
+                processAnalyticsData(); 
+                renderDashboardAnalytics();
+                renderTopTasksAnalytics();
+            });
+            onValue(withdrawRequestsRef, (snapshot) => { 
+                allWithdrawals = snapshot.val() || {}; 
+                renderWithdrawals(); 
+                updateDashboardData(); 
+                
+                const pendingCount = Object.values(allWithdrawals).filter(w => w.status === 'Pending').length;
+                document.title = pendingCount > 0 ? `(${pendingCount}) ${originalDocTitle}` : originalDocTitle;
+            });
+            onValue(promoCodesRef, (snapshot) => { renderPromoCodes(snapshot.val() || {}); });
+            onValue(supportTicketsRef, (snapshot) => { renderSupportTickets(snapshot.val() || {}); });
+            onValue(taskSubmissionsRef, (snapshot) => { renderTaskSubmissions(snapshot.val() || {}); });
+            onValue(lotteryRef, (snapshot) => { renderLotterySection(snapshot.val()); });
+            
+            document.getElementById('withdraw-tab-nav').addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { document.querySelectorAll('#withdraw-tab-nav .tab-btn').forEach(btn => btn.classList.remove('active')); e.target.classList.add('active'); currentWithdrawFilter = e.target.dataset.status; renderWithdrawals(); } });
+            document.getElementById('userSearch').addEventListener('input', () => { currentPage = 1; renderUsers(false); });
+            document.getElementById('filter-status').addEventListener('change', () => { currentPage = 1; renderUsers(false); });
+            document.getElementById('filter-balance').addEventListener('change', () => { currentPage = 1; renderUsers(false); });
+            document.getElementById('select-all-users').addEventListener('change', (e) => { document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = e.target.checked); });
+            document.getElementById('save-user-changes-btn').addEventListener('click', saveUserChanges);
+            document.getElementById('currency').addEventListener('input', (e) => { document.getElementById('currency-label').textContent = e.target.value || 'Currency'; });
+            document.getElementById('send-global-notification-btn').addEventListener('click', sendGlobalNotification);
+            document.getElementById('target-segment').addEventListener('change', handleSegmentChange);
+            document.getElementById('action-type').addEventListener('change', handleActionChange);
         }
         
         function filterSettings() {
@@ -1353,14 +1579,14 @@
         async function saveConfigToFirebase() { 
             try { 
                 await set(configRef, appConfig); 
-                showToast('Settings updated successfully!'); 
+                return true;
             } catch (error) { 
                 console.error("Error saving settings to Firebase: ", JSON.stringify(error, null, 2)); 
                 showToast(`Failed to update settings. Code: ${error.code}`, 'error'); 
+                return false;
             } 
         }
         
-        // === MODIFIED: renderUsers with Pagination Logic ===
         function renderUsers(reset = false) {
             if (reset) {
                 document.getElementById('userSearch').value = '';
@@ -1413,7 +1639,6 @@
             renderPaginationControls(filteredUsers.length, currentPage);
         }
 
-        // === NEW: PAGINATION RENDERING FUNCTION ===
         function renderPaginationControls(totalUsers, page) {
             const container = document.getElementById('pagination-container');
             const totalPages = Math.ceil(totalUsers / usersPerPage);
@@ -1432,7 +1657,6 @@
             container.innerHTML = html;
         }
 
-        // === NEW: Page change handler ===
         window.changePage = function(newPage, totalPages) {
             if (newPage < 1 || newPage > totalPages) return;
             currentPage = newPage;
@@ -1441,17 +1665,29 @@
 
         function renderAllSettings() {
             if (!appConfig || Object.keys(appConfig).length === 0) return;
+
+            // --- NEW: RENDER TECHNICAL SETTINGS ---
+            document.getElementById('telegramScriptEnabled').checked = appConfig.telegramScript?.enabled ?? true;
+            const fbConfig = appConfig.firebaseConfig || {};
+            document.getElementById('fb-apiKey').value = fbConfig.apiKey || '';
+            document.getElementById('fb-authDomain').value = fbConfig.authDomain || '';
+            document.getElementById('fb-databaseURL').value = fbConfig.databaseURL || '';
+            document.getElementById('fb-projectId').value = fbConfig.projectId || '';
+            document.getElementById('fb-storageBucket').value = fbConfig.storageBucket || '';
+            document.getElementById('fb-messagingSenderId').value = fbConfig.messagingSenderId || '';
+            document.getElementById('fb-appId').value = fbConfig.appId || '';
+            document.getElementById('fb-measurementId').value = fbConfig.measurementId || '';
             
-            // === NEW: Populate Asset Management fields ===
             if (appConfig.assets) {
                 document.getElementById('asset-ad-logo').value = appConfig.assets.adNetworkLogo || '';
                 document.getElementById('asset-default-avatar').value = appConfig.assets.defaultAvatar || '';
             }
 
             document.getElementById('appVersion').value = appConfig.appVersion || '1.0.0';
+            document.getElementById('appUpdateMessage').value = appConfig.appUpdateMessage || DEFAULT_CONFIG.appUpdateMessage;
             document.getElementById('announcement').value = appConfig.announcement || '';
             document.getElementById('adsReward').value = appConfig.adsReward; document.getElementById('adsLimit').value = appConfig.adsLimit;
-            document.getElementById('refferBonus').value = appConfig.refferBonus; document.getElementById('refferJoinBonus').value = appConfig.refferJoinBonus;
+            document.getElementById('refferBonus').value = appConfig.refferBonus;
             document.getElementById('currency').value = appConfig.currency; document.getElementById('minWithdraw').value = appConfig.minWithdraw;
             document.getElementById('adWatchTimerSeconds').value = appConfig.adWatchTimerSeconds; document.getElementById('hourlyAdsLimit').value = appConfig.hourlyAdsLimit;
             document.getElementById('minReferralsForWithdrawal').value = appConfig.minReferralsForWithdrawal;
@@ -1465,11 +1701,32 @@
             document.getElementById('themeColor').value = appConfig.theme?.primaryColor || '#6a11cb';
             document.getElementById('withdrawalFeePercent').value = appConfig.withdrawalFeePercent || 0;
 
-            if(appConfig.fraudDetection) document.getElementById('ipSharingLimit').value = appConfig.fraudDetection.ipSharingLimit || 3;
+            if(appConfig.fraudDetection) {
+                document.getElementById('ipSharingLimit').value = appConfig.fraudDetection.ipSharingLimit || 3;
+                const vpnConfig = appConfig.fraudDetection.vpnDetection || {};
+                document.getElementById('vpnDetectionEnabled').checked = vpnConfig.enabled || false;
+                document.getElementById('vpn-detection-action').value = vpnConfig.action || 'warn';
+                const vpnOptionsContainer = document.getElementById('vpn-detection-options');
+                vpnOptionsContainer.style.display = vpnConfig.enabled ? 'block' : 'none';
+                document.getElementById('vpnDetectionEnabled').addEventListener('change', (e) => {
+                    vpnOptionsContainer.style.display = e.target.checked ? 'block' : 'none';
+                });
+            }
             if(appConfig.referralControl) {
                 document.getElementById('maxReferrals').value = appConfig.referralControl.maxReferrals || 0;
                 document.getElementById('referralCommissionActivation').value = appConfig.referralControl.commissionActivation?.adsWatched || 10;
+                const multiLevelConfig = appConfig.referralControl.multiLevel || {};
+                document.getElementById('multiLevelReferralEnabled').checked = multiLevelConfig.enabled || false;
+                document.getElementById('referral-level2-commission').value = multiLevelConfig.level2_commission || 2;
+                document.getElementById('referral-level3-commission').value = multiLevelConfig.level3_commission || 1;
+                const multiLevelInputs = document.getElementById('multi-level-referral-inputs');
+                multiLevelInputs.style.display = multiLevelConfig.enabled ? 'block' : 'none';
+                document.getElementById('multiLevelReferralEnabled').addEventListener('change', (e) => {
+                    multiLevelInputs.style.display = e.target.checked ? 'block' : 'none';
+                });
             }
+
+            document.getElementById('libtlZoneId').value = appConfig.libtlZoneId || '9892740';
 
             renderAdNetworksSection(); renderDailyCheckinSection(); renderTasksSection();
             renderUserTiersSection(); renderWithdrawalMethodsSection();
@@ -1799,7 +2056,6 @@
 
         window.addTask = () => { if (!appConfig.tasks) appConfig.tasks = []; appConfig.tasks.push({ id: Date.now(), title: '', link: '', reward: 0, enabled: true, type: 'join_claim', iconUrl: '' }); renderTasksSection(); }; window.removeTask = (index) => { if(confirm('Are you sure?')) { appConfig.tasks.splice(index, 1); renderTasksSection(); }};
         
-        // === MODIFIED: renderUserTiersSection with new fields ===
         function renderUserTiersSection() { 
             const list = appConfig.userTiers || [];
             renderSection('user-tiers-section', list, { toggleLabel: 'Enable User Tiers Feature', enabledId: 'userTiersEnabled', enabledFlag: 'userTiersEnabled', listContainerId: 'user-tiers-list', 
@@ -1976,7 +2232,6 @@
             `;
         }
 
-        // === NEW: Render Offerwall Section ===
         function renderOfferwallSection() {
             const container = document.getElementById('offerwall-section');
             const config = appConfig.offerwall || { enabled: false, code: '' };
@@ -1997,7 +2252,6 @@
             });
         }
 
-        // === NEW: Render Lottery Section ===
         function renderLotterySection(lotteryData) {
             const container = document.getElementById('lottery-section');
             const config = appConfig.lottery || { enabled: false, ticketPrice: 100, prizeAmount: 5000 };
@@ -2024,7 +2278,6 @@
             });
         }
         
-        // === NEW: Draw Lottery Winner Function ===
         window.drawLotteryWinner = async () => {
             if (!confirm("Are you sure you want to draw the lottery winner now? This will end the current round.")) return;
 
@@ -2048,7 +2301,6 @@
                     return showToast(`Winner (${winnerId}) not found. Refunding tickets is recommended.`, "error");
                 }
                 
-                // Grant prize to winner
                 const winnerData = winnerSnapshot.val();
                 const newBalance = (winnerData.balance || 0) + prizeAmount;
                 const historyRef = push(ref(database, `app/users/${winnerId}/transactionHistory`));
@@ -2063,7 +2315,6 @@
                 };
                 await update(winnerRef, updates);
 
-                // Archive the winner and start a new round
                 const pastWinnersRef = push(ref(database, 'app/lottery/past_winners'));
                 await set(pastWinnersRef, {
                     winnerId: winnerId,
@@ -2072,7 +2323,6 @@
                     date: new Date().toISOString()
                 });
 
-                // Clear current round
                 await remove(ref(database, 'app/lottery/current_round'));
 
                 showToast(`Congratulations! The winner is User ID: ${winnerId}. Prize of ${prizeAmount} points has been sent.`, "success");
@@ -2083,70 +2333,112 @@
             }
         };
 
-        async function saveAllSettings(e) {
-            e.preventDefault();
-            const pInt = (val) => parseInt(val) || 0;
-            const pFlt = (val) => parseFloat(val) || 0;
+        // --- NEW: INDIVIDUAL SAVE FUNCTIONS ---
+        async function createSaveFunction(sectionName, logic) {
+            logic();
+            if (await saveConfigToFirebase()) {
+                showToast(`${sectionName} settings saved successfully!`);
+            }
+        }
+        
+        window.saveTechnicalSettings = () => createSaveFunction('Technical', () => {
+             appConfig.telegramScript = {
+                enabled: document.getElementById('telegramScriptEnabled').checked
+            };
+            appConfig.firebaseConfig = {
+                apiKey: document.getElementById('fb-apiKey').value.trim(),
+                authDomain: document.getElementById('fb-authDomain').value.trim(),
+                databaseURL: document.getElementById('fb-databaseURL').value.trim(),
+                projectId: document.getElementById('fb-projectId').value.trim(),
+                storageBucket: document.getElementById('fb-storageBucket').value.trim(),
+                messagingSenderId: document.getElementById('fb-messagingSenderId').value.trim(),
+                appId: document.getElementById('fb-appId').value.trim(),
+                measurementId: document.getElementById('fb-measurementId').value.trim(),
+            };
+        });
 
-            // === NEW: Saving Asset Management fields ===
+        window.saveAssetSettings = () => createSaveFunction('Asset', () => {
             appConfig.assets = {
                 adNetworkLogo: document.getElementById('asset-ad-logo').value.trim(),
                 defaultAvatar: document.getElementById('asset-default-avatar').value.trim()
             };
-
+        });
+        window.saveAppControlSettings = () => createSaveFunction('App Control', () => {
             appConfig.appVersion = document.getElementById('appVersion').value;
+            appConfig.appUpdateMessage = document.getElementById('appUpdateMessage').value;
             appConfig.announcement = document.getElementById('announcement').value;
-            appConfig.adsReward = pFlt(document.getElementById('adsReward').value);
-            appConfig.adsLimit = pInt(document.getElementById('adsLimit').value);
-            appConfig.refferBonus = pInt(document.getElementById('refferBonus').value);
-            appConfig.refferJoinBonus = pFlt(document.getElementById('refferJoinBonus').value);
-            appConfig.currency = document.getElementById('currency').value;
-            appConfig.minWithdraw = pFlt(document.getElementById('minWithdraw').value);
             appConfig.botUsername = document.getElementById('botUsername').value;
-            appConfig.pointsPerCurrency = pInt(document.getElementById('pointsPerCurrency').value);
-            appConfig.adWatchTimerSeconds = pInt(document.getElementById('adWatchTimerSeconds').value);
-            appConfig.hourlyAdsLimit = pInt(document.getElementById('hourlyAdsLimit').value);
-            appConfig.minReferralsForWithdrawal = pInt(document.getElementById('minReferralsForWithdrawal').value);
-            appConfig.maintenanceMode = document.getElementById('maintenanceMode').checked;
-            appConfig.welcomeBonusEnabled = document.getElementById('welcomeBonusEnabled').checked;
-            appConfig.welcomeBonus = pInt(document.getElementById('welcomeBonus').value);
-            appConfig.dynamicText = { welcomeMessageTemplate: document.getElementById('dynamicWelcomeMessage').value, shoppingButtonText: document.getElementById('dynamicShoppingButtonText').value, shoppingButtonLink: document.getElementById('dynamicShoppingButtonLink').value };
-            
+        });
+        window.saveAppCustomizationSettings = () => createSaveFunction('App Customization', () => {
             appConfig.theme = { primaryColor: document.getElementById('themeColor').value };
-            appConfig.withdrawalFeePercent = pFlt(document.getElementById('withdrawalFeePercent').value);
-            appConfig.storeEnabled = document.getElementById('storeEnabled').checked;
-            appConfig.pointPackages = Array.from(document.querySelectorAll('.package-setting')).map((el, index) => ({ price: pFlt(el.querySelector('[data-type="packagePrice"]').value), currency: el.querySelector('[data-type="packageCurrency"]').value, points: pInt(el.querySelector('[data-type="packagePoints"]').value), enabled: true }));
-            appConfig.textStrings.navHome = document.getElementById('text-navHome').value;
-            appConfig.textStrings.navEarn = document.getElementById('text-navEarn').value;
-            appConfig.textStrings.navRefer = document.getElementById('text-navRefer').value;
-            appConfig.textStrings.navProfile = document.getElementById('text-navProfile').value;
-            appConfig.textStrings.referTitle = document.getElementById('text-referTitle').value;
-            appConfig.textStrings.referLinkTitle = document.getElementById('text-referLinkTitle').value;
-
-            document.querySelectorAll('.error-message-setting input').forEach(input => {
-                appConfig.textStrings.errorMessages[input.dataset.key] = input.value;
-            });
-
+            appConfig.welcomeBonusEnabled = document.getElementById('welcomeBonusEnabled').checked;
+            appConfig.welcomeBonus = parseInt(document.getElementById('welcomeBonus').value) || 0;
+            appConfig.dynamicText = { 
+                welcomeMessageTemplate: document.getElementById('dynamicWelcomeMessage').value, 
+                shoppingButtonText: document.getElementById('dynamicShoppingButtonText').value, 
+                shoppingButtonLink: document.getElementById('dynamicShoppingButtonLink').value 
+            };
+        });
+        window.saveManageSettings = () => createSaveFunction('Manage', () => {
+            appConfig.adsReward = parseFloat(document.getElementById('adsReward').value) || 0;
+            appConfig.adsLimit = parseInt(document.getElementById('adsLimit').value) || 0;
+            appConfig.refferBonus = parseInt(document.getElementById('refferBonus').value) || 0;
+            appConfig.currency = document.getElementById('currency').value;
+            appConfig.pointsPerCurrency = parseInt(document.getElementById('pointsPerCurrency').value) || 100;
+        });
+        window.saveReferralControlSettings = () => createSaveFunction('Referral Control', () => {
+             appConfig.referralControl = {
+                maxReferrals: parseInt(document.getElementById('maxReferrals').value) || 0,
+                commissionActivation: { adsWatched: parseInt(document.getElementById('referralCommissionActivation').value) || 0 },
+                multiLevel: {
+                    enabled: document.getElementById('multiLevelReferralEnabled').checked,
+                    level2_commission: parseInt(document.getElementById('referral-level2-commission').value) || 0,
+                    level3_commission: parseInt(document.getElementById('referral-level3-commission').value) || 0
+                }
+            };
+        });
+        window.saveAdvancedControlSettings = () => createSaveFunction('Advanced Control', () => {
+             appConfig.adWatchTimerSeconds = parseInt(document.getElementById('adWatchTimerSeconds').value) || 30;
+             appConfig.hourlyAdsLimit = parseInt(document.getElementById('hourlyAdsLimit').value) || 25;
+             appConfig.minReferralsForWithdrawal = parseInt(document.getElementById('minReferralsForWithdrawal').value) || 0;
+             appConfig.maintenanceMode = document.getElementById('maintenanceMode').checked;
+        });
+        window.saveFraudDetectionSettings = () => createSaveFunction('Fraud Detection', () => {
+            appConfig.fraudDetection = { 
+                ipSharingLimit: parseInt(document.getElementById('ipSharingLimit').value) || 3,
+                vpnDetection: {
+                    enabled: document.getElementById('vpnDetectionEnabled').checked,
+                    action: document.getElementById('vpn-detection-action').value
+                }
+            };
+        });
+        window.saveAdNetworkSettings = () => createSaveFunction('Ad Network', () => {
+            appConfig.libtlZoneId = document.getElementById('libtlZoneId').value.trim();
             appConfig.adNetworksEnabled = document.getElementById('adNetworksEnabled').checked; 
-            appConfig.adNetworks = (appConfig.adNetworks || []).map((item, index) => ({ 
-                ...item, 
-                name: document.querySelector(`[data-type="adNetworkName"][data-index="${index}"]`).value, 
-                zoneId: document.querySelector(`[data-type="adNetworkZoneId"][data-index="${index}"]`).value, 
-                reward: pFlt(document.querySelector(`[data-type="adNetworkReward"][data-index="${index}"]`).value),
-                timer: pInt(document.querySelector(`[data-type="adNetworkTimer"][data-index="${index}"]`).value),
-                enabled: document.querySelector(`[data-type="adNetworkItemEnabled"][data-index="${index}"]`).checked 
+            appConfig.adNetworks = Array.from(document.querySelectorAll('.ad-network-setting')).map((el, index) => ({ 
+                name: el.querySelector(`[data-type="adNetworkName"]`).value, 
+                zoneId: el.querySelector(`[data-type="adNetworkZoneId"]`).value, 
+                reward: parseFloat(el.querySelector(`[data-type="adNetworkReward"]`).value) || 0,
+                timer: parseInt(el.querySelector(`[data-type="adNetworkTimer"]`).value) || 0,
+                enabled: el.querySelector(`[data-type="adNetworkItemEnabled"]`).checked 
             }));
-
-            appConfig.dailyCheckinEnabled = document.getElementById('dailyCheckinEnabled').checked; appConfig.dailyCheckinRewards = (appConfig.dailyCheckinRewards || []).map((item, index) => ({ ...item, reward: pFlt(document.querySelector(`[data-type="checkinReward"][data-index="${index}"]`).value) }));
-            
+        });
+        window.saveDailyCheckinSettings = () => createSaveFunction('Daily Check-in', () => {
+            appConfig.dailyCheckinEnabled = document.getElementById('dailyCheckinEnabled').checked;
+            appConfig.dailyCheckinRewards = Array.from(document.querySelectorAll('.daily-checkin-item')).map((el, index) => ({ 
+                day: index + 1,
+                reward: parseFloat(el.querySelector(`[data-type="checkinReward"]`).value) || 0
+            }));
+        });
+        window.saveTasksSettings = () => createSaveFunction('Tasks', () => {
             appConfig.tasksEnabled = document.getElementById('tasksEnabled').checked;
             appConfig.tasks = Array.from(document.querySelectorAll('.task-setting')).map((el, index) => {
                 const type = el.querySelector(`[data-type="taskType"]`).value;
                 const task = {
-                    id: appConfig.tasks[index].id || Date.now() + index,
+                    id: appConfig.tasks[index]?.id || Date.now() + index,
                     title: el.querySelector(`[data-type="taskTitle"]`).value,
                     iconUrl: el.querySelector(`[data-type="taskIconUrl"]`).value,
-                    reward: pFlt(el.querySelector(`[data-type="taskReward"]`).value),
+                    reward: parseFloat(el.querySelector(`[data-type="taskReward"]`).value) || 0,
                     enabled: el.querySelector(`[data-type="taskItemEnabled"]`).checked,
                     type: type
                 };
@@ -2158,31 +2450,71 @@
                 }
                 return task;
             });
-            
+        });
+        window.saveUserTiersSettings = () => createSaveFunction('User Tiers', () => {
             appConfig.userTiersEnabled = document.getElementById('userTiersEnabled').checked; 
-            // === MODIFIED: Saving new tier settings ===
-            const tempTiers = (appConfig.userTiers || []).map((item, index) => ({
-                ...item,
-                name: document.querySelector(`.tier-setting [data-type="tierName"][data-index="${index}"]`).value,
-                requiredPoints: pInt(document.querySelector(`.tier-setting [data-type="tierRequiredPoints"][data-index="${index}"]`).value),
-                bonusPercent: pInt(document.querySelector(`.tier-setting [data-type="tierBonusPercent"][data-index="${index}"]`).value),
-                minWithdraw: pInt(document.querySelector(`.tier-setting [data-type="tierMinWithdraw"][data-index="${index}"]`).value),
-                dailyWithdrawLimit: pInt(document.querySelector(`.tier-setting [data-type="tierDailyLimit"][data-index="${index}"]`).value)
+            const tempTiers = Array.from(document.querySelectorAll('.tier-setting')).map((el, index) => ({
+                name: el.querySelector(`[data-type="tierName"]`).value,
+                requiredPoints: parseInt(el.querySelector(`[data-type="tierRequiredPoints"]`).value) || 0,
+                bonusPercent: parseInt(el.querySelector(`[data-type="tierBonusPercent"]`).value) || 0,
+                minWithdraw: parseInt(el.querySelector(`[data-type="tierMinWithdraw"]`).value) || 0,
+                dailyWithdrawLimit: parseInt(el.querySelector(`[data-type="tierDailyLimit"]`).value) || 0
             }));
             appConfig.userTiers = tempTiers.sort((a,b) => a.requiredPoints - b.requiredPoints);
-            
+        });
+        window.saveWithdrawalSettings = () => createSaveFunction('Withdrawal', () => {
+            appConfig.minWithdraw = parseFloat(document.getElementById('minWithdraw').value) || 0;
+            appConfig.withdrawalFeePercent = parseFloat(document.getElementById('withdrawalFeePercent').value) || 0;
             appConfig.withdrawalMethodsEnabled = document.getElementById('withdrawalMethodsEnabled').checked; 
-            appConfig.withdrawalMethods = (appConfig.withdrawalMethods || []).map((item, index) => ({ ...item, name: document.querySelector(`[data-type="methodName"][data-index="${index}"]`).value, bn_name: document.querySelector(`[data-type="methodBnName"][data-index="${index}"]`).value, logo: document.querySelector(`[data-type="methodLogo"][data-index="${index}"]`).value, enabled: document.querySelector(`[data-type="methodItemEnabled"][data-index="${index}"]`).checked }));
-
+            appConfig.withdrawalMethods = Array.from(document.querySelectorAll('.method-setting')).map((el, index) => ({ 
+                name: el.querySelector(`[data-type="methodName"]`).value,
+                bn_name: el.querySelector(`[data-type="methodBnName"]`).value, 
+                logo: el.querySelector(`[data-type="methodLogo"]`).value, 
+                enabled: el.querySelector(`[data-type="methodItemEnabled"]`).checked 
+            }));
+        });
+        window.saveOfferwallSettings = () => createSaveFunction('Offerwall', () => {
+            appConfig.offerwall = {
+                enabled: document.getElementById('offerwallEnabled').checked,
+                code: document.getElementById('offerwallCode').value
+            };
+        });
+        window.saveLotterySettings = () => createSaveFunction('Lottery', () => {
+             appConfig.lottery = {
+                enabled: document.getElementById('lotteryEnabled').checked,
+                ticketPrice: parseInt(document.getElementById('lotteryTicketPrice').value) || 100,
+                prizeAmount: parseInt(document.getElementById('lotteryPrizeAmount').value) || 5000
+            };
+        });
+        window.saveLeaderboardSettings = () => createSaveFunction('Leaderboard', () => {
             appConfig.leaderboard = {
                 enabled: document.getElementById('leaderboardEnabled').checked,
                 resetFrequency: document.getElementById('leaderboardReset').value,
                 rewards: {
-                    top1: pInt(document.getElementById('leaderboardTop1').value),
-                    top2: pInt(document.getElementById('leaderboardTop2').value),
-                    top3: pInt(document.getElementById('leaderboardTop3').value)
+                    top1: parseInt(document.getElementById('leaderboardTop1').value) || 0,
+                    top2: parseInt(document.getElementById('leaderboardTop2').value) || 0,
+                    top3: parseInt(document.getElementById('leaderboardTop3').value) || 0
                 }
             };
+        });
+        window.saveStoreSettings = () => createSaveFunction('Store', () => {
+            appConfig.storeEnabled = document.getElementById('storeEnabled').checked;
+            appConfig.pointPackages = Array.from(document.querySelectorAll('.package-setting')).map((el, index) => ({ 
+                price: parseFloat(el.querySelector('[data-type="packagePrice"]').value) || 0, 
+                currency: el.querySelector('[data-type="packageCurrency"]').value, 
+                points: parseInt(el.querySelector('[data-type="packagePoints"]').value) || 0,
+                enabled: true 
+            }));
+        });
+        window.saveTextManagementSettings = () => createSaveFunction('Text Management', () => {
+            appConfig.textStrings.navHome = document.getElementById('text-navHome').value;
+            appConfig.textStrings.navEarn = document.getElementById('text-navEarn').value;
+            appConfig.textStrings.navRefer = document.getElementById('text-navRefer').value;
+            appConfig.textStrings.navProfile = document.getElementById('text-navProfile').value;
+            appConfig.textStrings.referTitle = document.getElementById('text-referTitle').value;
+            appConfig.textStrings.referLinkTitle = document.getElementById('text-referLinkTitle').value;
+        });
+        window.saveAdvancedTextSettings = () => createSaveFunction('Advanced Text', () => {
             appConfig.uiStrings = {
                 balanceLabel: document.getElementById('ui-balanceLabel').value,
                 totalEarningsLabel: document.getElementById('ui-totalEarningsLabel').value,
@@ -2191,26 +2523,44 @@
                 requestWithdrawalBtn: document.getElementById('ui-requestWithdrawalBtn').value,
                 transactionHistoryBtn: document.getElementById('ui-transactionHistoryBtn').value,
             };
+        });
+        window.saveErrorMessagesSettings = () => createSaveFunction('Error Messages', () => {
+             document.querySelectorAll('.error-message-setting input').forEach(input => {
+                appConfig.textStrings.errorMessages[input.dataset.key] = input.value;
+            });
+        });
+        
+        // --- MODIFIED: Main save function collects data from all fields ---
+        window.saveAllSettings = async () => {
+            const pInt = (val) => parseInt(val) || 0;
+            const pFlt = (val) => parseFloat(val) || 0;
 
-            appConfig.fraudDetection = { ipSharingLimit: pInt(document.getElementById('ipSharingLimit').value) };
-            appConfig.referralControl = {
-                maxReferrals: pInt(document.getElementById('maxReferrals').value),
-                commissionActivation: { adsWatched: pInt(document.getElementById('referralCommissionActivation').value) }
-            };
+            // Collect data from all sections
+            window.saveTechnicalSettings();
+            window.saveAssetSettings();
+            window.saveAppControlSettings();
+            window.saveAppCustomizationSettings();
+            window.saveManageSettings();
+            window.saveReferralControlSettings();
+            window.saveAdvancedControlSettings();
+            window.saveFraudDetectionSettings();
+            window.saveAdNetworkSettings();
+            window.saveDailyCheckinSettings();
+            window.saveTasksSettings();
+            window.saveUserTiersSettings();
+            window.saveWithdrawalSettings();
+            window.saveOfferwallSettings();
+            window.saveLotterySettings();
+            window.saveLeaderboardSettings();
+            window.saveStoreSettings();
+            window.saveTextManagementSettings();
+            window.saveAdvancedTextSettings();
+            window.saveErrorMessagesSettings();
 
-            // === NEW: Saving Offerwall and Lottery config ===
-            appConfig.offerwall = {
-                enabled: document.getElementById('offerwallEnabled').checked,
-                code: document.getElementById('offerwallCode').value
-            };
-            appConfig.lottery = {
-                enabled: document.getElementById('lotteryEnabled').checked,
-                ticketPrice: pInt(document.getElementById('lotteryTicketPrice').value),
-                prizeAmount: pInt(document.getElementById('lotteryPrizeAmount').value)
-            };
-
-            await saveConfigToFirebase();
-        }
+            if (await saveConfigToFirebase()) {
+                showToast('All settings have been updated successfully!', 'success');
+            }
+        };
 
         function toggleMenu() { sideNav.classList.toggle('open'); overlay.classList.toggle('active'); }
         function handleNavClick(e) { e.preventDefault(); navigateToPage(this.getAttribute('href').substring(1)); if (window.innerWidth <= 768) toggleMenu(); }

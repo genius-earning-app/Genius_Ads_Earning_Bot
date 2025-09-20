@@ -384,7 +384,6 @@
             <a href="#" target="_blank" class="action-button" id="shopping-button">Start Shopping Now &nbsp; <i class="fa-solid fa-arrow-right"></i></a>
         </div>
         <div class="stats-grid">
-            <!-- MODIFIED: This card now shows current balance -->
             <div class="stats-card full-width-stats">
                 <div class="icon"><i class="fa-solid fa-wallet"></i></div>
                 <h3 class="value" id="home-total-earnings"><span class="points-value">0 Points</span><span class="bdt-value">...</span></h3>
@@ -613,6 +612,7 @@
     let isLoginTracked = false;
     let isEarningBlocked = false;
     let isAdScriptLoaded = false;
+    let hourlyTimerInterval = null; // NEW: To manage the hourly timer interval
     const clientVersion = "1.0.0"; 
 
     let currentHistoryPage = 1;
@@ -743,7 +743,8 @@
                     balance: initialBalance, totalEarnings: initialBalance, totalAdsWatched: 0, totalReferralCommission: 0,
                     referralsList: {}, transactionHistory: initialHistory, tasksState: {},
                     checkinState: { streak: 0, lastClaimTimestamp: null },
-                    adTracking: { dailyCount: 0, hourlyCount: 0, lastAdTimestamp: null },
+                    // MODIFIED: Added hourlyLimitResetTimestamp
+                    adTracking: { dailyCount: 0, hourlyCount: 0, lastAdTimestamp: null, hourlyLimitResetTimestamp: null },
                     dailyStats: { adsWatched: 0, referralCommission: 0, lastReset: new Date().toISOString() },
                     leaderboardStats: { score: 0, lastReset: new Date().toISOString() },
                     isBlocked: false, joinedAt: new Date().toISOString(), blockReason: null
@@ -936,7 +937,35 @@
     }
         
     function isNewDay(timestamp) { if (!timestamp) return true; const today = new Date().setHours(0, 0, 0, 0); const thatDay = new Date(timestamp).setHours(0, 0, 0, 0); return today > thatDay; }
-    async function checkAndResetDailyStats() { if (!userData.dailyStats || isNewDay(userData.dailyStats.lastReset)) { await update(userRef, { 'dailyStats': { adsWatched: 0, referralCommission: 0, lastReset: new Date().toISOString() }, 'adTracking/dailyCount': 0, 'adTracking/hourlyCount': 0 }); } }
+    
+    // MODIFIED: This function now handles hourly reset as well
+    async function checkAndResetDailyStats() {
+        const updates = {};
+        let needsUpdate = false;
+
+        // Daily reset logic (runs only if the day has changed)
+        if (!userData.dailyStats || isNewDay(userData.dailyStats.lastReset)) {
+            updates['dailyStats'] = { adsWatched: 0, referralCommission: 0, lastReset: new Date().toISOString() };
+            updates['adTracking/dailyCount'] = 0;
+            // Also reset hourly count on new day
+            updates['adTracking/hourlyCount'] = 0;
+            updates['adTracking/hourlyLimitResetTimestamp'] = null; // Clear timer on new day
+            needsUpdate = true;
+        }
+
+        // Hourly reset logic (runs every time if the timer has expired)
+        const hourlyResetTimestamp = userData.adTracking?.hourlyLimitResetTimestamp;
+        if (hourlyResetTimestamp && Date.now() > hourlyResetTimestamp) {
+            updates['adTracking/hourlyCount'] = 0;
+            updates['adTracking/hourlyLimitResetTimestamp'] = null;
+            needsUpdate = true;
+        }
+
+        if (needsUpdate) {
+            await update(userRef, updates);
+        }
+    }
+
 
     window.showView = (viewId) => {
         if (!isConfigLoaded || !isUserLoaded) return; 
@@ -959,33 +988,75 @@
         return currentTier;
     }
 
+    // NEW: Function to format time for the hourly timer
+    function formatTime(seconds) {
+        const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+        const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+        const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${h}:${m}:${s}`;
+    }
+
+    // NEW: Function to manage the hourly timer display
+    function startHourlyTimer(resetTimestamp, button) {
+        if (hourlyTimerInterval) clearInterval(hourlyTimerInterval);
+        
+        hourlyTimerInterval = setInterval(() => {
+            const now = Date.now();
+            const remainingSeconds = Math.max(0, Math.floor((resetTimestamp - now) / 1000));
+            
+            if (remainingSeconds > 0) {
+                button.innerHTML = `<i class="fa-solid fa-clock"></i> Next in ${formatTime(remainingSeconds)}`;
+            } else {
+                clearInterval(hourlyTimerInterval);
+                button.innerHTML = `<i class="fa-solid fa-play-circle"></i> Watch Ad & Earn`;
+                button.disabled = false;
+                // Trigger a check to reset the stats in the database
+                checkAndResetDailyStats();
+            }
+        }, 1000);
+    }
+
     function updateDisplay() {
         if (!isConfigLoaded || !isUserLoaded) return;
         const currencySymbol = appConfig.currency || 'BDT'; const pointsPerCurrency = appConfig.pointsPerCurrency || 100;
         const pointsBalance = userData.balance || 0; const balanceInBdt = pointsBalance / pointsPerCurrency;
         document.getElementById('header-balance').textContent = `${currencySymbol} ${balanceInBdt.toFixed(2)}`;
         
-        // --- MODIFIED: Changed home-total-earnings to show current balance for consistency ---
         document.getElementById('home-total-earnings').innerHTML = `<span class="points-value">${pointsBalance.toLocaleString()} Points</span><span class="bdt-value">${currencySymbol} ${balanceInBdt.toFixed(2)}</span>`;
-        document.getElementById('home-total-earnings-label').textContent = "Current Balance"; // Changed label for clarity
+        document.getElementById('home-total-earnings-label').textContent = "Current Balance";
 
         document.getElementById('home-ads-watched').textContent = userData.totalAdsWatched || 0;
         document.getElementById('home-total-referrals').textContent = userData.referralsList ? Object.keys(userData.referralsList).length : 0;
         document.getElementById('home-total-tasks-completed').textContent = userData.tasksState ? Object.values(userData.tasksState).filter(s => s.completed).length : 0;
         document.getElementById('home-total-commission').textContent = `${userData.totalReferralCommission || 0} Points`;
         const dailyAdsLimit = appConfig.adsLimit || 250, hourlyLimit = appConfig.hourlyAdsLimit || 25;
-        const adTracking = userData.adTracking || { dailyCount: 0, hourlyCount: 0 };
+        const adTracking = userData.adTracking || { dailyCount: 0, hourlyCount: 0, hourlyLimitResetTimestamp: null };
+        
         document.querySelectorAll('.ad-network-card').forEach(card => {
             const watchButton = card.querySelector(`.watch-ad-button`);
             if (watchButton) {
                 card.querySelector(`.tasks-completed-daily`).textContent = adTracking.dailyCount; card.querySelector(`.tasks-remaining-daily`).textContent = dailyAdsLimit - adTracking.dailyCount;
                 card.querySelector(`.progress-bar-inner`).style.width = `${(adTracking.dailyCount / dailyAdsLimit) * 100}%`;
                 card.querySelector(`.hourly-limit-value`).textContent = `${adTracking.hourlyCount}/${hourlyLimit}`; card.querySelector(`.daily-limit-value`).textContent = `${adTracking.dailyCount}/${dailyAdsLimit}`;
-                if (adTracking.dailyCount >= dailyAdsLimit) { watchButton.disabled = true; watchButton.innerHTML = `<i class="fa-solid fa-check"></i> Daily Limit`; }
-                else if (adTracking.hourlyCount >= hourlyLimit) { watchButton.disabled = true; watchButton.innerHTML = `<i class="fa-solid fa-clock"></i> Hourly Limit`; }
-                else { watchButton.disabled = false; watchButton.innerHTML = `<i class="fa-solid fa-play-circle"></i> Watch Ad & Earn`; }
+                
+                // MODIFIED: Logic for disabling the watch ad button
+                if (adTracking.dailyCount >= dailyAdsLimit) { 
+                    watchButton.disabled = true; watchButton.innerHTML = `<i class="fa-solid fa-check"></i> Daily Limit Reached`;
+                }
+                else if (adTracking.hourlyLimitResetTimestamp && Date.now() < adTracking.hourlyLimitResetTimestamp) {
+                    watchButton.disabled = true;
+                    startHourlyTimer(adTracking.hourlyLimitResetTimestamp, watchButton);
+                }
+                else if (adTracking.hourlyCount >= hourlyLimit) {
+                     watchButton.disabled = true; watchButton.innerHTML = `<i class="fa-solid fa-clock"></i> Hourly Limit Reached`;
+                }
+                else {
+                    if (hourlyTimerInterval) clearInterval(hourlyTimerInterval);
+                    watchButton.disabled = false; watchButton.innerHTML = `<i class="fa-solid fa-play-circle"></i> Watch Ad & Earn`;
+                }
             }
         });
+
         document.getElementById('refer-today-commission').textContent = `${userData.dailyStats?.referralCommission || 0} Points`;
         document.getElementById('profile-balance').innerHTML = `${pointsBalance.toLocaleString()} Points <span class="bdt-value">${currencySymbol} ${balanceInBdt.toFixed(2)}</span>`;
         document.getElementById('profile-total-earnings').innerHTML = `${(userData.totalEarnings || 0).toLocaleString()} Points <span class="bdt-value">${((userData.totalEarnings || 0) / pointsPerCurrency).toFixed(2)} ${currencySymbol}</span>`;
@@ -1004,13 +1075,10 @@
             let { firstName, lastName, username, photo_url } = userData.profile;
             const userName = firstName || 'User'; document.getElementById('header-username').textContent = userName;
             
-            // --- MODIFIED: Self-healing for profile picture ---
             if (!photo_url && tgUser.photo_url) {
-                // If photo_url is missing in DB but available from Telegram now, update it.
                 update(userRef, { 'profile/photo_url': tgUser.photo_url });
-                photo_url = tgUser.photo_url; // Use it immediately for display
+                photo_url = tgUser.photo_url; 
             }
-            // --- END OF MODIFICATION ---
 
             const headerAvatar = document.getElementById('header-avatar-placeholder');
             const avatarUrl = photo_url || appConfig.assets?.defaultAvatar || `https://i.pravatar.cc/150?u=${tgUser.id}`;
@@ -1074,9 +1142,13 @@
         }
     }
     
+    // MODIFIED: GrantReward function to handle hourly limit trigger
     async function grantReward(adNetwork, baseRewardPoints) {
         const tier = getCurrentUserTier(), bonusPoints = Math.floor(baseRewardPoints * (tier.bonusPercent / 100));
         const totalReward = baseRewardPoints + bonusPoints; const transactionTitle = bonusPoints > 0 ? `${adNetwork.name} Ad Reward (+${bonusPoints} bonus)` : `${adNetwork.name} Ad Reward`;
+        
+        const currentHourlyCount = (userData.adTracking?.hourlyCount || 0) + 1;
+        const hourlyLimit = appConfig.hourlyAdsLimit || 25;
         
         const updates = {
             'balance': (userData.balance || 0) + totalReward, 
@@ -1084,12 +1156,17 @@
             'totalAdsWatched': (userData.totalAdsWatched || 0) + 1,
             'dailyStats/adsWatched': (userData.dailyStats?.adsWatched || 0) + 1, 
             'adTracking/dailyCount': (userData.adTracking?.dailyCount || 0) + 1,
-            'adTracking/hourlyCount': (userData.adTracking?.hourlyCount || 0) + 1, 
+            'adTracking/hourlyCount': currentHourlyCount, 
             'adTracking/lastAdTimestamp': new Date().toISOString(),
             'leaderboardStats/score': (userData.leaderboardStats?.score || 0) + totalReward
         };
         updates[`transactionHistory/earn_${Date.now()}`] = { type: 'earning', amount: totalReward, title: transactionTitle, date: new Date().toISOString() };
         
+        // NEW: Set the hourly timer if the limit is reached
+        if (currentHourlyCount >= hourlyLimit) {
+            updates['adTracking/hourlyLimitResetTimestamp'] = Date.now() + 3600000; // 1 hour from now
+        }
+
         await update(userRef, updates);
         await grantMultiLevelCommission(baseRewardPoints, tgUser.id);
         
@@ -1101,8 +1178,9 @@
         const network = (appConfig.adNetworks || []).find(n => n.name === networkName);
         if (!network) return;
 
-        const adTracking = userData.adTracking || { dailyCount: 0, hourlyCount: 0 };
-        if (adTracking.dailyCount >= (appConfig.adsLimit || 250) || adTracking.hourlyCount >= (appConfig.hourlyAdsLimit || 25)) return;
+        const adTracking = userData.adTracking || { dailyCount: 0, hourlyCount: 0, hourlyLimitResetTimestamp: null };
+        const hourlyLimitReset = adTracking.hourlyLimitResetTimestamp;
+        if (adTracking.dailyCount >= (appConfig.adsLimit || 250) || adTracking.hourlyCount >= (appConfig.hourlyAdsLimit || 25) || (hourlyLimitReset && Date.now() < hourlyLimitReset) ) return;
         
         const overlay = document.getElementById('timer-notification-overlay'), overlayContent = document.getElementById('timer-notification-content');
         const adTimerSeconds = network.timer || appConfig.adWatchTimerSeconds || 30;
@@ -1129,20 +1207,38 @@
         }, adTimerSeconds * 1000);
     };
 
+    // MODIFIED: Logic for daily check-in button state
     function renderCheckinDays() {
         const timelineContainer = document.getElementById('checkin-timeline-container'), claimButton = document.getElementById('claim-checkin-button');
         const checkinRewards = appConfig.dailyCheckinRewards || []; if (!timelineContainer || !claimButton || checkinRewards.length === 0) return;
         const { streak = 0, lastClaimTimestamp = null } = userData.checkinState || {}; const canClaimToday = isNewDay(lastClaimTimestamp);
         let isClaimable = false, claimableReward = 0;
+
         timelineContainer.innerHTML = checkinRewards.map((dayInfo, index) => {
             const reward = dayInfo.reward; let status = 'locked', icon = '🎁';
             if (index < streak) { status = 'claimed'; icon = '<i class="fa-solid fa-check"></i>'; }
             else if (index === streak && canClaimToday) { status = 'claimable'; icon = '<i class="fa-solid fa-gift"></i>'; isClaimable = true; claimableReward = reward; }
             return `<div class="day-item ${status}"><div class="day-content"><div class="day-circle">${icon}</div><div class="day-reward">${reward} Points</div><div class="day-number">Day ${index + 1}</div></div></div>`;
         }).join('');
-        if (isClaimable) { claimButton.innerHTML = `<i class="fa-solid fa-gift"></i> Claim ${claimableReward} Points`; claimButton.disabled = false; }
-        else if (streak >= checkinRewards.length) { claimButton.innerHTML = `<i class="fa-solid fa-check-circle"></i> Cycle Complete`; claimButton.disabled = true; }
-        else { claimButton.innerHTML = `<i class="fa-solid fa-clock"></i> Come back tomorrow`; claimButton.disabled = true; }
+
+        // NEW: Check if daily ad limit is completed
+        const dailyAdsCompleted = userData.adTracking?.dailyCount || 0;
+        const dailyAdsLimit = appConfig.adsLimit || 250;
+        
+        if (dailyAdsCompleted < dailyAdsLimit) {
+            const remainingAds = dailyAdsLimit - dailyAdsCompleted;
+            claimButton.disabled = true;
+            claimButton.innerHTML = `<i class="fa-solid fa-eye"></i> Complete ${remainingAds} more Ads`;
+        }
+        else if (isClaimable) { 
+            claimButton.innerHTML = `<i class="fa-solid fa-gift"></i> Claim ${claimableReward} Points`; claimButton.disabled = false; 
+        }
+        else if (streak >= checkinRewards.length) { 
+            claimButton.innerHTML = `<i class="fa-solid fa-check-circle"></i> Cycle Complete`; claimButton.disabled = true; 
+        }
+        else { 
+            claimButton.innerHTML = `<i class="fa-solid fa-clock"></i> Come back tomorrow`; claimButton.disabled = true; 
+        }
     }
 
     function initializeEventListeners() {
@@ -1179,6 +1275,7 @@
         container.innerHTML = appConfig.adNetworks.filter(n => n.enabled).map(network => `<div class="ad-network-card"><a href="#" class="earn-option-card" onclick="event.preventDefault(); document.querySelector('.watch-ad-button[data-network=\\'${network.name}\\']').click();"><div class="logo-wrapper"><img src="${appConfig.assets?.adNetworkLogo || ''}" alt="${network.name} Logo"></div><div class="info-wrapper"><span class="company-name">${network.name}</span><span class="subtitle">Watch ads & get rewards</span></div><div class="action-wrapper"><i class="fa-solid fa-chevron-right"></i></div></a><div class="card progress-card" style="margin-top: -5px; border-radius: 0 0 12px 12px; margin-bottom: 12px;"><h3>Watch Ads</h3><div class="progress-info"><span>Completed: <span class="tasks-completed-daily">0</span></span><span>Remaining: <span class="tasks-remaining-daily">${appConfig.adsLimit || 250}</span></span></div><div class="progress-bar"><div class="progress-bar-inner"></div></div><div class="limits-grid"><div class="limit-card"><div class="icon"><i class="fa-solid fa-clock"></i></div><h3 class="value hourly-limit-value">0/${hourlyLimit}</h3><p class="label">Hourly Limit</p></div><div class="limit-card"><div class="icon"><i class="fa-solid fa-calendar-day"></i></div><h3 class="value daily-limit-value">0/${appConfig.adsLimit || 250}</h3><p class="label">Daily Limit</p></div></div><button class="action-button primary-button watch-ad-button" data-network="${network.name}" onclick="window.startAdCycleFor('${network.name}')"><i class="fa-solid fa-play-circle"></i> Watch Ad & Earn</button></div></div>`).join('');
     }
     
+    // MODIFIED: To render new 'watch_ads_claim' task type
     function renderTasks() {
         const container = document.getElementById('tasks-container');
         const tasks = appConfig.tasks || [];
@@ -1187,13 +1284,23 @@
         container.innerHTML = tasks.filter(t => t.enabled).map(task => {
             const taskState = userData.tasksState?.[task.id] || {};
             let buttonHTML;
+            
             if (taskState.completed) {
                 buttonHTML = `<button class="task-button completed" disabled><i class="fa-solid fa-check"></i> Completed</button>`;
             } else if (taskState.pendingReview) {
                 buttonHTML = `<button class="task-button" disabled>Pending Review</button>`;
             } else if (taskState.pendingClaim) {
                 buttonHTML = `<button class="task-button" onclick="window.handleTaskClick(${task.id})">Claim Reward</button>`;
-            } else {
+            } else if (task.type === 'watch_ads_claim') { // NEW: Logic for ad watch tasks
+                const totalAdsWatched = userData.totalAdsWatched || 0;
+                const requiredAds = task.requiredAds || 0;
+                if (totalAdsWatched >= requiredAds) {
+                     buttonHTML = `<button class="task-button" onclick="window.handleTaskClick(${task.id})">Claim Reward</button>`;
+                } else {
+                     buttonHTML = `<button class="task-button" disabled>Watch (${totalAdsWatched}/${requiredAds})</button>`;
+                }
+            }
+            else {
                 let actionText = 'Start Task';
                 if (task.type === 'join_claim') actionText = 'Join & Claim';
                 if (task.type === 'screenshot') actionText = 'Submit Proof';
@@ -1217,6 +1324,7 @@
         }).join('');
     }
     
+    // MODIFIED: handleTaskClick to process new task type
     window.handleTaskClick = async (taskId) => {
         if (isEarningBlocked) { return showToast("Earning is disabled due to network policy.", "error"); }
         const task = (appConfig.tasks || []).find(t => t.id === taskId);
@@ -1236,6 +1344,13 @@
             openScreenshotTaskModal(task);
         } else if (task.type === 'question_answer') {
             openQATaskModal(task);
+        } else if (task.type === 'watch_ads_claim') { // NEW: Handle claiming for ad watch tasks
+            const totalAdsWatched = userData.totalAdsWatched || 0;
+            if (totalAdsWatched >= task.requiredAds) {
+                await claimSimpleTask(task);
+            } else {
+                showToast(`You need to watch ${task.requiredAds - totalAdsWatched} more ads.`, "info");
+            }
         }
     };
     
@@ -1809,7 +1924,7 @@
                 .sort((a,b) => new Date(b.date) - new Date(a.date))
                 .slice(0, 5)
                 .map(async (winner) => {
-                    const userSnap = await get(ref(database, `app/users/${winner.winnerId}/profile/firstName`));
+                    const userSnap = await get(ref(database, `app/users/${winner.winnerId}/profile/firstName`)));
                     const name = userSnap.val() || `User ${winner.winnerId.slice(0,4)}`;
                     return `<div class="winner-item">
                                 <span class="rank"><i class="fas fa-trophy"></i></span>

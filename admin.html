@@ -97,7 +97,6 @@
         .form-group textarea { resize: vertical; min-height: 100px; }
         .form-group input[type="color"] { padding: 5px; height: 48px; }
         
-        /* --- NEW & MODIFIED STYLES --- */
         .global-save-container {
             position: fixed;
             bottom: 20px;
@@ -201,7 +200,7 @@
         .status-open { background-color: var(--blue); }
         .status-closed { background-color: #7f8c8d; }
 
-        .tab-nav { display: flex; gap: 10px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; /* --- FIX: Added flex-wrap --- */ }
+        .tab-nav { display: flex; gap: 10px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
         .tab-btn { padding: 10px 20px; background: none; border: none; cursor: pointer; font-size: 1rem; font-weight: 600; color: var(--text-dark); border-radius: 5px 5px 0 0;}
         .tab-btn.active { background-color: var(--primary-bg); color: var(--text-light); }
         .tab-content { display: none; }
@@ -574,7 +573,6 @@
                             <input type="text" id="settingsSearch" placeholder="🔍 Search settings sections...">
                         </div>
                         
-                        <!-- NEW SECTION FOR TECHNICAL SETTINGS -->
                         <div class="section-card">
                             <div class="section-header"><i class="fas fa-code"></i>Technical Settings<i class="fas fa-chevron-down toggle-icon"></i></div>
                             <div class="section-body collapsed">
@@ -796,14 +794,12 @@
                         <div class="section-card">
                             <div class="section-header" data-lang-key="settingsAdNetworks"><i class="fas fa-ad"></i>Ad Network Zone IDs<i class="fas fa-chevron-down toggle-icon"></i></div>
                             <div class="section-body collapsed">
-                                <!-- NEW FIELD ADDED HERE -->
                                 <div class="form-group">
                                     <label for="libtlZoneId">LibTL Ad Network Zone ID</label>
                                     <input type="text" id="libtlZoneId" placeholder="e.g., 9892740">
                                     <small>এই আইডিটি userM10.html ফাইলের libtl.com স্ক্রিপ্টে ব্যবহৃত হবে।</small>
                                 </div>
                                 <hr>
-                                <!-- Existing Section Content -->
                                 <div id="ad-networks-section"></div>
                                 <button type="button" class="section-save-btn" onclick="window.saveAdNetworkSettings()">Save Changes</button>
                             </div>
@@ -903,7 +899,6 @@
                             </div>
                         </div>
                         
-                        <!-- Main Update Button Moved to a Fixed Container -->
                         <div class="global-save-container">
                              <button type="submit" class="update-btn-global" data-lang-key="btnUpdateAllSettings">UPDATE ALL SETTINGS</button>
                         </div>
@@ -992,7 +987,6 @@
 <!-- Firebase SDKs -->
 <script type="module">
     // --- Firebase Configuration ---
-    // This is a fallback. The primary config will be loaded from the database.
     const firebaseConfig = {
     apiKey: "AIzaSyDfn1veuHMeHCbqgYQs_KEREDgwVmBxSHw",
     authDomain: "the-arafat-earnings.firebaseapp.com",
@@ -1007,11 +1001,9 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, onValue, update, get, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // Initialize with fallback
     let app = initializeApp(firebaseConfig);
     let database = getDatabase(app);
     
-    // --- MODIFIED: Database references are now initialized after config load ---
     let dbRef, configRef, usersRef, withdrawRequestsRef, supportTicketsRef, taskSubmissionsRef, globalNotificationRef, promoCodesRef, lotteryRef;
 
     function initializeDbRefs() {
@@ -1026,7 +1018,6 @@
         lotteryRef = ref(database, 'app/lottery');
     }
     
-    // Initial call with fallback config
     initializeDbRefs();
 
 
@@ -1216,11 +1207,10 @@
                 ticketPrice: 100,
                 prizeAmount: 5000
             },
-            // --- NEW: Added default configs ---
             telegramScript: {
                 enabled: true
             },
-            firebaseConfig: { ...firebaseConfig } // Store the hardcoded config as default
+            firebaseConfig: { ...firebaseConfig } 
         };
         
         function setLanguage(lang) {
@@ -1276,12 +1266,10 @@
 
         function init() {
             initLanguage();
-            // --- MODIFIED: Load config and then initialize listeners ---
             onValue(ref(database, 'app/config'), (snapshot) => {
                 const data = snapshot.val();
                 appConfig = data ? { ...DEFAULT_CONFIG, ...data } : { ...DEFAULT_CONFIG };
 
-                // Re-initialize app if firebaseConfig is different
                 if (JSON.stringify(appConfig.firebaseConfig) !== JSON.stringify(firebaseConfig)) {
                     console.log("Firebase config changed. Re-initializing...");
                     app = initializeApp(appConfig.firebaseConfig, "admin-panel-reinit");
@@ -1289,7 +1277,6 @@
                     initializeDbRefs();
                 }
 
-                // Ensure nested default objects exist if they are missing from Firebase
                 if (!appConfig.textStrings.errorMessages) appConfig.textStrings.errorMessages = DEFAULT_CONFIG.textStrings.errorMessages;
                 if (!appConfig.leaderboard) appConfig.leaderboard = DEFAULT_CONFIG.leaderboard;
                 if (!appConfig.uiStrings) appConfig.uiStrings = DEFAULT_CONFIG.uiStrings;
@@ -1301,17 +1288,14 @@
                 if (!appConfig.telegramScript) appConfig.telegramScript = DEFAULT_CONFIG.telegramScript;
                 if (!appConfig.firebaseConfig) appConfig.firebaseConfig = DEFAULT_CONFIG.firebaseConfig;
 
-
                 if (!data) {
                     set(configRef, appConfig);
                 }
                 renderAllSettings();
                 updateDashboardData();
-                
-                // Initialize listeners that depend on config
                 setupDynamicListeners();
 
-            }, { onlyOnce: true }); // Load config only once to avoid loops on save
+            }, { onlyOnce: true }); 
 
             menuToggle.addEventListener('click', toggleMenu);
             overlay.addEventListener('click', toggleMenu);
@@ -1331,7 +1315,6 @@
             initCharts();
         }
 
-        // --- NEW: Setup listeners that depend on data ---
         function setupDynamicListeners() {
             onValue(usersRef, (snapshot) => { 
                 allUsers = snapshot.val() || {}; 
@@ -1666,7 +1649,6 @@
         function renderAllSettings() {
             if (!appConfig || Object.keys(appConfig).length === 0) return;
 
-            // --- NEW: RENDER TECHNICAL SETTINGS ---
             document.getElementById('telegramScriptEnabled').checked = appConfig.telegramScript?.enabled ?? true;
             const fbConfig = appConfig.firebaseConfig || {};
             document.getElementById('fb-apiKey').value = fbConfig.apiKey || '';
@@ -1986,18 +1968,21 @@
         function renderDailyCheckinSection() { const container = document.getElementById('daily-checkin-section'); container.innerHTML = `<div class="section-toggle"><label>Enable Daily Check-in Feature</label><label class="switch"><input type="checkbox" id="dailyCheckinEnabled" ${appConfig.dailyCheckinEnabled ? 'checked' : ''}><span class="slider"></span></label></div><div id="daily-checkin-list" style="padding-top: 15px; border-top: 1px solid #eee; margin-top: 15px;"><div class="days-grid">${(appConfig.dailyCheckinRewards || []).map((item, index) => `<div class="daily-checkin-item"><div class="form-group"><label class="day-label">Day ${item.day}</label><input type="number" step="0.01" data-type="checkinReward" data-index="${index}" value="${item.reward}"></div><button type="button" class="btn-remove" onclick="removeCheckinDay(${index})">&times;</button></div>`).join('')}</div><button type="button" class="btn-add" onclick="addCheckinDay()"><i class="fas fa-plus"></i> Add New Day</button></div>`; const switchEl = document.getElementById('dailyCheckinEnabled'), listEl = document.getElementById('daily-checkin-list'); listEl.style.display = switchEl.checked ? 'block' : 'none'; switchEl.addEventListener('change', () => { listEl.style.display = switchEl.checked ? 'block' : 'none'; }); }
         window.addCheckinDay = () => { if (!appConfig.dailyCheckinRewards) appConfig.dailyCheckinRewards = []; const nextDay = appConfig.dailyCheckinRewards.length + 1; appConfig.dailyCheckinRewards.push({ day: nextDay, reward: 0 }); renderDailyCheckinSection(); }; window.removeCheckinDay = (index) => { if(confirm('Are you sure?')) { appConfig.dailyCheckinRewards.splice(index, 1); appConfig.dailyCheckinRewards.forEach((item, i) => item.day = i + 1); renderDailyCheckinSection(); }};
         
+        // MODIFIED: This function now renders the new 'watch_ads_claim' task type fields
         function renderTasksSection() {
             const container = document.getElementById('tasks-section');
             const list = appConfig.tasks || [];
             const listHtml = list.map((item, index) => {
                 const isScreenshot = item.type === 'screenshot';
                 const isQuestion = item.type === 'question_answer';
+                const isWatchAds = item.type === 'watch_ads_claim'; // NEW
+
                 return `
                 <div class="task-setting" id="task-item-${index}">
                     <div class="task-setting-grid">
                         <input type="text" data-type="taskTitle" data-index="${index}" value="${item.title}" placeholder="Task Title">
                         <input type="text" data-type="taskIconUrl" data-index="${index}" value="${item.iconUrl || ''}" placeholder="Icon URL (Optional)">
-                        <input type="number" step="0.01" data-type="taskReward" data-index="${index}" value="${item.reward}" placeholder="Reward">
+                        <input type="number" step="1" data-type="taskReward" data-index="${index}" value="${item.reward}" placeholder="Reward">
                         <label class="switch"><input type="checkbox" data-type="taskItemEnabled" data-index="${index}" ${item.enabled ? 'checked' : ''}><span class="slider"></span></label>
                         <div class="order-controls"><button type="button" class="btn-order" onclick="window.moveItem('tasks', ${index}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button><button type="button" class="btn-order" onclick="window.moveItem('tasks', ${index}, 'down')" ${index === list.length - 1 ? 'disabled' : ''}>▼</button></div>
                         <button type="button" class="btn-remove" onclick="removeTask(${index})">&times;</button>
@@ -2008,9 +1993,10 @@
                             <option value="join_claim" ${item.type === 'join_claim' ? 'selected' : ''}>Join & Claim</option>
                             <option value="screenshot" ${isScreenshot ? 'selected' : ''}>Screenshot Submission</option>
                             <option value="question_answer" ${isQuestion ? 'selected' : ''}>Question & Answer</option>
+                            <option value="watch_ads_claim" ${isWatchAds ? 'selected' : ''}>Watch Ads & Claim</option>
                         </select>
                     </div>
-                    <div class="form-group task-type-field" id="task-link-field-${index}" style="display: ${isScreenshot || isQuestion ? 'none' : 'block'};">
+                    <div class="form-group task-type-field" id="task-link-field-${index}" style="display: ${!isScreenshot && !isQuestion && !isWatchAds ? 'block' : 'none'};">
                         <label>Task Link</label>
                         <input type="text" data-type="taskLink" data-index="${index}" value="${item.link || ''}" placeholder="https://t.me/your_channel">
                     </div>
@@ -2027,6 +2013,10 @@
                             <label>Correct Answer (Case-sensitive)</label>
                             <input type="text" data-type="taskAnswer" data-index="${index}" value="${item.answer || ''}" placeholder="e.g., Dhaka">
                         </div>
+                    </div>
+                    <div class="form-group task-type-field" id="task-watch-ads-field-${index}" style="display: ${isWatchAds ? 'block' : 'none'};">
+                        <label>Required Ads to Watch</label>
+                        <input type="number" data-type="taskRequiredAds" data-index="${index}" value="${item.requiredAds || ''}" placeholder="e.g., 20">
                     </div>
                 </div>`;
             }).join('');
@@ -2052,9 +2042,11 @@
             document.getElementById(`task-link-field-${index}`).style.display = selectedType === 'join_claim' ? 'block' : 'none';
             document.getElementById(`task-description-field-${index}`).style.display = selectedType === 'screenshot' ? 'block' : 'none';
             document.getElementById(`task-qa-fields-${index}`).style.display = selectedType === 'question_answer' ? 'block' : 'none';
+            document.getElementById(`task-watch-ads-field-${index}`).style.display = selectedType === 'watch_ads_claim' ? 'block' : 'none';
         };
 
-        window.addTask = () => { if (!appConfig.tasks) appConfig.tasks = []; appConfig.tasks.push({ id: Date.now(), title: '', link: '', reward: 0, enabled: true, type: 'join_claim', iconUrl: '' }); renderTasksSection(); }; window.removeTask = (index) => { if(confirm('Are you sure?')) { appConfig.tasks.splice(index, 1); renderTasksSection(); }};
+        window.addTask = () => { if (!appConfig.tasks) appConfig.tasks = []; appConfig.tasks.push({ id: Date.now(), title: '', reward: 0, enabled: true, type: 'join_claim', iconUrl: '' }); renderTasksSection(); }; 
+        window.removeTask = (index) => { if(confirm('Are you sure?')) { appConfig.tasks.splice(index, 1); renderTasksSection(); }};
         
         function renderUserTiersSection() { 
             const list = appConfig.userTiers || [];
@@ -2333,7 +2325,6 @@
             }
         };
 
-        // --- NEW: INDIVIDUAL SAVE FUNCTIONS ---
         async function createSaveFunction(sectionName, logic) {
             logic();
             if (await saveConfigToFirebase()) {
@@ -2430,6 +2421,7 @@
                 reward: parseFloat(el.querySelector(`[data-type="checkinReward"]`).value) || 0
             }));
         });
+        // MODIFIED: This function now saves the new 'watch_ads_claim' task type fields
         window.saveTasksSettings = () => createSaveFunction('Tasks', () => {
             appConfig.tasksEnabled = document.getElementById('tasksEnabled').checked;
             appConfig.tasks = Array.from(document.querySelectorAll('.task-setting')).map((el, index) => {
@@ -2448,9 +2440,13 @@
                     task.question = el.querySelector(`[data-type="taskQuestion"]`).value;
                     task.answer = el.querySelector(`[data-type="taskAnswer"]`).value;
                 }
+                if (type === 'watch_ads_claim') {
+                    task.requiredAds = parseInt(el.querySelector(`[data-type="taskRequiredAds"]`).value) || 0;
+                }
                 return task;
             });
         });
+
         window.saveUserTiersSettings = () => createSaveFunction('User Tiers', () => {
             appConfig.userTiersEnabled = document.getElementById('userTiersEnabled').checked; 
             const tempTiers = Array.from(document.querySelectorAll('.tier-setting')).map((el, index) => ({
@@ -2530,12 +2526,7 @@
             });
         });
         
-        // --- MODIFIED: Main save function collects data from all fields ---
         window.saveAllSettings = async () => {
-            const pInt = (val) => parseInt(val) || 0;
-            const pFlt = (val) => parseFloat(val) || 0;
-
-            // Collect data from all sections
             window.saveTechnicalSettings();
             window.saveAssetSettings();
             window.saveAppControlSettings();
